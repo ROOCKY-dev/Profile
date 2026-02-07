@@ -1,36 +1,39 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# RooOS Control Center 🕹️
 
-## Getting Started
+A futuristic, high-performance dashboard for ROOCKYbot.
 
-First, run the development server:
+## Features
+- **Live Status Orb**: Visualizes AI state (Idle, Thinking, Working).
+- **System Monitor**: Simulated CPU/RAM stats (can be hooked to real data).
+- **Command Log**: Matrix-style scrolling logs.
+- **Quick Actions**: Trigger scripts and automations.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Tech Stack
+- **Next.js 14** (App Router)
+- **Tailwind CSS** (Styling)
+- **Framer Motion** (Animations)
+- **Lucide React** (Icons)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## How to Run
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. Open Terminal in this folder:
+   ```bash
+   cd "Documents/Roo files/control-center"
+   ```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+2. Install dependencies (if you haven't):
+   ```bash
+   npm install
+   ```
 
-## Learn More
+3. Start the dev server:
+   ```bash
+   npm run dev
+   ```
 
-To learn more about Next.js, take a look at the following resources:
+4. Open `http://localhost:3000` in your browser.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Future Upgrades
+- Connect to real OpenClaw API for live logs.
+- Add "Voice Mode" visualizer.
+- Add "Matrix Rain" background effect.
