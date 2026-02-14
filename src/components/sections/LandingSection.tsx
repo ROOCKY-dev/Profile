@@ -12,6 +12,14 @@ interface LandingSectionProps {
   customColor?: string;
 }
 
+/**
+ * Landing Section
+ *
+ * The first section the user sees. Contains the main status dashboard,
+ * the 3D Orb Visualizer, and navigation links.
+ *
+ * Uses `snap-start` to ensure the viewport snaps to this section.
+ */
 export default function LandingSection({ status, focusLevel, errorCount, voiceLevel, customColor }: LandingSectionProps) {
 
   const scrollToSection = (id: string) => {
@@ -22,6 +30,7 @@ export default function LandingSection({ status, focusLevel, errorCount, voiceLe
   };
 
   return (
+    // Main Landing Section - Snaps to start
     <section className="h-screen w-full flex items-center justify-between relative bg-black snap-start overflow-hidden">
       {/* Left Column: Status */}
       <div className="w-1/4 h-full border-r border-white/5 p-8 flex flex-col justify-center bg-black/30 backdrop-blur-sm z-10 pointer-events-auto">

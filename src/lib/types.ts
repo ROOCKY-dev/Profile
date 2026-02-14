@@ -34,3 +34,11 @@ export interface SystemState {
   customColor?: string;
   errorCount: number;
 }
+
+export interface TimelineEventData {
+  year: string;
+  title: string;
+  description: string;
+  color: string;
+  isEncrypted?: boolean;
+}
