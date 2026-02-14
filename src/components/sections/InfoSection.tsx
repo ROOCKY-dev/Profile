@@ -1,33 +1,86 @@
 'use client';
 
-export default function InfoSection() {
-  return (
-    <section id="info-section" className="h-screen w-full bg-zinc-800 snap-start text-white overflow-hidden relative flex flex-col items-center justify-center">
-      <div className="text-center p-12">
-         <h1 className="text-4xl font-mono text-zinc-500 mb-4">Info Module</h1>
-         <p className="text-zinc-600 mb-8">Phase 4 Development Pending...</p>
+import { useRef } from 'react';
+import { motion, useScroll, useTransform } from 'framer-motion';
+import TerminalHero from '@/components/info/TerminalHero';
+import Timeline from '@/components/info/Timeline';
+import TechStack from '@/components/info/TechStack';
+import ProjectReveal from '@/components/info/ProjectReveal';
+import TerminalFooter from '@/components/info/TerminalFooter';
 
-         <div className="grid grid-cols-2 gap-4 text-left max-w-2xl mx-auto opacity-50 text-sm font-mono">
-            <div className="p-4 border border-white/5 bg-black/20">
-               <h3 className="text-cyan-500 mb-2">Structure</h3>
-               <ul className="list-disc pl-4 space-y-1">
-                 <li>Hero Section (Typewriter)</li>
-                 <li>Timeline (XP Bar)</li>
-                 <li>Skills (Parallax)</li>
-                 <li>Portfolio (Scroll Reveal)</li>
-               </ul>
-            </div>
-            <div className="p-4 border border-white/5 bg-black/20">
-               <h3 className="text-purple-500 mb-2">Interactions</h3>
-               <ul className="list-disc pl-4 space-y-1">
-                 <li>Cursor-Triggered Tooltips</li>
-                 <li>Holographic Tilt</li>
-                 <li>Magnetic Buttons</li>
-                 <li>Video Swap Preview</li>
-               </ul>
-            </div>
-         </div>
+export default function InfoSection() {
+  const containerRef = useRef<HTMLElement>(null);
+
+  // Track scroll progress within this section
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end end"]
+  });
+
+  // Dynamic Background Colors
+  // 0-25%: Hero (Blue/Cyan)
+  // 25-50%: Timeline (Blue/Purple)
+  // 50-75%: Tech (Purple/Pink)
+  // 75-100%: Projects (Red/Pink)
+
+  const backgroundColor = useTransform(
+    scrollYProgress,
+    [0, 0.25, 0.5, 0.75, 1],
+    [
+      "rgba(10, 10, 15, 1)", // Dark Blue/Black
+      "rgba(10, 20, 30, 1)", // Dark Cyan/Black
+      "rgba(20, 10, 30, 1)", // Dark Purple
+      "rgba(30, 10, 10, 1)", // Dark Red
+      "rgba(5, 20, 10, 1)"   // Dark Green (Footer/End)
+    ]
+  );
+
+  const glowColor = useTransform(
+    scrollYProgress,
+    [0, 0.25, 0.5, 0.75, 1],
+    [
+      "rgba(0, 255, 255, 0.1)", // Cyan Glow
+      "rgba(0, 100, 255, 0.1)", // Blue Glow
+      "rgba(200, 0, 255, 0.1)", // Purple Glow
+      "rgba(255, 0, 100, 0.1)", // Red/Pink Glow
+      "rgba(0, 255, 100, 0.1)"  // Green Glow
+    ]
+  );
+
+  return (
+    <motion.section
+      ref={containerRef}
+      id="info-section"
+      style={{ backgroundColor }}
+      className="relative w-full min-h-[400vh] snap-start flex flex-col items-center overflow-hidden"
+    >
+      {/* Ambient Glow Background */}
+      <motion.div
+        style={{ background: glowColor }}
+        className="absolute inset-0 pointer-events-none blur-3xl opacity-50 transition-colors duration-1000"
+      />
+
+      {/* Hero Section (Typewriter) */}
+      <div className="w-full min-h-screen flex items-center justify-center relative z-10">
+        <TerminalHero />
       </div>
-    </section>
+
+      {/* Timeline Section */}
+      <div className="w-full min-h-screen flex items-center justify-center relative z-10">
+        <Timeline />
+      </div>
+
+      {/* Tech Stack Section */}
+      <div className="w-full min-h-screen flex items-center justify-center relative z-10">
+        <TechStack />
+      </div>
+
+      {/* Portfolio Section */}
+      <div className="w-full min-h-screen flex items-center justify-center relative z-10">
+        <ProjectReveal />
+      </div>
+
+      <TerminalFooter />
+    </motion.section>
   );
 }
