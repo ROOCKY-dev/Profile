@@ -2,9 +2,7 @@
 
 import { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
-import Timeline from '@/components/info/Timeline';
-import HexTechStack from '@/components/info/HexTechStack';
-import ProjectReveal from '@/components/info/ProjectReveal';
+import AboutMe from '@/components/info/AboutMe';
 
 export default function InfoSection() {
   const containerRef = useRef<HTMLElement>(null);
@@ -15,31 +13,14 @@ export default function InfoSection() {
     offset: ["start start", "end end"]
   });
 
-  // Dynamic Background Colors
-  // 0-25%: Hero (Blue/Cyan)
-  // 25-50%: Timeline (Blue/Purple)
-  // 50-75%: Tech (Purple/Pink)
-  // 75-100%: Projects (Red/Pink)
-
+  // Dynamic Background Colors - subtle overlays
   const backgroundColor = useTransform(
     scrollYProgress,
-    [0, 0.33, 0.66, 1],
+    [0, 0.5, 1],
     [
-      "rgba(10, 20, 30, 1)", // Dark Cyan/Black (Timeline)
-      "rgba(20, 10, 30, 1)", // Dark Purple (Tech)
-      "rgba(30, 10, 10, 1)", // Dark Red (Projects)
-      "rgba(5, 20, 10, 1)"   // Dark Green (End)
-    ]
-  );
-
-  const glowColor = useTransform(
-    scrollYProgress,
-    [0, 0.33, 0.66, 1],
-    [
-      "rgba(0, 100, 255, 0.1)", // Blue Glow
-      "rgba(200, 0, 255, 0.1)", // Purple Glow
-      "rgba(255, 0, 100, 0.1)", // Red/Pink Glow
-      "rgba(0, 255, 100, 0.1)"  // Green Glow
+      "rgba(0, 0, 0, 0)", // Transparent
+      "rgba(10, 20, 30, 0.4)", // Slight Cyan
+      "rgba(20, 10, 30, 0.4)" // Slight Purple
     ]
   );
 
@@ -48,28 +29,16 @@ export default function InfoSection() {
       ref={containerRef}
       id="info-section"
       style={{ backgroundColor }}
-      className="relative w-full min-h-[300vh] snap-start flex flex-col items-center overflow-hidden"
+      className="relative w-full min-h-screen flex flex-col items-center overflow-hidden snap-start"
     >
-      {/* Ambient Glow Background */}
-      <motion.div
-        style={{ background: glowColor }}
-        className="absolute inset-0 pointer-events-none blur-3xl opacity-50 transition-colors duration-1000"
-      />
+      {/* Ambient Glow Background - Subtle */}
+      <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-transparent via-cyan-900/10 to-transparent" />
 
-      {/* Timeline Section */}
-      <div className="w-full min-h-screen flex items-center justify-center relative z-10">
-        <Timeline />
+      {/* Main Content */}
+      <div className="w-full relative z-10 pt-16 md:pt-20">
+        <AboutMe />
       </div>
 
-      {/* Tech Stack Section (Hexagonal Grid) */}
-      <div className="w-full min-h-screen flex items-center justify-center relative z-10">
-        <HexTechStack />
-      </div>
-
-      {/* Portfolio Section */}
-      <div className="w-full min-h-screen flex items-center justify-center relative z-10">
-        <ProjectReveal />
-      </div>
     </motion.section>
   );
 }
