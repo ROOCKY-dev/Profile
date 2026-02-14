@@ -25,7 +25,7 @@ export default function DevTools({
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="fixed bottom-20 left-4 z-50 font-mono text-xs">
+    <div className="fixed bottom-4 right-4 md:bottom-8 md:left-8 z-50 font-mono text-xs">
       <AnimatePresence>
         {isOpen && (
           <motion.div

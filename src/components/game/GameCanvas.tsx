@@ -169,17 +169,33 @@ export default function GameCanvas() {
             y: e.clientY - rect.top
         };
     };
+
+    // Touch Handling
+    const handleTouchMove = (e: TouchEvent) => {
+        e.preventDefault(); // Prevent scrolling
+        const rect = canvas.getBoundingClientRect();
+        const touch = e.touches[0];
+        playerPosRef.current = {
+            x: touch.clientX - rect.left,
+            y: touch.clientY - rect.top
+        };
+    };
+
     canvas.addEventListener('mousemove', handleMouseMove);
+    canvas.addEventListener('touchstart', handleTouchMove, { passive: false });
+    canvas.addEventListener('touchmove', handleTouchMove, { passive: false });
 
     return () => {
         cancelAnimationFrame(requestRef.current);
         window.removeEventListener('resize', resize);
         canvas.removeEventListener('mousemove', handleMouseMove);
+        canvas.removeEventListener('touchstart', handleTouchMove);
+        canvas.removeEventListener('touchmove', handleTouchMove);
     };
   }, []);
 
   return (
-    <div className="relative w-full max-w-4xl mx-auto h-[500px] bg-black border border-zinc-800 rounded-xl overflow-hidden shadow-2xl group cursor-none">
+    <div className="relative w-full max-w-4xl mx-auto h-[350px] md:h-[500px] bg-black border border-zinc-800 rounded-xl overflow-hidden shadow-2xl group cursor-none">
 
         <canvas
             ref={canvasRef}

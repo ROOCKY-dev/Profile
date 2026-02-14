@@ -130,7 +130,7 @@ function HexItem({ tech, activeCategory }: { tech: TechItem, activeCategory: Tec
         filter: isActive ? 'grayscale(0%)' : 'grayscale(100%) blur(2px)'
       }}
       transition={{ duration: 0.4 }}
-      className="relative group w-[180px] h-[200px] flex items-center justify-center"
+      className="relative group w-[140px] h-[160px] md:w-[180px] md:h-[200px] flex items-center justify-center"
     >
        {/* Hexagon Shape Wrapper */}
        <div className="absolute inset-0 bg-zinc-900/80 backdrop-blur-md clip-path-hexagon flex items-center justify-center transition-transform duration-300 group-hover:scale-105">
@@ -148,17 +148,17 @@ function HexItem({ tech, activeCategory }: { tech: TechItem, activeCategory: Tec
 
           {/* Content */}
           <div className="text-center z-10 p-4">
-             <div className="text-3xl mb-2 text-cyan-400 group-hover:scale-110 transition-transform duration-300">
+             <div className="text-2xl md:text-3xl mb-1 md:mb-2 text-cyan-400 group-hover:scale-110 transition-transform duration-300">
                ⬡
              </div>
-             <h3 className="text-lg font-bold text-white mb-1">{tech.name}</h3>
-             <p className="text-[10px] text-zinc-500 font-mono uppercase tracking-wider">{tech.level}</p>
+             <h3 className="text-base md:text-lg font-bold text-white mb-1">{tech.name}</h3>
+             <p className="text-[9px] md:text-[10px] text-zinc-500 font-mono uppercase tracking-wider">{tech.level}</p>
           </div>
 
           {/* Detail Tooltip on Hover */}
-          <div className="absolute inset-0 bg-black/90 flex flex-col items-center justify-center p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-20">
-             <p className="text-xs text-cyan-300 font-mono mb-1">{'>'} {tech.category}</p>
-             <p className="text-sm text-zinc-300 text-center leading-tight">{tech.description}</p>
+          <div className="absolute inset-0 bg-black/90 flex flex-col items-center justify-center p-3 md:p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-20">
+             <p className="text-[10px] md:text-xs text-cyan-300 font-mono mb-1">{'>'} {tech.category}</p>
+             <p className="text-xs md:text-sm text-zinc-300 text-center leading-tight">{tech.description}</p>
           </div>
        </div>
 
