@@ -12,18 +12,18 @@ import RippleEffect from '@/components/ui/RippleEffect';
 export default function Home() {
   const [status, setStatus] = useState<BotStatus>('CODING');
   const [focusLevel, setFocusLevel] = useState<FocusLevel>('NORMAL');
-  const [voiceLevel, setVoiceLevel] = useState(0); 
+  const [voiceLevel] = useState(0);
   const [customColor, setCustomColor] = useState<string | undefined>(undefined);
 
   // Simulated Error Count
-  const [errorCount, setErrorCount] = useState(0);
+  const [errorCount] = useState(0);
 
   const containerRef = useRef<HTMLElement>(null);
 
   return (
     <main
       ref={containerRef}
-      className="h-screen w-screen overflow-y-scroll snap-y snap-mandatory scroll-smooth bg-black text-white relative"
+      className="min-h-screen w-full bg-black text-white relative overflow-x-hidden"
     >
 
       {/* Landing Section (Top) - Orb is now embedded here */}

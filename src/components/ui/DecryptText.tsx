@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 const CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890@#$%&";
 
 export default function DecryptText({ text, reveal, className }: { text: string, reveal: boolean, className?: string }) {
-  // Deterministic initial state (pseudo-random looking) to avoid hydration mismatch
+  // Deterministic initial state to avoid hydration mismatch
   const [displayText, setDisplayText] = useState(
     text.split('').map((_, i) => CHARS[i % CHARS.length]).join('')
   );

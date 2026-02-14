@@ -30,7 +30,7 @@ export default function LandingSection({ status, focusLevel, errorCount, voiceLe
         {/* Main Status */}
         <div className="mb-8">
             <div className="text-5xl font-bold text-white tracking-tighter mb-2 min-h-[48px]">
-               <DecryptText text={status} reveal={true} />
+               <DecryptText key={status} text={status} reveal={true} />
             </div>
             <div className={`text-xs font-mono px-2 py-1 inline-block rounded ${
                 status === 'OFFLINE' ? 'bg-zinc-800 text-zinc-400' : 'bg-cyan-900/30 text-cyan-400 border border-cyan-500/30'

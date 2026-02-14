@@ -44,10 +44,8 @@ export default function Timeline() {
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: containerRef,
-    offset: ["start end", "end start"]
+    offset: ["start center", "end center"]
   });
-
-  const pathLength = useTransform(scrollYProgress, [0, 0.8], [0, 1]);
 
   return (
     <div ref={containerRef} className="relative w-full max-w-5xl mx-auto py-32 px-4 md:px-8">
@@ -61,37 +59,25 @@ export default function Timeline() {
       </h2>
 
       <div className="relative">
-        {/* SVG Circuit Line */}
-        <div className="absolute left-[20px] md:left-1/2 top-0 bottom-0 w-[4px] md:-translate-x-1/2 h-full z-0">
-           <svg className="w-full h-full overflow-visible">
-              <defs>
-                <linearGradient id="circuit-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                  <stop offset="0%" stopColor="#06b6d4" stopOpacity="0" />
-                  <stop offset="50%" stopColor="#3b82f6" />
-                  <stop offset="100%" stopColor="#d946ef" />
-                </linearGradient>
-              </defs>
-              <motion.path
-                d="M 2 0 L 2 10000" // Simple vertical line, height will be clipped by container
-                stroke="url(#circuit-gradient)"
-                strokeWidth="4"
-                strokeLinecap="round"
-                fill="none"
-                style={{ pathLength }}
-              />
-           </svg>
-
-           {/* Pulsing Data Packets */}
+        {/* Central Line Container */}
+        <div className="absolute left-[20px] md:left-1/2 top-0 bottom-0 w-[4px] md:-translate-x-1/2 h-full z-0 bg-white/5 rounded-full overflow-hidden">
+           {/* Gradient Fill Line */}
            <motion.div
-             className="absolute top-0 left-0 w-4 h-4 bg-white rounded-full shadow-[0_0_15px_white] z-10"
-             style={{
-               top: useTransform(scrollYProgress, [0, 1], ['0%', '100%']),
-               opacity: useTransform(scrollYProgress, [0.9, 1], [1, 0])
-             }}
+             className="w-full bg-gradient-to-b from-cyan-500 via-blue-500 to-purple-500 origin-top"
+             style={{ height: useTransform(scrollYProgress, [0, 1], ["0%", "100%"]) }}
            />
         </div>
 
-        <div className="space-y-32">
+        {/* Pulsing Data Packet (Leading the line) */}
+        <motion.div
+             className="absolute left-[20px] md:left-1/2 md:-translate-x-1/2 w-4 h-4 bg-white rounded-full shadow-[0_0_15px_white] z-10"
+             style={{
+               top: useTransform(scrollYProgress, [0, 1], ['0%', '100%']),
+               opacity: useTransform(scrollYProgress, [0, 0.95, 1], [1, 1, 0])
+             }}
+        />
+
+        <div className="space-y-32 pb-32">
           {events.map((event, index) => (
             <TimelineEvent key={index} event={event} index={index} />
           ))}
@@ -113,7 +99,7 @@ function TimelineEvent({ event, index }: { event: TimelineEventData, index: numb
       <div className="hidden md:block w-5/12" />
 
       {/* Connection Node */}
-      <div className="absolute left-[20px] md:left-1/2 md:-translate-x-1/2 w-4 h-4 bg-black border-2 border-cyan-500 rounded-full z-10 flex items-center justify-center">
+      <div className="absolute left-[20px] md:left-1/2 md:-translate-x-1/2 w-4 h-4 bg-black border-2 border-cyan-500 rounded-full z-10 flex items-center justify-center -translate-x-1/2 md:translate-x-[-50%]">
         <motion.div
           initial={{ scale: 0 }}
           animate={isInView ? { scale: 1 } : { scale: 0 }}

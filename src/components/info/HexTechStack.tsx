@@ -1,15 +1,14 @@
 'use client';
 
 import { useState, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 
 type TechCategory = 'ALL' | 'BACKEND' | 'GAME_DEV' | 'SYS_ADMIN';
 
 interface TechItem {
   name: string;
   category: TechCategory;
-  icon?: string; // Could be Lucide icon name or image path
-  level: string; // e.g., "Kernel Level"
+  level: string;
   description: string;
 }
 
@@ -30,10 +29,9 @@ const TECH_STACK: TechItem[] = [
 
 export default function HexTechStack() {
   const [activeCategory, setActiveCategory] = useState<TechCategory>('ALL');
-  // Removed unused hoveredTech
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Spotlight Effect Logic
+  // Spotlight Effect
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!containerRef.current) return;
     const rect = containerRef.current.getBoundingClientRect();
@@ -43,8 +41,17 @@ export default function HexTechStack() {
     containerRef.current.style.setProperty('--mouse-y', `${y}px`);
   };
 
+  // Organize for Honeycomb Layout (Desktop)
+  // Rows: 4, 3, 4, 1
+  const rows = [
+    TECH_STACK.slice(0, 4),
+    TECH_STACK.slice(4, 7),
+    TECH_STACK.slice(7, 11),
+    TECH_STACK.slice(11, 12)
+  ];
+
   return (
-    <div className="w-full max-w-6xl mx-auto py-24 px-4">
+    <div className="w-full max-w-7xl mx-auto py-24 px-4">
       <h2 className="text-4xl md:text-5xl font-mono text-center mb-12 text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500">
         {'< Hex Core />'}
       </h2>
@@ -67,81 +74,98 @@ export default function HexTechStack() {
         ))}
       </div>
 
-      {/* Hex Grid Container */}
+      {/* Hex Grid Container - Desktop (Honeycomb) */}
       <div
         ref={containerRef}
         onMouseMove={handleMouseMove}
-        className="relative grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 md:gap-4 perspective-1000"
+        className="hidden md:flex flex-col items-center relative perspective-1000"
         style={{
-          // @ts-expect-error Custom CSS variables for spotlight effect
+          // @ts-expect-error custom property
           '--mouse-x': '0px',
           '--mouse-y': '0px',
         }}
       >
-        <AnimatePresence mode='popLayout'>
-          {TECH_STACK.map((tech) => {
-             const isActive = activeCategory === 'ALL' || tech.category === activeCategory;
-
-             return (
-               <motion.div
-                 key={tech.name}
-                 layout
-                 initial={{ opacity: 0, scale: 0.8 }}
-                 animate={{
-                   opacity: isActive ? 1 : 0.3,
-                   scale: isActive ? 1 : 0.9,
-                   filter: isActive ? 'grayscale(0%)' : 'grayscale(100%) blur(2px)'
-                 }}
-                 exit={{ opacity: 0, scale: 0 }}
-                 transition={{ duration: 0.3 }}
-                 className="relative group aspect-square flex items-center justify-center p-1"
-               >
-                  {/* Hexagon Shape Wrapper */}
-                  <div className="relative w-full h-full bg-zinc-900/80 backdrop-blur-md clip-path-hexagon flex items-center justify-center border-0">
-
-                     {/* Spotlight Overlay (Global) */}
-                     <div
-                       className="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                       style={{
-                         background: `radial-gradient(400px circle at var(--mouse-x) var(--mouse-y), rgba(6,182,212,0.15), transparent 40%)`
-                       }}
-                     />
-
-                     {/* Border Glow on Hover */}
-                     <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/0 via-cyan-500/0 to-purple-500/0 group-hover:from-cyan-500/20 group-hover:to-purple-500/20 transition-all duration-500" />
-
-                     {/* Content */}
-                     <div className="text-center z-10 p-4">
-                        <div className="text-3xl mb-2 text-cyan-400 group-hover:scale-110 transition-transform duration-300">
-                          {/* Placeholder Icon */}
-                          ⬡
-                        </div>
-                        <h3 className="text-lg font-bold text-white mb-1">{tech.name}</h3>
-                        <p className="text-[10px] text-zinc-500 font-mono uppercase tracking-wider">{tech.level}</p>
-                     </div>
-
-                     {/* Detail Tooltip on Hover */}
-                     <div className="absolute inset-0 bg-black/90 flex flex-col items-center justify-center p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-                        <p className="text-xs text-cyan-300 font-mono mb-1">{'>'} {tech.category}</p>
-                        <p className="text-sm text-zinc-300 text-center">{tech.description}</p>
-                     </div>
-                  </div>
-
-                  {/* Hexagon Border SVG (Optional for cleaner edges) */}
-                  <svg className="absolute inset-0 w-full h-full pointer-events-none stroke-zinc-800 group-hover:stroke-cyan-500/50 transition-colors duration-300" viewBox="0 0 100 100" preserveAspectRatio="none">
-                    <polygon points="50 0, 100 25, 100 75, 50 100, 0 75, 0 25" fill="none" strokeWidth="2" vectorEffect="non-scaling-stroke" />
-                  </svg>
-               </motion.div>
-             );
-          })}
-        </AnimatePresence>
+        {rows.map((row, rowIndex) => (
+          <div
+            key={rowIndex}
+            className="flex justify-center gap-4"
+            style={{
+              marginTop: rowIndex === 0 ? 0 : '-35px', // Overlap rows vertically
+              marginBottom: '0px'
+            }}
+          >
+            {row.map((tech) => (
+               <HexItem key={tech.name} tech={tech} activeCategory={activeCategory} />
+            ))}
+          </div>
+        ))}
       </div>
 
-      <style jsx>{`
+      {/* Hex Grid Container - Mobile (Simple Grid) */}
+      <div className="flex md:hidden flex-wrap justify-center gap-4">
+         {TECH_STACK.map((tech) => (
+            <HexItem key={tech.name} tech={tech} activeCategory={activeCategory} />
+         ))}
+      </div>
+
+      <style jsx global>{`
         .clip-path-hexagon {
           clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
         }
       `}</style>
     </div>
+  );
+}
+
+function HexItem({ tech, activeCategory }: { tech: TechItem, activeCategory: TechCategory }) {
+  const isActive = activeCategory === 'ALL' || tech.category === activeCategory;
+
+  return (
+    <motion.div
+      layout
+      initial={{ opacity: 0, scale: 0.8 }}
+      animate={{
+        opacity: isActive ? 1 : 0.3,
+        scale: isActive ? 1 : 0.9,
+        filter: isActive ? 'grayscale(0%)' : 'grayscale(100%) blur(2px)'
+      }}
+      transition={{ duration: 0.4 }}
+      className="relative group w-[180px] h-[200px] flex items-center justify-center"
+    >
+       {/* Hexagon Shape Wrapper */}
+       <div className="absolute inset-0 bg-zinc-900/80 backdrop-blur-md clip-path-hexagon flex items-center justify-center transition-transform duration-300 group-hover:scale-105">
+
+          {/* Spotlight Overlay (Global) */}
+          <div
+            className="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+            style={{
+              background: `radial-gradient(300px circle at var(--mouse-x) var(--mouse-y), rgba(6,182,212,0.15), transparent 40%)`
+            }}
+          />
+
+          {/* Border Glow on Hover */}
+          <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/0 via-cyan-500/0 to-purple-500/0 group-hover:from-cyan-500/20 group-hover:to-purple-500/20 transition-all duration-500" />
+
+          {/* Content */}
+          <div className="text-center z-10 p-4">
+             <div className="text-3xl mb-2 text-cyan-400 group-hover:scale-110 transition-transform duration-300">
+               ⬡
+             </div>
+             <h3 className="text-lg font-bold text-white mb-1">{tech.name}</h3>
+             <p className="text-[10px] text-zinc-500 font-mono uppercase tracking-wider">{tech.level}</p>
+          </div>
+
+          {/* Detail Tooltip on Hover */}
+          <div className="absolute inset-0 bg-black/90 flex flex-col items-center justify-center p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-20">
+             <p className="text-xs text-cyan-300 font-mono mb-1">{'>'} {tech.category}</p>
+             <p className="text-sm text-zinc-300 text-center leading-tight">{tech.description}</p>
+          </div>
+       </div>
+
+       {/* Hexagon Border SVG */}
+       <svg className="absolute inset-0 w-full h-full pointer-events-none stroke-zinc-700 group-hover:stroke-cyan-500/50 transition-colors duration-300" viewBox="0 0 100 100" preserveAspectRatio="none">
+         <polygon points="50 0, 100 25, 100 75, 50 100, 0 75, 0 25" fill="none" strokeWidth="1" vectorEffect="non-scaling-stroke" />
+       </svg>
+    </motion.div>
   );
 }
