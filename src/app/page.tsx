@@ -34,14 +34,14 @@ export default function Home() {
   // Transition happens between 0 (Top) and 0.2 (Just past Landing)
   // We want it to lock in the corner quickly so it doesn't float around weirdly
 
-  // X: 0% (Center) -> 0% (Remains Centered horizontally)
-  const x = useTransform(smoothProgress, [0, 0.2], ['0%', '0%']);
+  // X: 0% (Center) -> 35vw (Top Right Corner)
+  const x = useTransform(smoothProgress, [0, 0.2], ['0%', '35vw']);
 
-  // Y: 0% (Center) -> -42vh (Top Center)
-  const y = useTransform(smoothProgress, [0, 0.2], ['0%', '-42vh']);
+  // Y: 0% (Center) -> -35vh (Top Corner)
+  const y = useTransform(smoothProgress, [0, 0.2], ['0%', '-35vh']);
 
-  // Scale: 1 (Full) -> 0.6 (Larger and more centered)
-  const scale = useTransform(smoothProgress, [0, 0.2], [1, 0.6]);
+  // Scale: 1 (Full) -> 0.5 (Smaller and tucked away)
+  const scale = useTransform(smoothProgress, [0, 0.2], [1, 0.5]);
 
   // Opacity for the "Mini-View" border
   const borderOpacity = useTransform(smoothProgress, [0.15, 0.2], [0, 0.5]);
