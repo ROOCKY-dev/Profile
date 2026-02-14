@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, useCallback } from 'react';
 import DecryptText from '@/components/ui/DecryptText';
+import { useToast } from '@/components/ui/ToastSystem';
 
 interface Particle {
   id: string;
@@ -22,6 +23,7 @@ const DATA_LABELS = [
 type GameState = 'IDLE' | 'PLAYING' | 'GAME_OVER' | 'GAME_WON';
 
 export default function GameCanvas() {
+  const { toast } = useToast();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [score, setScore] = useState(0);
   const [gameState, setGameState] = useState<GameState>('IDLE');
@@ -259,7 +261,7 @@ export default function GameCanvas() {
                        className="mt-6 text-xs text-green-400 hover:text-green-300 underline underline-offset-4"
                        onClick={() => {
                           navigator.clipboard.writeText('ahmed@dev-systems.io');
-                          alert('Copied to clipboard!');
+                          toast('Copied to clipboard!', 'success');
                        }}
                     >
                         [COPY SECURE LINK]
