@@ -11,6 +11,16 @@ import TerminalFooter from '@/components/info/TerminalFooter';
 import RippleEffect from '@/components/ui/RippleEffect';
 import LoadingScreen from '@/components/ui/LoadingScreen';
 
+/**
+ * Main Page Component
+ *
+ * Implements the core layout of the portfolio with three main sections:
+ * 1. Landing Section - Initial view with status and orb visualizer.
+ * 2. Info Section - Scrollable timeline, tech stack, and projects (300vh).
+ * 3. Game Section - Interactive game canvas.
+ *
+ * Uses CSS Scroll Snap to ensure the user is immersed in one section at a time.
+ */
 export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
   const [status, setStatus] = useState<BotStatus>('CODING');

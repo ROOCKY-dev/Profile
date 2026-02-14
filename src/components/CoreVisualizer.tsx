@@ -5,6 +5,7 @@ import { OrbitControls, Sphere, Torus, Icosahedron } from '@react-three/drei';
 import * as THREE from 'three';
 import { useRef, useMemo } from 'react';
 import { BotStatus, FocusLevel } from '@/lib/types';
+import { STATUS_HEX_COLORS } from '@/lib/constants';
 import { EffectComposer, Bloom } from '@react-three/postprocessing';
 
 interface TechOrbProps {
@@ -21,22 +22,22 @@ function TechCore({ status, voiceLevel = 0, customColor, focusLevel = 'NORMAL' }
   const ring2Ref = useRef<THREE.Mesh>(null!);
   const ring3Ref = useRef<THREE.Mesh>(null!);
 
-  // Color Mapping
+  /**
+   * Memoize the color based on status and focus level to prevent unnecessary recalculations.
+   * Prioritizes custom color if set.
+   * If status is CODING and HYPER_FOCUSED, uses a special magenta color.
+   */
   const color = useMemo(() => {
     const c = new THREE.Color();
     if (status === 'CUSTOM' && customColor) {
       return c.set(customColor);
     }
-    switch (status) {
-      case 'CODING':
-        if (focusLevel === 'HYPER_FOCUSED') return c.set('#d946ef'); // Magenta
-        return c.set('#06b6d4'); // Cyan
-      case 'BROWSING': return c.set('#f97316'); // Orange
-      case 'DISCORD': return c.set('#6366f1'); // Indigo
-      case 'GAMING': return c.set('#22c55e'); // Green
-      case 'OFFLINE': return c.set('#52525b'); // Zinc
-      default: return c.set('#ffffff');
+    if (status === 'CODING' && focusLevel === 'HYPER_FOCUSED') {
+       return c.set('#d946ef'); // Magenta for hyper focus
     }
+
+    // Use the centralized status color map
+    return c.set(STATUS_HEX_COLORS[status] || '#ffffff');
   }, [status, customColor, focusLevel]);
 
   useFrame((state, delta) => {
@@ -63,6 +64,11 @@ function TechCore({ status, voiceLevel = 0, customColor, focusLevel = 'NORMAL' }
     if (focusLevel === 'HYPER_FOCUSED') speed *= 2.5;
     if (focusLevel === 'CALM') speed *= 0.5;
     
+    /**
+     * Animation Loop
+     * Rotates the wireframe shell and rings based on calculated speed.
+     * Uses delta time for frame-rate independent animation.
+     */
     // Rotate Wireframe Shell
     outerRef.current.rotation.y += delta * speed * 0.2;
     outerRef.current.rotation.z += delta * speed * 0.1;

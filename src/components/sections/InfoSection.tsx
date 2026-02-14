@@ -6,6 +6,17 @@ import Timeline from '@/components/info/Timeline';
 import HexTechStack from '@/components/info/HexTechStack';
 import ProjectReveal from '@/components/info/ProjectReveal';
 
+/**
+ * Info Section
+ *
+ * A tall scrollable section (300vh) containing detailed information:
+ * 1. Timeline
+ * 2. Tech Stack
+ * 3. Projects
+ *
+ * Includes dynamic background color shifts and internal scroll snap points
+ * for each sub-section to ensure content immersion.
+ */
 export default function InfoSection() {
   const containerRef = useRef<HTMLElement>(null);
 
@@ -56,18 +67,18 @@ export default function InfoSection() {
         className="absolute inset-0 pointer-events-none blur-3xl opacity-50 transition-colors duration-1000"
       />
 
-      {/* Timeline Section */}
-      <div className="w-full min-h-screen flex items-center justify-center relative z-10">
+      {/* Timeline Section - Sub-section snap point */}
+      <div className="w-full min-h-screen flex items-center justify-center relative z-10 snap-start">
         <Timeline />
       </div>
 
-      {/* Tech Stack Section (Hexagonal Grid) */}
-      <div className="w-full min-h-screen flex items-center justify-center relative z-10">
+      {/* Tech Stack Section (Hexagonal Grid) - Sub-section snap point */}
+      <div className="w-full min-h-screen flex items-center justify-center relative z-10 snap-start">
         <HexTechStack />
       </div>
 
-      {/* Portfolio Section */}
-      <div className="w-full min-h-screen flex items-center justify-center relative z-10">
+      {/* Portfolio Section - Sub-section snap point */}
+      <div className="w-full min-h-screen flex items-center justify-center relative z-10 snap-start">
         <ProjectReveal />
       </div>
     </motion.section>
