@@ -2,7 +2,7 @@
 
 export default function InfoSection() {
   return (
-    <section className="h-screen w-full bg-zinc-800 snap-start text-white overflow-hidden relative flex flex-col items-center justify-center">
+    <section id="info-section" className="h-screen w-full bg-zinc-800 snap-start text-white overflow-hidden relative flex flex-col items-center justify-center">
       <div className="text-center p-12">
          <h1 className="text-4xl font-mono text-zinc-500 mb-4">Info Module</h1>
          <p className="text-zinc-600 mb-8">Phase 4 Development Pending...</p>

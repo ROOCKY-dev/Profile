@@ -4,16 +4,17 @@ import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls, Sphere, Torus, Icosahedron } from '@react-three/drei';
 import * as THREE from 'three';
 import { useRef, useMemo } from 'react';
-import { BotStatus } from '@/lib/types';
+import { BotStatus, FocusLevel } from '@/lib/types';
 import { EffectComposer, Bloom } from '@react-three/postprocessing';
 
 interface TechOrbProps {
   status: BotStatus;
   voiceLevel?: number;
   customColor?: string;
+  focusLevel?: FocusLevel;
 }
 
-function TechCore({ status, voiceLevel = 0, customColor }: TechOrbProps) {
+function TechCore({ status, voiceLevel = 0, customColor, focusLevel = 'NORMAL' }: TechOrbProps) {
   const coreRef = useRef<THREE.Mesh>(null!);
   const outerRef = useRef<THREE.Group>(null!);
   const ringsRef = useRef<THREE.Group>(null!);
@@ -25,25 +26,30 @@ function TechCore({ status, voiceLevel = 0, customColor }: TechOrbProps) {
       return c.set(customColor);
     }
     switch (status) {
-      case 'CODING': return c.set('#06b6d4'); // Cyan
+      case 'CODING':
+        if (focusLevel === 'HYPER_FOCUSED') return c.set('#d946ef'); // Magenta
+        return c.set('#06b6d4'); // Cyan
       case 'BROWSING': return c.set('#f97316'); // Orange
       case 'DISCORD': return c.set('#6366f1'); // Indigo
       case 'GAMING': return c.set('#22c55e'); // Green
       case 'OFFLINE': return c.set('#52525b'); // Zinc
-      case 'CUSTOM': return c.set('#ec4899'); // Pink
       default: return c.set('#ffffff');
     }
-  }, [status, customColor]);
+  }, [status, customColor, focusLevel]);
 
   useFrame((state, delta) => {
     const t = state.clock.getElapsedTime();
     
-    // Core Pulse (Voice Reactive)
+    // Core Pulse (Voice Reactive + Focus)
+    let pulseIntensity = 1;
+    if (focusLevel === 'HYPER_FOCUSED') pulseIntensity = 2;
+    if (focusLevel === 'CALM') pulseIntensity = 0.5;
+
     const baseScale = 1;
-    const pulse = 1 + (voiceLevel * 1.5) + (Math.sin(t * 2) * 0.05);
+    const pulse = 1 + (voiceLevel * 1.5) + (Math.sin(t * (pulseIntensity * 2)) * 0.05);
     coreRef.current.scale.setScalar(baseScale * pulse);
 
-    // Rotation speeds based on status
+    // Rotation speeds based on status & focus
     let speed = 0.5;
     if (status === 'CODING') speed = 2;
     if (status === 'GAMING') speed = 3;
@@ -51,6 +57,9 @@ function TechCore({ status, voiceLevel = 0, customColor }: TechOrbProps) {
     if (status === 'BROWSING') speed = 1;
     if (status === 'OFFLINE') speed = 0.1;
 
+    // Focus Modifier
+    if (focusLevel === 'HYPER_FOCUSED') speed *= 2.5;
+    if (focusLevel === 'CALM') speed *= 0.5;
     
     // Rotate Wireframe Shell
     outerRef.current.rotation.y += delta * speed * 0.2;
@@ -71,7 +80,7 @@ function TechCore({ status, voiceLevel = 0, customColor }: TechOrbProps) {
         <meshStandardMaterial 
           color={color} 
           emissive={color} 
-          emissiveIntensity={2} 
+          emissiveIntensity={focusLevel === 'HYPER_FOCUSED' ? 4 : 2}
           roughness={0} 
           metalness={0.5} 
         />
@@ -105,14 +114,19 @@ function TechCore({ status, voiceLevel = 0, customColor }: TechOrbProps) {
   );
 }
 
-export default function CoreVisualizer({ status, voiceLevel, customColor }: TechOrbProps) {
+export default function CoreVisualizer({ status, voiceLevel, customColor, focusLevel }: TechOrbProps) {
   return (
     <div className="w-[400px] h-[400px] relative">
       <Canvas camera={{ position: [0, 0, 8], fov: 45 }} gl={{ antialias: true, alpha: true }}>
         <ambientLight intensity={0.5} />
         <pointLight position={[10, 10, 10]} intensity={1} />
         
-        <TechCore status={status} voiceLevel={voiceLevel} customColor={customColor} />
+        <TechCore
+            status={status}
+            voiceLevel={voiceLevel}
+            customColor={customColor}
+            focusLevel={focusLevel}
+        />
         
         <EffectComposer>
            <Bloom luminanceThreshold={0.2} mipmapBlur intensity={1.2} radius={0.5} />
