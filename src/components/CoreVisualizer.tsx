@@ -17,7 +17,9 @@ interface TechOrbProps {
 function TechCore({ status, voiceLevel = 0, customColor, focusLevel = 'NORMAL' }: TechOrbProps) {
   const coreRef = useRef<THREE.Mesh>(null!);
   const outerRef = useRef<THREE.Group>(null!);
-  const ringsRef = useRef<THREE.Group>(null!);
+  const ring1Ref = useRef<THREE.Mesh>(null!);
+  const ring2Ref = useRef<THREE.Mesh>(null!);
+  const ring3Ref = useRef<THREE.Mesh>(null!);
 
   // Color Mapping
   const color = useMemo(() => {
@@ -66,18 +68,22 @@ function TechCore({ status, voiceLevel = 0, customColor, focusLevel = 'NORMAL' }
     outerRef.current.rotation.z += delta * speed * 0.1;
 
     // Rotate Rings (Gyroscope style - more dynamic)
-    if (ringsRef.current) {
-        // Ring 1 (Inner) - Primary X, secondary Y
-        ringsRef.current.children[0].rotation.x += delta * speed * 0.5;
-        ringsRef.current.children[0].rotation.y += delta * speed * 0.2;
+    // Ring 1 (Inner) - Primary X, secondary Y
+    if (ring1Ref.current) {
+        ring1Ref.current.rotation.x += delta * speed * 0.5;
+        ring1Ref.current.rotation.y += delta * speed * 0.2;
+    }
 
-        // Ring 2 (Middle) - Primary Y, secondary Z
-        ringsRef.current.children[1].rotation.y += delta * speed * 0.4;
-        ringsRef.current.children[1].rotation.z += delta * speed * 0.2;
+    // Ring 2 (Middle) - Primary Y, secondary Z
+    if (ring2Ref.current) {
+        ring2Ref.current.rotation.y += delta * speed * 0.4;
+        ring2Ref.current.rotation.z += delta * speed * 0.2;
+    }
 
-        // Ring 3 (Outer) - Primary Z, secondary X
-        ringsRef.current.children[2].rotation.z += delta * speed * 0.3;
-        ringsRef.current.children[2].rotation.x += delta * speed * 0.2;
+    // Ring 3 (Outer) - Primary Z, secondary X
+    if (ring3Ref.current) {
+        ring3Ref.current.rotation.z += delta * speed * 0.3;
+        ring3Ref.current.rotation.x += delta * speed * 0.2;
     }
   });
 
@@ -107,14 +113,14 @@ function TechCore({ status, voiceLevel = 0, customColor, focusLevel = 'NORMAL' }
       </group>
 
       {/* Gyroscopic Rings */}
-      <group ref={ringsRef}>
-        <Torus args={[2.2, 0.02, 16, 100]}>
+      <group>
+        <Torus ref={ring1Ref} args={[2.2, 0.02, 16, 100]}>
            <meshBasicMaterial color={color} transparent opacity={0.5} />
         </Torus>
-        <Torus args={[2.6, 0.02, 16, 100]} rotation={[1.5, 0, 0]}>
+        <Torus ref={ring2Ref} args={[2.6, 0.02, 16, 100]} rotation={[1.5, 0, 0]}>
            <meshBasicMaterial color={color} transparent opacity={0.4} />
         </Torus>
-        <Torus args={[3.0, 0.02, 16, 100]} rotation={[0, 1.5, 0]}>
+        <Torus ref={ring3Ref} args={[3.0, 0.02, 16, 100]} rotation={[0, 1.5, 0]}>
            <meshBasicMaterial color={color} transparent opacity={0.3} />
         </Torus>
       </group>
@@ -124,7 +130,7 @@ function TechCore({ status, voiceLevel = 0, customColor, focusLevel = 'NORMAL' }
 
 export default function CoreVisualizer({ status, voiceLevel, customColor, focusLevel }: TechOrbProps) {
   return (
-    <div className="w-[400px] h-[400px] relative">
+    <div className="w-full h-full relative">
       <Canvas camera={{ position: [0, 0, 8], fov: 45 }} gl={{ antialias: true, alpha: true }}>
         <ambientLight intensity={0.5} />
         <pointLight position={[10, 10, 10]} intensity={1} />

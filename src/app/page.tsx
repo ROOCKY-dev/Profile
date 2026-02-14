@@ -54,7 +54,10 @@ export default function Home() {
 
       {/* Global Orb Overlay */}
       <div className="fixed inset-0 pointer-events-none z-50 flex items-center justify-center">
-        <motion.div style={{ x, y, scale }} className="relative flex items-center justify-center">
+        <motion.div
+          style={{ x, y, scale }}
+          className="relative flex items-center justify-center w-[400px] h-[400px]"
+        >
 
            {/* Mini-View Border (appears when docked) */}
            <motion.div
