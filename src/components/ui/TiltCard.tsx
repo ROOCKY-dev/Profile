@@ -3,13 +3,18 @@
 import { useRef, useState } from 'react';
 import { motion, useSpring, useTransform } from 'framer-motion';
 
+interface TiltCardProps extends React.HTMLAttributes<HTMLDivElement> {
+  children: React.ReactNode;
+  className?: string;
+}
+
 export default function TiltCard({
   children,
-  className
-}: {
-  children: React.ReactNode,
-  className?: string
-}) {
+  className,
+  onMouseMove,
+  onMouseLeave,
+  ...props
+}: TiltCardProps) {
   const [position, setPosition] = useState({ x: 0, y: 0 });
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -18,10 +23,13 @@ export default function TiltCard({
     const x = (clientX - (left + width / 2)) / (width / 2);
     const y = (clientY - (top + height / 2)) / (height / 2);
     setPosition({ x, y });
+
+    if (onMouseMove) onMouseMove(e);
   };
 
-  const handleMouseLeave = () => {
+  const handleMouseLeaveInternal = (e: React.MouseEvent<HTMLDivElement>) => {
     setPosition({ x: 0, y: 0 });
+    if (onMouseLeave) onMouseLeave(e);
   };
 
   const x = useSpring(position.x, { stiffness: 100, damping: 20 });
@@ -34,12 +42,13 @@ export default function TiltCard({
     <motion.div
       className={className}
       onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
+      onMouseLeave={handleMouseLeaveInternal}
       style={{
         rotateX,
         rotateY,
         transformStyle: 'preserve-3d',
       }}
+      {...props}
     >
       {children}
     </motion.div>

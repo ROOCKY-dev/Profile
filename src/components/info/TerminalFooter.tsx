@@ -4,8 +4,10 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Terminal, X, ArrowRight } from 'lucide-react';
 import MagneticButton from '@/components/ui/MagneticButton';
+import { useToast } from '@/components/ui/ToastSystem';
 
 export default function TerminalFooter() {
+  const { toast } = useToast();
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState('');
   const [output, setOutput] = useState<string[]>(['> Connected to terminal.', '> Type "help" for commands.']);
@@ -22,6 +24,7 @@ export default function TerminalFooter() {
       case 'email':
         response = '> Contact: dev@example.com (Copied to clipboard)';
         navigator.clipboard.writeText('dev@example.com');
+        toast('Copied to Clipboard', 'success');
         break;
       case 'social':
         response = '> GitHub: @dev / Twitter: @dev';

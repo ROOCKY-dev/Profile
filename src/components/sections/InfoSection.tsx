@@ -6,7 +6,6 @@ import TerminalHero from '@/components/info/TerminalHero';
 import Timeline from '@/components/info/Timeline';
 import TechStack from '@/components/info/TechStack';
 import ProjectReveal from '@/components/info/ProjectReveal';
-import TerminalFooter from '@/components/info/TerminalFooter';
 
 export default function InfoSection() {
   const containerRef = useRef<HTMLElement>(null);
@@ -79,8 +78,6 @@ export default function InfoSection() {
       <div className="w-full min-h-screen flex items-center justify-center relative z-10">
         <ProjectReveal />
       </div>
-
-      <TerminalFooter />
     </motion.section>
   );
 }

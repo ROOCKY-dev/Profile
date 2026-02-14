@@ -8,6 +8,8 @@ import InfoSection from '@/components/sections/InfoSection';
 import GameSection from '@/components/sections/GameSection';
 import DevTools from '@/components/DevTools';
 import CoreVisualizer from '@/components/CoreVisualizer';
+import TerminalFooter from '@/components/info/TerminalFooter';
+import RippleEffect from '@/components/ui/RippleEffect';
 
 export default function Home() {
   const [status, setStatus] = useState<BotStatus>('CODING');
@@ -32,17 +34,17 @@ export default function Home() {
   // Transition happens between 0 (Top) and 0.2 (Just past Landing)
   // We want it to lock in the corner quickly so it doesn't float around weirdly
 
-  // X: 0% (Center) -> 45% (Right Corner)
-  const x = useTransform(smoothProgress, [0, 0.2], ['0%', '42%']);
+  // X: 0% (Center) -> 0% (Remains Centered horizontally)
+  const x = useTransform(smoothProgress, [0, 0.2], ['0%', '0%']);
 
-  // Y: 0% (Center) -> 45% (Bottom Corner)
-  const y = useTransform(smoothProgress, [0, 0.2], ['0%', '42%']);
+  // Y: 0% (Center) -> -40vh (Top Center)
+  const y = useTransform(smoothProgress, [0, 0.2], ['0%', '-40vh']);
 
-  // Scale: 1 (Full) -> 0.15 (Mini)
-  const scale = useTransform(smoothProgress, [0, 0.2], [1, 0.15]);
+  // Scale: 1 (Full) -> 0.3 (Reasonably Small)
+  const scale = useTransform(smoothProgress, [0, 0.2], [1, 0.3]);
 
   // Opacity for the "Mini-View" border
-  const borderOpacity = useTransform(smoothProgress, [0.15, 0.2], [0, 1]);
+  const borderOpacity = useTransform(smoothProgress, [0.15, 0.2], [0, 0.5]);
 
   return (
     <main
@@ -90,6 +92,9 @@ export default function Home() {
         customColor={customColor}
         setCustomColor={setCustomColor}
       />
+
+      <TerminalFooter />
+      <RippleEffect />
     </main>
   );
 }
