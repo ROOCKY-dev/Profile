@@ -10,9 +10,10 @@ import { EffectComposer, Bloom } from '@react-three/postprocessing';
 interface TechOrbProps {
   status: BotStatus;
   voiceLevel?: number;
+  customColor?: string;
 }
 
-function TechCore({ status, voiceLevel = 0 }: TechOrbProps) {
+function TechCore({ status, voiceLevel = 0, customColor }: TechOrbProps) {
   const coreRef = useRef<THREE.Mesh>(null!);
   const outerRef = useRef<THREE.Group>(null!);
   const ringsRef = useRef<THREE.Group>(null!);
@@ -20,15 +21,19 @@ function TechCore({ status, voiceLevel = 0 }: TechOrbProps) {
   // Color Mapping
   const color = useMemo(() => {
     const c = new THREE.Color();
+    if (status === 'CUSTOM' && customColor) {
+      return c.set(customColor);
+    }
     switch (status) {
-      case 'IDLE': return c.set('#06b6d4'); // Cyan
-      case 'THINKING': return c.set('#a855f7'); // Purple
-      case 'WORKING': return c.set('#f97316'); // Orange
-      case 'ALERT': return c.set('#ef4444'); // Red
+      case 'CODING': return c.set('#06b6d4'); // Cyan
+      case 'BROWSING': return c.set('#f97316'); // Orange
+      case 'DISCORD': return c.set('#6366f1'); // Indigo
+      case 'GAMING': return c.set('#22c55e'); // Green
       case 'OFFLINE': return c.set('#52525b'); // Zinc
+      case 'CUSTOM': return c.set('#ec4899'); // Pink
       default: return c.set('#ffffff');
     }
-  }, [status]);
+  }, [status, customColor]);
 
   useFrame((state, delta) => {
     const t = state.clock.getElapsedTime();
@@ -39,7 +44,13 @@ function TechCore({ status, voiceLevel = 0 }: TechOrbProps) {
     coreRef.current.scale.setScalar(baseScale * pulse);
 
     // Rotation speeds based on status
-    const speed = status === 'THINKING' ? 2 : status === 'WORKING' ? 4 : 0.5;
+    let speed = 0.5;
+    if (status === 'CODING') speed = 2;
+    if (status === 'GAMING') speed = 3;
+    if (status === 'DISCORD') speed = 1.5;
+    if (status === 'BROWSING') speed = 1;
+    if (status === 'OFFLINE') speed = 0.1;
+
     
     // Rotate Wireframe Shell
     outerRef.current.rotation.y += delta * speed * 0.2;
@@ -94,16 +105,16 @@ function TechCore({ status, voiceLevel = 0 }: TechOrbProps) {
   );
 }
 
-export default function CoreVisualizer({ status, voiceLevel }: TechOrbProps) {
+export default function CoreVisualizer({ status, voiceLevel, customColor }: TechOrbProps) {
   return (
     <div className="w-[400px] h-[400px] relative">
       <Canvas camera={{ position: [0, 0, 8], fov: 45 }} gl={{ antialias: true, alpha: true }}>
         <ambientLight intensity={0.5} />
         <pointLight position={[10, 10, 10]} intensity={1} />
         
-        <TechCore status={status} voiceLevel={voiceLevel} />
+        <TechCore status={status} voiceLevel={voiceLevel} customColor={customColor} />
         
-        <EffectComposer disableNormalPass>
+        <EffectComposer>
            <Bloom luminanceThreshold={0.2} mipmapBlur intensity={1.2} radius={0.5} />
         </EffectComposer>
         
