@@ -1,14 +1,17 @@
 'use client';
 
 import { BotStatus, FocusLevel } from '@/lib/types';
+import CoreVisualizer from '@/components/CoreVisualizer';
 
 interface LandingSectionProps {
   status: BotStatus;
   focusLevel: FocusLevel;
   errorCount: number;
+  voiceLevel?: number;
+  customColor?: string;
 }
 
-export default function LandingSection({ status, focusLevel, errorCount }: LandingSectionProps) {
+export default function LandingSection({ status, focusLevel, errorCount, voiceLevel, customColor }: LandingSectionProps) {
 
   const scrollToSection = (id: string) => {
      const element = document.getElementById(id);
@@ -61,10 +64,19 @@ export default function LandingSection({ status, focusLevel, errorCount }: Landi
 
       </div>
 
-      {/* Center: Orb Placeholder (Visualizer is now global) */}
-      <div className="flex-1 h-full flex items-center justify-center relative pointer-events-none">
+      {/* Center: Orb Visualizer */}
+      <div className="flex-1 h-full flex items-center justify-center relative">
           {/* Background Grid/Effect */}
           <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:50px_50px] [mask-image:radial-gradient(ellipse_at_center,black_40%,transparent_100%)] pointer-events-none" />
+
+          <div className="w-[400px] h-[400px] relative z-10">
+             <CoreVisualizer
+                status={status}
+                voiceLevel={voiceLevel}
+                customColor={customColor}
+                focusLevel={focusLevel}
+             />
+          </div>
       </div>
 
       {/* Right Column: Nav */}

@@ -1,12 +1,12 @@
 'use client';
 
-import { useState } from 'react';
-import { motion, useSpring, useTransform, HTMLMotionProps } from 'framer-motion';
+import { useState, ComponentProps, ReactNode, MouseEvent } from 'react';
+import { motion, useSpring, useTransform } from 'framer-motion';
 
-interface TiltCardProps extends HTMLMotionProps<'div'> {
-  children: React.ReactNode;
+type TiltCardProps = ComponentProps<typeof motion.div> & {
+  children: ReactNode;
   className?: string;
-}
+};
 
 export default function TiltCard({
   children,
@@ -23,7 +23,7 @@ export default function TiltCard({
   const rotateX = useTransform(y, [-1, 1], [-10, 10]);
   const rotateY = useTransform(x, [-1, 1], [10, -10]);
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+  const handleMouseMove = (e: MouseEvent<HTMLDivElement>) => {
     const { clientX, clientY } = e;
     const { left, top, width, height } = e.currentTarget.getBoundingClientRect();
 
@@ -36,7 +36,7 @@ export default function TiltCard({
     if (onMouseMove) onMouseMove(e);
   };
 
-  const handleMouseLeaveInternal = (e: React.MouseEvent<HTMLDivElement>) => {
+  const handleMouseLeaveInternal = (e: MouseEvent<HTMLDivElement>) => {
     setPosition({ x: 0, y: 0 });
     if (onMouseLeave) onMouseLeave(e);
   };
