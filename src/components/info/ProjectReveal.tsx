@@ -5,51 +5,14 @@ import { motion, useInView } from 'framer-motion';
 import TiltCard from '@/components/ui/TiltCard';
 import { playHoverSound } from '@/lib/sound';
 import Image from 'next/image';
+import { projects } from '@/lib/data';
+import { Project } from '@/lib/types';
 
-interface Project {
-  title: string;
-  category: string;
-  image: string;
-  video: string;
-  description: string;
-  className: string;
-}
-
-const projects: Project[] = [
-  {
-    title: 'Planetary Claim',
-    category: 'Game Dev',
-    image: 'https://images.unsplash.com/photo-1614726365723-49cfae963956?w=800&q=80',
-    video: 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4', // Placeholder
-    description: 'A 4X space exploration strategy game built with Unity & C#. Features procedural planet generation and AI factions.',
-    className: 'col-span-1 md:col-span-2 md:row-span-2', // Hero Item
-  },
-  {
-    title: 'Alto Clef',
-    category: 'System Tool',
-    image: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=800&q=80',
-    video: '',
-    description: 'Advanced audio processing CLI for audiophiles. Written in Rust.',
-    className: 'col-span-1 md:col-span-1 md:row-span-1',
-  },
-  {
-    title: 'Neon Nexus',
-    category: 'Web App',
-    image: 'https://images.unsplash.com/photo-1555680202-c86f0e12f086?w=800&q=80',
-    video: '',
-    description: 'Cyberpunk social dashboard with real-time WebSocket updates.',
-    className: 'col-span-1 md:col-span-1 md:row-span-2', // Tall Item
-  },
-  {
-    title: 'Void Walker',
-    category: 'Modding',
-    image: 'https://images.unsplash.com/photo-1623479322729-28b25c16b011?w=800&q=80',
-    video: '',
-    description: 'Content expansion mod for Minecraft adding new dimensions.',
-    className: 'col-span-1 md:col-span-1 md:row-span-1',
-  },
-];
-
+/**
+ * Project Reveal Component
+ *
+ * Displays a grid of project cards with tilt effects and video previews on hover.
+ */
 export default function ProjectReveal() {
   const containerRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(containerRef, { once: true, margin: "-100px" });
@@ -74,7 +37,13 @@ export default function ProjectReveal() {
   );
 }
 
-function ProjectCard({ project, index, isInView }: { project: Project, index: number, isInView: boolean }) {
+interface ProjectCardProps {
+  project: Project;
+  index: number;
+  isInView: boolean;
+}
+
+function ProjectCard({ project, index, isInView }: ProjectCardProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isHovered, setIsHovered] = useState(false);
 
@@ -82,7 +51,9 @@ function ProjectCard({ project, index, isInView }: { project: Project, index: nu
     setIsHovered(true);
     playHoverSound();
     if (videoRef.current && project.video) {
-      videoRef.current.play().catch(() => {});
+      videoRef.current.play().catch(() => {
+        // Autoplay might be blocked or promise rejected if unmounted quickly
+      });
     }
   };
 

@@ -1,14 +1,29 @@
 'use client';
 
-import { BotStatus, FocusLevel } from '@/lib/types';
+import { BotStatus, FocusLevel, STATUS_TEXT } from '@/lib/types';
 import CoreVisualizer from '@/components/CoreVisualizer';
 import DecryptText from '@/components/ui/DecryptText';
 
 interface LandingSectionProps {
+  /**
+   * The current status of the bot/user.
+   */
   status: BotStatus;
+  /**
+   * The current focus level of the bot/user.
+   */
   focusLevel: FocusLevel;
+  /**
+   * Number of active errors (simulated or real).
+   */
   errorCount: number;
+  /**
+   * Audio level for visualizer reactivity (0-1).
+   */
   voiceLevel?: number;
+  /**
+   * Custom hex color override.
+   */
   customColor?: string;
 }
 
@@ -22,6 +37,10 @@ interface LandingSectionProps {
  */
 export default function LandingSection({ status, focusLevel, errorCount, voiceLevel, customColor }: LandingSectionProps) {
 
+  /**
+   * Smoothly scrolls to a section by ID.
+   * @param id - The HTML ID of the target section.
+   */
   const scrollToSection = (id: string) => {
      const element = document.getElementById(id);
      if (element) {
@@ -44,11 +63,7 @@ export default function LandingSection({ status, focusLevel, errorCount, voiceLe
             <div className={`text-xs font-mono px-2 py-1 inline-block rounded ${
                 status === 'OFFLINE' ? 'bg-zinc-800 text-zinc-400' : 'bg-cyan-900/30 text-cyan-400 border border-cyan-500/30'
             }`}>
-              {status === 'CODING' ? 'VS Code Active' :
-               status === 'BROWSING' ? 'Chrome Active' :
-               status === 'DISCORD' ? 'Discord Active' :
-               status === 'GAMING' ? 'Steam Active' :
-               status === 'CUSTOM' ? 'User Defined' : 'System Offline'}
+              {STATUS_TEXT[status] || 'Unknown Status'}
             </div>
         </div>
 
@@ -100,6 +115,7 @@ export default function LandingSection({ status, focusLevel, errorCount, voiceLe
          <div className="flex flex-col gap-6">
              <button
                 onClick={() => scrollToSection('info-section')}
+                aria-label="Scroll to Projects section"
                 className="group flex items-center gap-4 text-right transition-all hover:translate-x-[-10px]"
              >
                  <span className="text-2xl font-light text-zinc-300 group-hover:text-cyan-400 transition-colors">
@@ -110,6 +126,7 @@ export default function LandingSection({ status, focusLevel, errorCount, voiceLe
 
              <button
                 onClick={() => scrollToSection('info-section')}
+                aria-label="Scroll to About section"
                 className="group flex items-center gap-4 text-right transition-all hover:translate-x-[-10px]"
              >
                  <span className="text-2xl font-light text-zinc-300 group-hover:text-cyan-400 transition-colors">
@@ -120,6 +137,7 @@ export default function LandingSection({ status, focusLevel, errorCount, voiceLe
 
              <button
                 onClick={() => scrollToSection('game-section')}
+                aria-label="Scroll to Game section"
                 className="group flex items-center gap-4 text-right transition-all hover:translate-x-[-10px]"
              >
                  <span className="text-2xl font-light text-zinc-300 group-hover:text-cyan-400 transition-colors">

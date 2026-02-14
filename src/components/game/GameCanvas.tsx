@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import DecryptText from '@/components/ui/DecryptText';
 import { useToast } from '@/components/ui/ToastSystem';
+import { GAME_CONSTANTS } from '@/lib/constants';
 
 interface Particle {
   id: string;
@@ -14,14 +15,12 @@ interface Particle {
   label?: string; // e.g. "React", "Next.js"
 }
 
-const DATA_LABELS = [
-  'React', 'Next.js', 'Typescript', 'Node.js',
-  'Postgres', 'Docker', 'AWS', 'GraphQL',
-  'Tailwind', 'Three.js'
-];
-
 type GameState = 'IDLE' | 'PLAYING' | 'GAME_OVER' | 'GAME_WON';
 
+/**
+ * Interactive "Security Breach" mini-game.
+ * Players control a cursor to collect data packets and avoid glitches.
+ */
 export default function GameCanvas() {
   const { toast } = useToast();
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -29,13 +28,16 @@ export default function GameCanvas() {
   const [gameState, setGameState] = useState<GameState>('IDLE');
   const [collectedData, setCollectedData] = useState<string[]>([]);
 
-  // Refs for loop state
+  // Refs for loop state to avoid closure staleness in the game loop
   const gameStateRef = useRef<GameState>('IDLE');
   const scoreRef = useRef(0);
   const particlesRef = useRef<Particle[]>([]);
   const playerPosRef = useRef({ x: 0, y: 0 });
   const requestRef = useRef<number>(0);
   const loopRef = useRef<() => void>(null!);
+
+  // Cache the canvas bounding rectangle to avoid layout thrashing on mousemove
+  const canvasRectRef = useRef<DOMRect | null>(null);
 
   // Sync state to refs
   useEffect(() => {
@@ -46,6 +48,10 @@ export default function GameCanvas() {
     scoreRef.current = score;
   }, [score]);
 
+  /**
+   * Main Game Loop
+   * Handles rendering, physics, spawning, and collision detection.
+   */
   const loop = useCallback(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -57,13 +63,13 @@ export default function GameCanvas() {
     }
 
     // Win Condition
-    if (scoreRef.current >= 500) {
+    if (scoreRef.current >= GAME_CONSTANTS.WIN_SCORE) {
         setGameState('GAME_WON');
         gameStateRef.current = 'GAME_WON';
         return;
     }
 
-    // Clear Screen with Fade
+    // Clear Screen with Fade Effect
     ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -71,25 +77,30 @@ export default function GameCanvas() {
 
     // Draw Player
     ctx.beginPath();
-    ctx.arc(px, py, 12, 0, Math.PI * 2);
-    ctx.fillStyle = '#06b6d4';
-    ctx.shadowColor = '#06b6d4';
+    ctx.arc(px, py, GAME_CONSTANTS.PLAYER_RADIUS, 0, Math.PI * 2);
+    ctx.fillStyle = GAME_CONSTANTS.COLORS.PLAYER;
+    ctx.shadowColor = GAME_CONSTANTS.COLORS.PLAYER;
     ctx.shadowBlur = 20;
     ctx.fill();
     ctx.shadowBlur = 0;
 
     // Spawn Particles
-    if (Math.random() < 0.05) {
-        const isGlitch = Math.random() > 0.7;
-        const label = !isGlitch ? DATA_LABELS[Math.floor(Math.random() * DATA_LABELS.length)] : undefined;
+    if (Math.random() < GAME_CONSTANTS.SPAWN_RATE) {
+        const isGlitch = Math.random() > (1 - GAME_CONSTANTS.GLITCH_CHANCE);
+        const label = !isGlitch
+            ? GAME_CONSTANTS.DATA_LABELS[Math.floor(Math.random() * GAME_CONSTANTS.DATA_LABELS.length)]
+            : undefined;
 
         particlesRef.current.push({
             id: crypto.randomUUID(),
             x: Math.random() * canvas.width,
             y: -30,
             type: isGlitch ? 'GLITCH' : 'DATA',
-            size: isGlitch ? 20 : 16,
-            speed: isGlitch ? 3 + (scoreRef.current / 500) : 2 + (scoreRef.current / 1000),
+            size: isGlitch ? GAME_CONSTANTS.PARTICLE_SIZE.GLITCH : GAME_CONSTANTS.PARTICLE_SIZE.DATA,
+            // Speed increases slightly as score increases
+            speed: isGlitch
+                ? GAME_CONSTANTS.BASE_SPEED.GLITCH + (scoreRef.current / 500)
+                : GAME_CONSTANTS.BASE_SPEED.DATA + (scoreRef.current / 1000),
             label
         });
     }
@@ -100,22 +111,22 @@ export default function GameCanvas() {
         p.y += p.speed;
 
         if (p.type === 'DATA') {
-            ctx.fillStyle = '#22c55e';
+            ctx.fillStyle = GAME_CONSTANTS.COLORS.DATA;
             ctx.font = '14px monospace';
             ctx.fillText(p.label || '{}', p.x, p.y);
         } else {
-            ctx.fillStyle = '#ef4444';
+            ctx.fillStyle = GAME_CONSTANTS.COLORS.GLITCH;
             ctx.fillRect(p.x, p.y, p.size, p.size);
         }
 
-        // Collision
+        // Collision Detection
         const dx = px - p.x;
         const dy = py - p.y;
         const distance = Math.sqrt(dx*dx + dy*dy);
 
-        if (distance < 30) {
+        if (distance < GAME_CONSTANTS.COLLISION_DISTANCE) {
             if (p.type === 'DATA') {
-                setScore(prev => prev + 100);
+                setScore(prev => prev + GAME_CONSTANTS.SCORE_PER_PACKET);
                 if (p.label) setCollectedData(prev => [...prev.slice(-4), p.label!]);
                 particlesRef.current.splice(i, 1);
             } else {
@@ -130,11 +141,14 @@ export default function GameCanvas() {
     requestRef.current = requestAnimationFrame(() => loopRef.current());
   }, []);
 
-  // Update ref
+  // Update ref for the loop function
   useEffect(() => {
     loopRef.current = loop;
   }, [loop]);
 
+  /**
+   * Initializes or resets the game state.
+   */
   const startGame = useCallback(() => {
     setScore(0);
     setCollectedData([]);
@@ -151,29 +165,34 @@ export default function GameCanvas() {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    // Resize Handling
-    const resize = () => {
+    // Handle Window Resize and update canvas dimensions + rect cache
+    const updateDimensions = () => {
         if (canvas.parentElement) {
             canvas.width = canvas.parentElement.clientWidth;
             canvas.height = canvas.parentElement.clientHeight;
         }
+        canvasRectRef.current = canvas.getBoundingClientRect();
     };
-    window.addEventListener('resize', resize);
-    resize();
 
-    // Mouse Handling
+    window.addEventListener('resize', updateDimensions);
+    window.addEventListener('scroll', updateDimensions); // Update rect on scroll
+    updateDimensions();
+
+    // Mouse Handling using cached rect
     const handleMouseMove = (e: MouseEvent) => {
-        const rect = canvas.getBoundingClientRect();
+        if (!canvasRectRef.current) return;
+
         playerPosRef.current = {
-            x: e.clientX - rect.left,
-            y: e.clientY - rect.top
+            x: e.clientX - canvasRectRef.current.left,
+            y: e.clientY - canvasRectRef.current.top
         };
     };
     canvas.addEventListener('mousemove', handleMouseMove);
 
     return () => {
         cancelAnimationFrame(requestRef.current);
-        window.removeEventListener('resize', resize);
+        window.removeEventListener('resize', updateDimensions);
+        window.removeEventListener('scroll', updateDimensions);
         canvas.removeEventListener('mousemove', handleMouseMove);
     };
   }, []);
@@ -189,8 +208,11 @@ export default function GameCanvas() {
         {/* HUD */}
         {gameState === 'PLAYING' && (
             <>
-                <div className="absolute top-4 left-4 font-mono text-cyan-400 text-lg font-bold drop-shadow-[0_0_5px_rgba(6,182,212,0.8)] pointer-events-none">
-                    SCORE: {score} / 500
+                <div
+                  className="absolute top-4 left-4 font-mono text-lg font-bold drop-shadow-[0_0_5px_rgba(6,182,212,0.8)] pointer-events-none"
+                  style={{ color: GAME_CONSTANTS.COLORS.HUD_SCORE }}
+                >
+                    SCORE: {score} / {GAME_CONSTANTS.WIN_SCORE}
                 </div>
 
                 <div className="absolute top-4 right-4 flex flex-col items-end space-y-1 pointer-events-none">

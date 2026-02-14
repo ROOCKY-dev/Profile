@@ -6,8 +6,17 @@ import DecryptText from '@/components/ui/DecryptText';
 import { timelineEvents } from '@/lib/data';
 import { TimelineEventData } from '@/lib/types';
 
+/**
+ * Timeline Component
+ *
+ * Renders a vertical timeline of events using data from `src/lib/data.ts`.
+ * Features a central progress line that fills up as the user scrolls,
+ * and event cards that animate in from alternate sides.
+ */
 export default function Timeline() {
   const containerRef = useRef<HTMLDivElement>(null);
+
+  // Track scroll progress to animate the central line filling up
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start center", "end center"]
@@ -15,8 +24,8 @@ export default function Timeline() {
 
   return (
     <div ref={containerRef} className="relative w-full max-w-5xl mx-auto py-32 px-4 md:px-8">
+      {/* Background Tech Grid */}
       <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
-         {/* Background Grid for tech feel */}
          <div className="absolute inset-0 opacity-[0.03] bg-[linear-gradient(rgba(6,182,212,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(6,182,212,0.1)_1px,transparent_1px)] bg-[size:40px_40px]" />
       </div>
 
@@ -25,16 +34,16 @@ export default function Timeline() {
       </h2>
 
       <div className="relative">
-        {/* Central Line Container */}
+        {/* Central Vertical Line Container */}
         <div className="absolute left-[20px] md:left-1/2 top-0 bottom-0 w-[4px] md:-translate-x-1/2 h-full z-0 bg-white/5 rounded-full overflow-hidden">
-           {/* Gradient Fill Line */}
+           {/* Animated Gradient Fill Line */}
            <motion.div
              className="w-full bg-gradient-to-b from-cyan-500 via-blue-500 to-purple-500 origin-top"
              style={{ height: useTransform(scrollYProgress, [0, 1], ["0%", "100%"]) }}
            />
         </div>
 
-        {/* Pulsing Data Packet (Leading the line) */}
+        {/* Pulsing "Data Packet" Indicator (Leading the line) */}
         <motion.div
              className="absolute left-[20px] md:left-1/2 md:-translate-x-1/2 w-4 h-4 bg-white rounded-full shadow-[0_0_15px_white] z-10"
              style={{
@@ -53,7 +62,17 @@ export default function Timeline() {
   );
 }
 
-function TimelineEvent({ event, index }: { event: TimelineEventData, index: number }) {
+interface TimelineEventProps {
+  event: TimelineEventData;
+  index: number;
+}
+
+/**
+ * Individual Timeline Event Card
+ *
+ * Animates into view when scrolled to. Alternates left/right alignment on desktop.
+ */
+function TimelineEvent({ event, index }: TimelineEventProps) {
   const ref = useRef(null);
   const isInView = useInView(ref, { margin: "-20% 0px", once: true });
   const isEven = index % 2 === 0;
@@ -61,10 +80,10 @@ function TimelineEvent({ event, index }: { event: TimelineEventData, index: numb
   return (
     <div ref={ref} className={`relative flex items-center md:justify-between ${isEven ? 'md:flex-row-reverse' : ''}`}>
 
-      {/* Spacer for alignment on desktop */}
+      {/* Spacer for alignment on desktop to push content to one side */}
       <div className="hidden md:block w-5/12" />
 
-      {/* Connection Node */}
+      {/* Central Connection Node */}
       <div className="absolute left-[20px] md:left-1/2 md:-translate-x-1/2 w-4 h-4 bg-black border-2 border-cyan-500 rounded-full z-10 flex items-center justify-center -translate-x-1/2 md:translate-x-[-50%]">
         <motion.div
           initial={{ scale: 0 }}
@@ -82,10 +101,19 @@ function TimelineEvent({ event, index }: { event: TimelineEventData, index: numb
           className="relative group perspective-1000"
         >
           {/* Card Background & Border */}
-          <div className={`
-             relative p-6 bg-zinc-900/80 backdrop-blur-md border border-white/10 rounded-xl overflow-hidden
-             group-hover:border-[${event.color}]/50 transition-colors duration-500
-          `}>
+          <div
+             className="relative p-6 bg-zinc-900/80 backdrop-blur-md border border-white/10 rounded-xl overflow-hidden transition-colors duration-500"
+             style={{
+                // Inline style for dynamic hover border color if supported, else relies on tailwind group-hover classes
+                borderColor: isInView ? 'rgba(255,255,255,0.1)' : 'transparent'
+             }}
+          >
+             {/* Hover Border Effect (Dynamic Color) */}
+             <div
+                className="absolute inset-0 border-2 border-transparent rounded-xl pointer-events-none transition-colors duration-500 group-hover:border-opacity-50"
+                style={{ borderColor: event.color, opacity: 0 }}
+             />
+
              {/* Glowing Corner Accent */}
              <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-cyan-500/10 to-transparent pointer-events-none" />
 

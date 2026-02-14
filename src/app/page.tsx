@@ -19,16 +19,20 @@ import LoadingScreen from '@/components/ui/LoadingScreen';
  * 2. Info Section - Scrollable timeline, tech stack, and projects (300vh).
  * 3. Game Section - Interactive game canvas.
  *
- * Uses CSS Scroll Snap to ensure the user is immersed in one section at a time.
+ * Architecture:
+ * - Uses client-side state for `status` and `focusLevel` which drives the visualizer.
+ * - `DevTools` allows manual control over this state for demonstration purposes.
+ * - Uses CSS Scroll Snap (`snap-start` in sections) to enforce distinct transitions.
  */
 export default function Home() {
+  // Global State: Controls the behavior of the 3D Orb and UI themes
   const [isLoading, setIsLoading] = useState(true);
   const [status, setStatus] = useState<BotStatus>('CODING');
   const [focusLevel, setFocusLevel] = useState<FocusLevel>('NORMAL');
-  const [voiceLevel] = useState(0);
+  const [voiceLevel] = useState(0); // Placeholder for microphone input integration
   const [customColor, setCustomColor] = useState<string | undefined>(undefined);
 
-  // Simulated Error Count
+  // Simulated Error Count (Could be hooked to real linter/test output later)
   const [errorCount] = useState(0);
 
   const containerRef = useRef<HTMLElement>(null);
@@ -38,6 +42,7 @@ export default function Home() {
       ref={containerRef}
       className="min-h-screen w-full bg-black text-white relative overflow-x-hidden"
     >
+      {/* Initial Loading Overlay */}
       <AnimatePresence mode="wait">
         {isLoading && <LoadingScreen onComplete={() => setIsLoading(false)} />}
       </AnimatePresence>
@@ -51,12 +56,13 @@ export default function Home() {
         customColor={customColor}
       />
 
-      {/* Info Section (Middle) */}
+      {/* Info Section (Middle) - Contains Timeline, Tech Stack, Projects */}
       <InfoSection />
 
-      {/* Game Section (Bottom) */}
+      {/* Game Section (Bottom) - Interactive "Security Breach" Game */}
       <GameSection />
 
+      {/* Debug/Control Tools - Floating UI */}
       <DevTools
         status={status}
         setStatus={setStatus}
@@ -66,7 +72,10 @@ export default function Home() {
         setCustomColor={setCustomColor}
       />
 
+      {/* Footer / Modal Triggers */}
       <TerminalFooter />
+
+      {/* Global Visual Effects */}
       <RippleEffect />
     </main>
   );

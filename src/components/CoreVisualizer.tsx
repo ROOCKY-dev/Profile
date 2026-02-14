@@ -5,7 +5,7 @@ import { OrbitControls, Sphere, Torus, Icosahedron } from '@react-three/drei';
 import * as THREE from 'three';
 import { useRef, useMemo } from 'react';
 import { BotStatus, FocusLevel } from '@/lib/types';
-import { STATUS_HEX_COLORS } from '@/lib/constants';
+import { STATUS_HEX_COLORS, VISUALIZER_CONSTANTS } from '@/lib/constants';
 import { EffectComposer, Bloom } from '@react-three/postprocessing';
 
 interface TechOrbProps {
@@ -15,6 +15,9 @@ interface TechOrbProps {
   focusLevel?: FocusLevel;
 }
 
+/**
+ * The inner core component containing the 3D meshes and animation logic.
+ */
 function TechCore({ status, voiceLevel = 0, customColor, focusLevel = 'NORMAL' }: TechOrbProps) {
   const coreRef = useRef<THREE.Mesh>(null!);
   const outerRef = useRef<THREE.Group>(null!);
@@ -33,7 +36,7 @@ function TechCore({ status, voiceLevel = 0, customColor, focusLevel = 'NORMAL' }
       return c.set(customColor);
     }
     if (status === 'CODING' && focusLevel === 'HYPER_FOCUSED') {
-       return c.set('#d946ef'); // Magenta for hyper focus
+       return c.set(VISUALIZER_CONSTANTS.HYPER_FOCUS_COLOR);
     }
 
     // Use the centralized status color map
@@ -44,21 +47,14 @@ function TechCore({ status, voiceLevel = 0, customColor, focusLevel = 'NORMAL' }
     const t = state.clock.getElapsedTime();
     
     // Core Pulse (Voice Reactive + Focus)
-    let pulseIntensity = 1;
-    if (focusLevel === 'HYPER_FOCUSED') pulseIntensity = 2;
-    if (focusLevel === 'CALM') pulseIntensity = 0.5;
+    const pulseIntensity = VISUALIZER_CONSTANTS.FOCUS_INTENSITY[focusLevel] || 1;
 
-    const baseScale = 1;
+    const baseScale = VISUALIZER_CONSTANTS.BASE_SCALE;
     const pulse = 1 + (voiceLevel * 1.5) + (Math.sin(t * (pulseIntensity * 2)) * 0.05);
     coreRef.current.scale.setScalar(baseScale * pulse);
 
     // Rotation speeds based on status & focus
-    let speed = 0.5;
-    if (status === 'CODING') speed = 2;
-    if (status === 'GAMING') speed = 3;
-    if (status === 'DISCORD') speed = 1.5;
-    if (status === 'BROWSING') speed = 1;
-    if (status === 'OFFLINE') speed = 0.1;
+    let speed = VISUALIZER_CONSTANTS.ANIMATION_SPEEDS[status] || 0.5;
 
     // Focus Modifier
     if (focusLevel === 'HYPER_FOCUSED') speed *= 2.5;
@@ -134,6 +130,12 @@ function TechCore({ status, voiceLevel = 0, customColor, focusLevel = 'NORMAL' }
   );
 }
 
+/**
+ * Main Visualizer Component
+ *
+ * Renders a 3D scene with a sci-fi orb that reacts to status, focus level, and voice activity.
+ * Uses React Three Fiber for 3D rendering and post-processing for bloom effects.
+ */
 export default function CoreVisualizer({ status, voiceLevel, customColor, focusLevel }: TechOrbProps) {
   return (
     <div className="w-full h-full relative">

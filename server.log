@@ -1,18 +1,13 @@
-
-> control-center@0.1.0 dev
-> next dev
-
+$ next dev
 ▲ Next.js 16.1.6 (Turbopack)
 - Local:         http://localhost:3000
 - Network:       http://192.168.0.2:3000
 
 ✓ Starting...
-Attention: Next.js now collects completely anonymous telemetry regarding usage.
-This information is used to shape Next.js' roadmap and prioritize features.
-You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:
-https://nextjs.org/telemetry
-
-✓ Ready in 1050ms
+✓ Ready in 1014ms
 ○ Compiling / ...
- GET / 200 in 9.6s (compile: 8.6s, render: 1046ms)
+ GET / 200 in 7.5s (compile: 6.5s, render: 997ms)
 ⨯ upstream image response failed for https://images.unsplash.com/photo-1614726365723-49cfae963956?w=800&q=80 404
+ GET / 200 in 138ms (compile: 17ms, render: 121ms)
+⨯ upstream image response failed for https://images.unsplash.com/photo-1614726365723-49cfae963956?w=800&q=80 404
+[?25h

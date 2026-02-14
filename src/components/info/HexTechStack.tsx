@@ -2,36 +2,22 @@
 
 import { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
+import { TECH_STACK } from '@/lib/data';
+import { TechCategory, TechItem } from '@/lib/types';
 
-type TechCategory = 'ALL' | 'BACKEND' | 'GAME_DEV' | 'SYS_ADMIN';
-
-interface TechItem {
-  name: string;
-  category: TechCategory;
-  level: string;
-  description: string;
-}
-
-const TECH_STACK: TechItem[] = [
-  { name: 'Java', category: 'BACKEND', level: 'Senior', description: 'High-performance backend systems.' },
-  { name: 'Unity', category: 'GAME_DEV', level: 'Advanced', description: '3D Physics & Shaders.' },
-  { name: 'C#', category: 'GAME_DEV', level: 'Advanced', description: 'Scripting & Tool Development.' },
-  { name: 'Next.js', category: 'BACKEND', level: 'Intermediate', description: 'Full-stack web apps.' },
-  { name: 'Node.js', category: 'BACKEND', level: 'Senior', description: 'Microservices & APIs.' },
-  { name: 'Linux', category: 'SYS_ADMIN', level: 'Expert', description: 'Shell Scripting & Server Mgmt.' },
-  { name: 'Docker', category: 'SYS_ADMIN', level: 'Intermediate', description: 'Containerization & CI/CD.' },
-  { name: 'Python', category: 'BACKEND', level: 'Advanced', description: 'Data Analysis & Automation.' },
-  { name: 'PostgreSQL', category: 'BACKEND', level: 'Intermediate', description: 'Complex Queries & Optimization.' },
-  { name: 'TypeScript', category: 'BACKEND', level: 'Advanced', description: 'Type-safe scalable code.' },
-  { name: 'AWS', category: 'SYS_ADMIN', level: 'Intermediate', description: 'Cloud Infrastructure.' },
-  { name: 'Three.js', category: 'GAME_DEV', level: 'Intermediate', description: 'WebGL & 3D Web Experiences.' },
-];
-
+/**
+ * Hexagonal Tech Stack Component
+ *
+ * Displays technical skills in a responsive hexagonal grid.
+ * Features a spotlight hover effect and category filtering.
+ */
 export default function HexTechStack() {
   const [activeCategory, setActiveCategory] = useState<TechCategory>('ALL');
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Spotlight Effect
+  /**
+   * Updates CSS variables for the mouse position to create a spotlight effect.
+   */
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!containerRef.current) return;
     const rect = containerRef.current.getBoundingClientRect();
@@ -57,11 +43,12 @@ export default function HexTechStack() {
       </h2>
 
       {/* Filter Buttons */}
-      <div className="flex justify-center gap-4 mb-16 flex-wrap">
+      <div className="flex justify-center gap-4 mb-16 flex-wrap" role="group" aria-label="Tech Stack Filters">
         {['ALL', 'BACKEND', 'GAME_DEV', 'SYS_ADMIN'].map((cat) => (
           <button
             key={cat}
             onClick={() => setActiveCategory(cat as TechCategory)}
+            aria-pressed={activeCategory === cat}
             className={`
               px-6 py-2 rounded-full font-mono text-sm transition-all duration-300 border
               ${activeCategory === cat
@@ -80,7 +67,7 @@ export default function HexTechStack() {
         onMouseMove={handleMouseMove}
         className="hidden md:flex flex-col items-center relative perspective-1000"
         style={{
-          // @ts-expect-error custom property
+          // @ts-expect-error custom property for spotlight effect
           '--mouse-x': '0px',
           '--mouse-y': '0px',
         }}
@@ -117,7 +104,12 @@ export default function HexTechStack() {
   );
 }
 
-function HexItem({ tech, activeCategory }: { tech: TechItem, activeCategory: TechCategory }) {
+interface HexItemProps {
+  tech: TechItem;
+  activeCategory: TechCategory;
+}
+
+function HexItem({ tech, activeCategory }: HexItemProps) {
   const isActive = activeCategory === 'ALL' || tech.category === activeCategory;
 
   return (
