@@ -4,7 +4,7 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import DecryptText from '@/components/ui/DecryptText';
 
 interface Particle {
-  id: number;
+  id: string;
   x: number;
   y: number;
   type: 'DATA' | 'GLITCH';
@@ -82,7 +82,7 @@ export default function GameCanvas() {
         const label = !isGlitch ? DATA_LABELS[Math.floor(Math.random() * DATA_LABELS.length)] : undefined;
 
         particlesRef.current.push({
-            id: Math.random(),
+            id: crypto.randomUUID(),
             x: Math.random() * canvas.width,
             y: -30,
             type: isGlitch ? 'GLITCH' : 'DATA',
