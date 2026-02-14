@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef } from 'react';
+import { AnimatePresence } from 'framer-motion';
 import { BotStatus, FocusLevel } from '@/lib/types';
 import LandingSection from '@/components/sections/LandingSection';
 import InfoSection from '@/components/sections/InfoSection';
@@ -8,8 +9,10 @@ import GameSection from '@/components/sections/GameSection';
 import DevTools from '@/components/DevTools';
 import TerminalFooter from '@/components/info/TerminalFooter';
 import RippleEffect from '@/components/ui/RippleEffect';
+import LoadingScreen from '@/components/ui/LoadingScreen';
 
 export default function Home() {
+  const [isLoading, setIsLoading] = useState(true);
   const [status, setStatus] = useState<BotStatus>('CODING');
   const [focusLevel, setFocusLevel] = useState<FocusLevel>('NORMAL');
   const [voiceLevel] = useState(0);
@@ -25,6 +28,9 @@ export default function Home() {
       ref={containerRef}
       className="min-h-screen w-full bg-black text-white relative overflow-x-hidden"
     >
+      <AnimatePresence mode="wait">
+        {isLoading && <LoadingScreen onComplete={() => setIsLoading(false)} />}
+      </AnimatePresence>
 
       {/* Landing Section (Top) - Orb is now embedded here */}
       <LandingSection
