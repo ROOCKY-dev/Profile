@@ -2,6 +2,7 @@
 
 import { BotStatus, FocusLevel } from '@/lib/types';
 import CoreVisualizer from '@/components/CoreVisualizer';
+import DecryptText from '@/components/ui/DecryptText';
 
 interface LandingSectionProps {
   status: BotStatus;
@@ -28,7 +29,9 @@ export default function LandingSection({ status, focusLevel, errorCount, voiceLe
 
         {/* Main Status */}
         <div className="mb-8">
-            <div className="text-5xl font-bold text-white tracking-tighter mb-2">{status}</div>
+            <div className="text-5xl font-bold text-white tracking-tighter mb-2 min-h-[48px]">
+               <DecryptText text={status} reveal={true} />
+            </div>
             <div className={`text-xs font-mono px-2 py-1 inline-block rounded ${
                 status === 'OFFLINE' ? 'bg-zinc-800 text-zinc-400' : 'bg-cyan-900/30 text-cyan-400 border border-cyan-500/30'
             }`}>
@@ -69,7 +72,10 @@ export default function LandingSection({ status, focusLevel, errorCount, voiceLe
           {/* Background Grid/Effect */}
           <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:50px_50px] [mask-image:radial-gradient(ellipse_at_center,black_40%,transparent_100%)] pointer-events-none" />
 
-          <div className="w-[400px] h-[400px] relative z-10">
+          <div className="w-[400px] h-[400px] relative z-10 group">
+             {/* Hover Effect on Orb Container */}
+             <div className="absolute inset-0 bg-cyan-500/5 rounded-full filter blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+
              <CoreVisualizer
                 status={status}
                 voiceLevel={voiceLevel}

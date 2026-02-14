@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState, useCallback } from 'react';
+import DecryptText from '@/components/ui/DecryptText';
 
 interface Particle {
   id: number;
@@ -18,18 +19,21 @@ const DATA_LABELS = [
   'Tailwind', 'Three.js'
 ];
 
+type GameState = 'IDLE' | 'PLAYING' | 'GAME_OVER' | 'GAME_WON';
+
 export default function GameCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [score, setScore] = useState(0);
-  const [gameState, setGameState] = useState<'IDLE' | 'PLAYING' | 'GAME_OVER'>('IDLE');
+  const [gameState, setGameState] = useState<GameState>('IDLE');
   const [collectedData, setCollectedData] = useState<string[]>([]);
 
   // Refs for loop state
-  const gameStateRef = useRef<'IDLE' | 'PLAYING' | 'GAME_OVER'>('IDLE');
+  const gameStateRef = useRef<GameState>('IDLE');
   const scoreRef = useRef(0);
   const particlesRef = useRef<Particle[]>([]);
   const playerPosRef = useRef({ x: 0, y: 0 });
   const requestRef = useRef<number>(0);
+  const loopRef = useRef<() => void>(null!);
 
   // Sync state to refs
   useEffect(() => {
@@ -40,19 +44,110 @@ export default function GameCanvas() {
     scoreRef.current = score;
   }, [score]);
 
-  const startGame = useCallback(() => {
-    setScore(0);
-    setCollectedData([]);
-    setGameState('PLAYING');
-    particlesRef.current = [];
-    scoreRef.current = 0;
-  }, []);
-
-  useEffect(() => {
+  const loop = useCallback(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
+
+    if (gameStateRef.current === 'IDLE' || gameStateRef.current === 'GAME_OVER' || gameStateRef.current === 'GAME_WON') {
+         return;
+    }
+
+    // Win Condition
+    if (scoreRef.current >= 500) {
+        setGameState('GAME_WON');
+        gameStateRef.current = 'GAME_WON';
+        return;
+    }
+
+    // Clear Screen with Fade
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    const { x: px, y: py } = playerPosRef.current;
+
+    // Draw Player
+    ctx.beginPath();
+    ctx.arc(px, py, 12, 0, Math.PI * 2);
+    ctx.fillStyle = '#06b6d4';
+    ctx.shadowColor = '#06b6d4';
+    ctx.shadowBlur = 20;
+    ctx.fill();
+    ctx.shadowBlur = 0;
+
+    // Spawn Particles
+    if (Math.random() < 0.05) {
+        const isGlitch = Math.random() > 0.7;
+        const label = !isGlitch ? DATA_LABELS[Math.floor(Math.random() * DATA_LABELS.length)] : undefined;
+
+        particlesRef.current.push({
+            id: Math.random(),
+            x: Math.random() * canvas.width,
+            y: -30,
+            type: isGlitch ? 'GLITCH' : 'DATA',
+            size: isGlitch ? 20 : 16,
+            speed: isGlitch ? 3 + (scoreRef.current / 500) : 2 + (scoreRef.current / 1000),
+            label
+        });
+    }
+
+    // Update & Draw Particles
+    for (let i = particlesRef.current.length - 1; i >= 0; i--) {
+        const p = particlesRef.current[i];
+        p.y += p.speed;
+
+        if (p.type === 'DATA') {
+            ctx.fillStyle = '#22c55e';
+            ctx.font = '14px monospace';
+            ctx.fillText(p.label || '{}', p.x, p.y);
+        } else {
+            ctx.fillStyle = '#ef4444';
+            ctx.fillRect(p.x, p.y, p.size, p.size);
+        }
+
+        // Collision
+        const dx = px - p.x;
+        const dy = py - p.y;
+        const distance = Math.sqrt(dx*dx + dy*dy);
+
+        if (distance < 30) {
+            if (p.type === 'DATA') {
+                setScore(prev => prev + 100);
+                if (p.label) setCollectedData(prev => [...prev.slice(-4), p.label!]);
+                particlesRef.current.splice(i, 1);
+            } else {
+                setGameState('GAME_OVER');
+                gameStateRef.current = 'GAME_OVER';
+            }
+        } else if (p.y > canvas.height) {
+            particlesRef.current.splice(i, 1);
+        }
+    }
+
+    requestRef.current = requestAnimationFrame(() => loopRef.current());
+  }, []);
+
+  // Update ref
+  useEffect(() => {
+    loopRef.current = loop;
+  }, [loop]);
+
+  const startGame = useCallback(() => {
+    setScore(0);
+    setCollectedData([]);
+    setGameState('PLAYING');
+    gameStateRef.current = 'PLAYING';
+    particlesRef.current = [];
+    scoreRef.current = 0;
+
+    if (requestRef.current) cancelAnimationFrame(requestRef.current);
+    requestRef.current = requestAnimationFrame(loop);
+  }, [loop]);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
 
     // Resize Handling
     const resize = () => {
@@ -74,92 +169,6 @@ export default function GameCanvas() {
     };
     canvas.addEventListener('mousemove', handleMouseMove);
 
-    let frame = 0;
-
-    const loop = () => {
-        if (gameStateRef.current === 'IDLE') {
-             requestRef.current = requestAnimationFrame(loop);
-             return;
-        }
-
-        if (gameStateRef.current === 'GAME_OVER') {
-             requestRef.current = requestAnimationFrame(loop);
-             return;
-        }
-
-        // --- GAME LOGIC ---
-
-        // Clear Screen with Fade (Trails)
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-        const { x: px, y: py } = playerPosRef.current;
-
-        // Draw Player
-        ctx.beginPath();
-        ctx.arc(px, py, 12, 0, Math.PI * 2);
-        ctx.fillStyle = '#06b6d4';
-        ctx.shadowColor = '#06b6d4';
-        ctx.shadowBlur = 20;
-        ctx.fill();
-        ctx.shadowBlur = 0;
-
-        // Spawn Particles
-        if (frame % 30 === 0) {
-            const isGlitch = Math.random() > 0.7;
-            const label = !isGlitch ? DATA_LABELS[Math.floor(Math.random() * DATA_LABELS.length)] : undefined;
-
-            particlesRef.current.push({
-                id: Math.random(),
-                x: Math.random() * canvas.width,
-                y: -30,
-                type: isGlitch ? 'GLITCH' : 'DATA',
-                size: isGlitch ? 20 : 16,
-                speed: isGlitch ? 3 + (scoreRef.current / 500) : 2 + (scoreRef.current / 1000),
-                label
-            });
-        }
-
-        // Update & Draw Particles
-        for (let i = particlesRef.current.length - 1; i >= 0; i--) {
-            const p = particlesRef.current[i];
-            p.y += p.speed;
-
-            if (p.type === 'DATA') {
-                ctx.fillStyle = '#22c55e';
-                ctx.font = '14px monospace';
-                ctx.fillText(p.label || '{}', p.x, p.y);
-            } else {
-                ctx.fillStyle = '#ef4444';
-                ctx.fillRect(p.x, p.y, p.size, p.size);
-            }
-
-            // Collision
-            const dx = px - p.x;
-            const dy = py - p.y;
-            const distance = Math.sqrt(dx*dx + dy*dy);
-
-            if (distance < 30) {
-                if (p.type === 'DATA') {
-                    setScore(prev => prev + 100);
-                    if (p.label) setCollectedData(prev => [...prev.slice(-4), p.label!]);
-                    particlesRef.current.splice(i, 1);
-                } else {
-                    setGameState('GAME_OVER');
-                    gameStateRef.current = 'GAME_OVER';
-                }
-            } else if (p.y > canvas.height) {
-                particlesRef.current.splice(i, 1);
-            }
-        }
-
-        frame++;
-        requestRef.current = requestAnimationFrame(loop);
-    };
-
-    // Start Loop
-    requestRef.current = requestAnimationFrame(loop);
-
     return () => {
         cancelAnimationFrame(requestRef.current);
         window.removeEventListener('resize', resize);
@@ -168,18 +177,18 @@ export default function GameCanvas() {
   }, []);
 
   return (
-    <div className="relative w-full max-w-4xl mx-auto h-[500px] bg-black border border-zinc-800 rounded-xl overflow-hidden shadow-2xl">
+    <div className="relative w-full max-w-4xl mx-auto h-[500px] bg-black border border-zinc-800 rounded-xl overflow-hidden shadow-2xl group cursor-none">
 
         <canvas
             ref={canvasRef}
-            className="w-full h-full cursor-none bg-[url('https://upload.wikimedia.org/wikipedia/commons/7/76/Noise.png')] bg-opacity-5"
+            className="w-full h-full bg-[url('https://upload.wikimedia.org/wikipedia/commons/7/76/Noise.png')] bg-opacity-5"
         />
 
         {/* HUD */}
         {gameState === 'PLAYING' && (
             <>
                 <div className="absolute top-4 left-4 font-mono text-cyan-400 text-lg font-bold drop-shadow-[0_0_5px_rgba(6,182,212,0.8)] pointer-events-none">
-                    SCORE: {score}
+                    SCORE: {score} / 500
                 </div>
 
                 <div className="absolute top-4 right-4 flex flex-col items-end space-y-1 pointer-events-none">
@@ -194,10 +203,10 @@ export default function GameCanvas() {
 
         {/* Start Screen */}
         {gameState === 'IDLE' && (
-            <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/80 backdrop-blur-sm z-20">
+            <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/80 backdrop-blur-sm z-20 cursor-auto">
                 <h2 className="text-4xl font-bold text-white mb-2 tracking-tighter">SYSTEM RESTORE</h2>
                 <p className="text-zinc-400 mb-8 max-w-md text-center text-sm">
-                    The system memory is fragmented. Guide the <span className="text-cyan-400 font-bold">Recovery Agent</span> to collect valid data packets.
+                    The system memory is fragmented. Guide the <span className="text-cyan-400 font-bold">Recovery Agent</span> to collect <span className="text-green-400">5 Valid Data Packets</span>.
                     <br/><br/>
                     <span className="text-red-500 font-bold">WARNING:</span> Avoid corrupted sectors (Red Blocks).
                 </p>
@@ -212,7 +221,7 @@ export default function GameCanvas() {
 
         {/* Game Over Screen */}
         {gameState === 'GAME_OVER' && (
-            <div className="absolute inset-0 flex flex-col items-center justify-center bg-red-950/90 backdrop-blur-sm z-30">
+            <div className="absolute inset-0 flex flex-col items-center justify-center bg-red-950/90 backdrop-blur-sm z-30 cursor-auto">
                 <h2 className="text-5xl font-bold text-white mb-2 tracking-tighter drop-shadow-[0_0_10px_rgba(239,68,68,0.8)]">CRITICAL ERROR</h2>
                 <div className="text-red-300 font-mono mb-8 animate-pulse">System Halted. Data Corruption Detected.</div>
 
@@ -225,6 +234,43 @@ export default function GameCanvas() {
                     className="px-8 py-3 bg-white text-red-900 font-bold rounded-full hover:scale-105 transition-transform shadow-lg"
                 >
                     RETRY RESTORE
+                </button>
+            </div>
+        )}
+
+        {/* Win Screen */}
+        {gameState === 'GAME_WON' && (
+            <div className="absolute inset-0 flex flex-col items-center justify-center bg-green-950/95 backdrop-blur-md z-30 cursor-auto">
+                <h2 className="text-5xl font-bold text-white mb-4 tracking-tighter drop-shadow-[0_0_10px_rgba(34,197,94,0.8)]">ACCESS GRANTED</h2>
+                <div className="text-green-300 font-mono mb-8 animate-pulse">System Integrity Restored. Encrypted Channel Open.</div>
+
+                <div className="mb-8 font-mono bg-black/60 px-8 py-6 rounded-xl border border-green-500/50 text-center relative overflow-hidden group/card">
+                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-green-500 to-transparent animate-scan" />
+
+                    <p className="text-xs text-zinc-500 mb-2 uppercase tracking-widest">Direct Line Connection</p>
+                    <div className="text-2xl text-white font-bold mb-1">
+                        <DecryptText text="ahmed@dev-systems.io" reveal={true} />
+                    </div>
+                    <div className="text-sm text-zinc-400">
+                        Discord: <span className="text-white">Ahmed#0001</span>
+                    </div>
+
+                    <button
+                       className="mt-6 text-xs text-green-400 hover:text-green-300 underline underline-offset-4"
+                       onClick={() => {
+                          navigator.clipboard.writeText('ahmed@dev-systems.io');
+                          alert('Copied to clipboard!');
+                       }}
+                    >
+                        [COPY SECURE LINK]
+                    </button>
+                </div>
+
+                <button
+                    onClick={startGame}
+                    className="px-8 py-3 bg-zinc-800 text-zinc-400 font-bold rounded-full hover:bg-zinc-700 transition-colors border border-white/10"
+                >
+                    REPLAY SIMULATION
                 </button>
             </div>
         )}

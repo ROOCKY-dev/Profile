@@ -4,7 +4,7 @@ import { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import TerminalHero from '@/components/info/TerminalHero';
 import Timeline from '@/components/info/Timeline';
-import TechStack from '@/components/info/TechStack';
+import HexTechStack from '@/components/info/HexTechStack';
 import ProjectReveal from '@/components/info/ProjectReveal';
 
 export default function InfoSection() {
@@ -69,9 +69,9 @@ export default function InfoSection() {
         <Timeline />
       </div>
 
-      {/* Tech Stack Section */}
+      {/* Tech Stack Section (Hexagonal Grid) */}
       <div className="w-full min-h-screen flex items-center justify-center relative z-10">
-        <TechStack />
+        <HexTechStack />
       </div>
 
       {/* Portfolio Section */}

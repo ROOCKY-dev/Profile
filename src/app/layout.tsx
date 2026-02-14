@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ToastProvider } from '@/components/ui/ToastSystem';
+import SmoothScroll from '@/components/ui/SmoothScroll';
+import CursorTrail from '@/components/ui/CursorTrail';
+import NoiseOverlay from '@/components/ui/NoiseOverlay';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -26,8 +29,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased overflow-x-hidden`}
       >
+        <NoiseOverlay />
+        <SmoothScroll />
+        <CursorTrail />
         <ToastProvider>
           {children}
         </ToastProvider>
