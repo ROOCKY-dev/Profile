@@ -18,34 +18,34 @@ interface Project {
 const projects: Project[] = [
   {
     title: 'Planetary Claim',
-    category: 'Game Dev',
+    category: 'MMO-RTS | Unity',
     image: 'https://images.unsplash.com/photo-1614726365723-49cfae963956?w=800&q=80',
     video: 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4', // Placeholder
-    description: 'A 4X space exploration strategy game built with Unity & C#. Features procedural planet generation and AI factions.',
+    description: 'An ambitious MMO-RTS built in Unity, featuring persistent strategic environments and AI-first gameplay mechanics inspired by Rusted Warfare.',
     className: 'col-span-1 md:col-span-2 md:row-span-2', // Hero Item
   },
   {
-    title: 'Alto Clef',
-    category: 'System Tool',
-    image: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=800&q=80',
-    video: '',
-    description: 'Advanced audio processing CLI for audiophiles. Written in Rust.',
-    className: 'col-span-1 md:col-span-1 md:row-span-1',
-  },
-  {
-    title: 'Neon Nexus',
+    title: 'Problem Marketplace',
     category: 'Web App',
     image: 'https://images.unsplash.com/photo-1555680202-c86f0e12f086?w=800&q=80',
     video: '',
-    description: 'Cyberpunk social dashboard with real-time WebSocket updates.',
+    description: 'A platform connecting users with technical hurdles to developers. Turns real-world frustrations into software solutions.',
     className: 'col-span-1 md:col-span-1 md:row-span-2', // Tall Item
   },
   {
-    title: 'Void Walker',
-    category: 'Modding',
+    title: 'Minecraft Ecosystems',
+    category: 'Server Admin',
     image: 'https://images.unsplash.com/photo-1623479322729-28b25c16b011?w=800&q=80',
     video: '',
-    description: 'Content expansion mod for Minecraft adding new dimensions.',
+    description: 'Managed high-performance servers with custom mods (KubeJS, Polymer) and unique economy systems.',
+    className: 'col-span-1 md:col-span-1 md:row-span-1',
+  },
+  {
+    title: 'Alto Clef Fork',
+    category: 'Automation Tool',
+    image: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=800&q=80',
+    video: '',
+    description: 'A specialized automation tool for Minecraft designed for efficient resource gathering and navigation.',
     className: 'col-span-1 md:col-span-1 md:row-span-1',
   },
 ];

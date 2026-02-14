@@ -16,15 +16,15 @@ const TECH_STACK: TechItem[] = [
   { name: 'Java', category: 'BACKEND', level: 'Senior', description: 'High-performance backend systems.' },
   { name: 'Unity', category: 'GAME_DEV', level: 'Advanced', description: '3D Physics & Shaders.' },
   { name: 'C#', category: 'GAME_DEV', level: 'Advanced', description: 'Scripting & Tool Development.' },
+  { name: 'C++', category: 'GAME_DEV', level: 'Advanced', description: 'Engine Dev & Optimization.' },
+  { name: 'Unreal', category: 'GAME_DEV', level: 'Intermediate', description: 'Blueprints & C++.' },
+  { name: 'Linux', category: 'SYS_ADMIN', level: 'Expert', description: 'Ubuntu Server Admin.' },
+  { name: 'Python', category: 'BACKEND', level: 'Advanced', description: 'AI & Data Analysis.' },
+  { name: 'MC Server', category: 'SYS_ADMIN', level: 'Expert', description: 'Fabric/Paper Architecture.' },
   { name: 'Next.js', category: 'BACKEND', level: 'Intermediate', description: 'Full-stack web apps.' },
   { name: 'Node.js', category: 'BACKEND', level: 'Senior', description: 'Microservices & APIs.' },
-  { name: 'Linux', category: 'SYS_ADMIN', level: 'Expert', description: 'Shell Scripting & Server Mgmt.' },
-  { name: 'Docker', category: 'SYS_ADMIN', level: 'Intermediate', description: 'Containerization & CI/CD.' },
-  { name: 'Python', category: 'BACKEND', level: 'Advanced', description: 'Data Analysis & Automation.' },
-  { name: 'PostgreSQL', category: 'BACKEND', level: 'Intermediate', description: 'Complex Queries & Optimization.' },
   { name: 'TypeScript', category: 'BACKEND', level: 'Advanced', description: 'Type-safe scalable code.' },
-  { name: 'AWS', category: 'SYS_ADMIN', level: 'Intermediate', description: 'Cloud Infrastructure.' },
-  { name: 'Three.js', category: 'GAME_DEV', level: 'Intermediate', description: 'WebGL & 3D Web Experiences.' },
+  { name: 'Docker', category: 'SYS_ADMIN', level: 'Intermediate', description: 'Containerization & CI/CD.' },
 ];
 
 export default function HexTechStack() {

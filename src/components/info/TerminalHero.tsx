@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 
 export default function TerminalHero() {
   const [text, setText] = useState('');
-  const fullText = "> Initializing System...\n> Loading User Profile: Ahmed...\n> Role: Backend / Systems Architect\n> Status: ONLINE";
+  const fullText = "> Initializing System...\n> Loading User Profile: Ahmed Husam Ghaithan (ROOCKY dev)...\n> Role: Computer Science Student | Game Developer | Systems Architect\n> Status: ONLINE";
   const [cursorVisible, setCursorVisible] = useState(true);
 
   useEffect(() => {

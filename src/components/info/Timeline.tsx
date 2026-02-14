@@ -22,7 +22,7 @@ const events: TimelineEventData[] = [
   {
     year: '2021',
     title: 'System Migration',
-    description: 'Relocated to Malaysia. Expanded stack to React, Next.js, and Node.',
+    description: 'Relocated to Malaysia (UNITEN). Expanded stack to React, Next.js, and Node.',
     color: '#3b82f6' // Blue
   },
   {

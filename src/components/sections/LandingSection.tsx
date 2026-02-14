@@ -1,8 +1,10 @@
 'use client';
 
+import { useState } from 'react';
 import { BotStatus, FocusLevel } from '@/lib/types';
 import CoreVisualizer from '@/components/CoreVisualizer';
 import DecryptText from '@/components/ui/DecryptText';
+import ContactModal from '@/components/ui/ContactModal';
 
 interface LandingSectionProps {
   status: BotStatus;
@@ -13,6 +15,7 @@ interface LandingSectionProps {
 }
 
 export default function LandingSection({ status, focusLevel, errorCount, voiceLevel, customColor }: LandingSectionProps) {
+  const [isContactModalOpen, setIsContactModalOpen] = useState(false);
 
   const scrollToSection = (id: string) => {
      const element = document.getElementById(id);
@@ -22,9 +25,12 @@ export default function LandingSection({ status, focusLevel, errorCount, voiceLe
   };
 
   return (
-    <section className="h-screen w-full flex items-center justify-between relative bg-black snap-start overflow-hidden">
+    <section className="min-h-screen w-full flex flex-col md:flex-row items-center justify-between relative bg-black snap-start overflow-hidden">
+
+      <ContactModal isOpen={isContactModalOpen} onClose={() => setIsContactModalOpen(false)} />
+
       {/* Left Column: Status */}
-      <div className="w-1/4 h-full border-r border-white/5 p-8 flex flex-col justify-center bg-black/30 backdrop-blur-sm z-10 pointer-events-auto">
+      <div className="w-full md:w-1/4 h-auto md:h-full border-b md:border-b-0 md:border-r border-white/5 p-8 flex flex-col justify-center bg-black/30 backdrop-blur-sm z-10 pointer-events-auto">
         <h2 className="text-zinc-500 font-mono text-sm uppercase tracking-widest mb-4">Current Status</h2>
 
         {/* Main Status */}
@@ -68,11 +74,11 @@ export default function LandingSection({ status, focusLevel, errorCount, voiceLe
       </div>
 
       {/* Center: Orb Visualizer */}
-      <div className="flex-1 h-full flex items-center justify-center relative">
+      <div className="w-full md:flex-1 h-[50vh] md:h-full flex items-center justify-center relative">
           {/* Background Grid/Effect */}
           <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:50px_50px] [mask-image:radial-gradient(ellipse_at_center,black_40%,transparent_100%)] pointer-events-none" />
 
-          <div className="w-[400px] h-[400px] relative z-10 group">
+          <div className="w-[300px] h-[300px] md:w-[400px] md:h-[400px] relative z-10 group">
              {/* Hover Effect on Orb Container */}
              <div className="absolute inset-0 bg-cyan-500/5 rounded-full filter blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
 
@@ -86,14 +92,14 @@ export default function LandingSection({ status, focusLevel, errorCount, voiceLe
       </div>
 
       {/* Right Column: Nav */}
-      <div className="w-1/4 h-full border-l border-white/5 p-8 flex flex-col justify-center items-end bg-black/30 backdrop-blur-sm z-10 pointer-events-auto">
-         <h2 className="text-zinc-500 font-mono text-sm uppercase tracking-widest mb-6">Modules</h2>
-         <div className="flex flex-col gap-6">
+      <div className="w-full md:w-1/4 h-auto md:h-full border-t md:border-t-0 md:border-l border-white/5 p-8 flex flex-col justify-center items-end bg-black/30 backdrop-blur-sm z-10 pointer-events-auto">
+         <h2 className="text-zinc-500 font-mono text-sm uppercase tracking-widest mb-6 w-full text-right">Modules</h2>
+         <div className="flex flex-col gap-6 w-full items-end">
              <button
                 onClick={() => scrollToSection('info-section')}
                 className="group flex items-center gap-4 text-right transition-all hover:translate-x-[-10px]"
              >
-                 <span className="text-2xl font-light text-zinc-300 group-hover:text-cyan-400 transition-colors">
+                 <span className="text-xl md:text-2xl font-light text-zinc-300 group-hover:text-cyan-400 transition-colors">
                    Projects
                  </span>
                  <span className="w-2 h-2 rounded-full bg-zinc-800 group-hover:bg-cyan-400 transition-colors" />
@@ -103,7 +109,7 @@ export default function LandingSection({ status, focusLevel, errorCount, voiceLe
                 onClick={() => scrollToSection('info-section')}
                 className="group flex items-center gap-4 text-right transition-all hover:translate-x-[-10px]"
              >
-                 <span className="text-2xl font-light text-zinc-300 group-hover:text-cyan-400 transition-colors">
+                 <span className="text-xl md:text-2xl font-light text-zinc-300 group-hover:text-cyan-400 transition-colors">
                    About
                  </span>
                  <span className="w-2 h-2 rounded-full bg-zinc-800 group-hover:bg-cyan-400 transition-colors" />
@@ -113,11 +119,34 @@ export default function LandingSection({ status, focusLevel, errorCount, voiceLe
                 onClick={() => scrollToSection('game-section')}
                 className="group flex items-center gap-4 text-right transition-all hover:translate-x-[-10px]"
              >
-                 <span className="text-2xl font-light text-zinc-300 group-hover:text-cyan-400 transition-colors">
+                 <span className="text-xl md:text-2xl font-light text-zinc-300 group-hover:text-cyan-400 transition-colors">
                    Play Game
                  </span>
                  <span className="w-2 h-2 rounded-full bg-zinc-800 group-hover:bg-cyan-400 transition-colors" />
              </button>
+
+             <div className="w-full h-[1px] bg-white/5 my-2" />
+
+             <button
+                onClick={() => setIsContactModalOpen(true)}
+                className="group flex items-center gap-4 text-right transition-all hover:translate-x-[-10px]"
+             >
+                 <span className="text-lg md:text-xl font-light text-zinc-400 group-hover:text-white transition-colors">
+                   Contact Me
+                 </span>
+                 <span className="w-2 h-2 rounded-full bg-zinc-800 group-hover:bg-white transition-colors border border-zinc-600 group-hover:border-white" />
+             </button>
+
+             <a
+                href="#"
+                target="_blank"
+                className="group flex items-center gap-4 text-right transition-all hover:translate-x-[-10px]"
+             >
+                 <span className="text-lg md:text-xl font-light text-zinc-400 group-hover:text-white transition-colors">
+                   Curriculum Vitae
+                 </span>
+                 <span className="w-2 h-2 rounded-full bg-zinc-800 group-hover:bg-white transition-colors border border-zinc-600 group-hover:border-white" />
+             </a>
          </div>
       </div>
     </section>

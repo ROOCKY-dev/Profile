@@ -5,6 +5,7 @@ import { ToastProvider } from '@/components/ui/ToastSystem';
 import SmoothScroll from '@/components/ui/SmoothScroll';
 import CursorTrail from '@/components/ui/CursorTrail';
 import NoiseOverlay from '@/components/ui/NoiseOverlay';
+import GlobalBackground from '@/components/ui/GlobalBackground';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,6 +32,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased overflow-x-hidden`}
       >
+        <GlobalBackground />
         <NoiseOverlay />
         <SmoothScroll />
         <CursorTrail />
