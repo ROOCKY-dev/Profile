@@ -25,8 +25,8 @@ export default function Home() {
 
   // UseSpring for smooth, physics-based transition
   const smoothProgress = useSpring(scrollYProgress, {
-    stiffness: 100,
-    damping: 30,
+    stiffness: 150,
+    damping: 20,
     restDelta: 0.001
   });
 
@@ -37,11 +37,11 @@ export default function Home() {
   // X: 0% (Center) -> 0% (Remains Centered horizontally)
   const x = useTransform(smoothProgress, [0, 0.2], ['0%', '0%']);
 
-  // Y: 0% (Center) -> -40vh (Top Center)
-  const y = useTransform(smoothProgress, [0, 0.2], ['0%', '-40vh']);
+  // Y: 0% (Center) -> -42vh (Top Center)
+  const y = useTransform(smoothProgress, [0, 0.2], ['0%', '-42vh']);
 
-  // Scale: 1 (Full) -> 0.3 (Reasonably Small)
-  const scale = useTransform(smoothProgress, [0, 0.2], [1, 0.3]);
+  // Scale: 1 (Full) -> 0.6 (Larger and more centered)
+  const scale = useTransform(smoothProgress, [0, 0.2], [1, 0.6]);
 
   // Opacity for the "Mini-View" border
   const borderOpacity = useTransform(smoothProgress, [0.15, 0.2], [0, 0.5]);

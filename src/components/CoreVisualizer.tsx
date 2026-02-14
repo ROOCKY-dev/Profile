@@ -65,11 +65,19 @@ function TechCore({ status, voiceLevel = 0, customColor, focusLevel = 'NORMAL' }
     outerRef.current.rotation.y += delta * speed * 0.2;
     outerRef.current.rotation.z += delta * speed * 0.1;
 
-    // Rotate Rings (Gyroscope style)
+    // Rotate Rings (Gyroscope style - more dynamic)
     if (ringsRef.current) {
+        // Ring 1 (Inner) - Primary X, secondary Y
         ringsRef.current.children[0].rotation.x += delta * speed * 0.5;
-        ringsRef.current.children[1].rotation.y += delta * speed * 0.3;
-        ringsRef.current.children[2].rotation.z += delta * speed * 0.4;
+        ringsRef.current.children[0].rotation.y += delta * speed * 0.2;
+
+        // Ring 2 (Middle) - Primary Y, secondary Z
+        ringsRef.current.children[1].rotation.y += delta * speed * 0.4;
+        ringsRef.current.children[1].rotation.z += delta * speed * 0.2;
+
+        // Ring 3 (Outer) - Primary Z, secondary X
+        ringsRef.current.children[2].rotation.z += delta * speed * 0.3;
+        ringsRef.current.children[2].rotation.x += delta * speed * 0.2;
     }
   });
 
