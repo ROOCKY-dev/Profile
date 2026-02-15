@@ -163,15 +163,17 @@ export default function LandingSection({ status, focusLevel, errorCount, voiceLe
                  <span className="w-2 h-2 rounded-full bg-zinc-800 group-hover:bg-green-400 transition-colors" />
              </button>
 
-             <a
-                href="#" // Placeholder for CV
-                className="group hidden md:flex items-center gap-4 text-right transition-all hover:translate-x-[-10px]"
+             <button
+                disabled
+                aria-disabled="true"
+                className="group hidden md:flex items-center gap-4 text-right transition-all opacity-50 cursor-not-allowed"
+                title="CV coming soon"
              >
-                 <span className="text-xl font-light text-zinc-500 group-hover:text-white transition-colors">
+                 <span className="text-xl font-light text-zinc-500">
                    My CV
                  </span>
-                 <span className="w-2 h-2 rounded-full bg-zinc-800 group-hover:bg-white transition-colors" />
-             </a>
+                 <span className="w-2 h-2 rounded-full bg-zinc-800" />
+             </button>
          </div>
       </div>
     </section>
