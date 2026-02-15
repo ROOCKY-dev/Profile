@@ -15,16 +15,25 @@ interface LandingSectionProps {
 }
 
 /**
- * Landing Section
+ * Landing Section Component
  *
  * The first section the user sees. Contains the main status dashboard,
  * the 3D Orb Visualizer, and navigation links.
+ *
+ * Features:
+ * - Real-time status indicators (BotStatus, FocusLevel).
+ * - Interactive 3D Visualizer (CoreVisualizer).
+ * - Navigation menu to scroll to other sections.
  *
  * Uses `snap-start` to ensure the viewport snaps to this section.
  */
 export default function LandingSection({ status, focusLevel, errorCount, voiceLevel, customColor }: LandingSectionProps) {
   const [isContactOpen, setIsContactOpen] = useState(false);
 
+  /**
+   * Smoothly scrolls to a section by its ID.
+   * @param id The HTML ID of the target section.
+   */
   const scrollToSection = (id: string) => {
      const element = document.getElementById(id);
      if (element) {

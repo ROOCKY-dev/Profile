@@ -7,16 +7,20 @@ import HexTechStack from '@/components/info/HexTechStack';
 import ProjectReveal from '@/components/info/ProjectReveal';
 
 /**
- * Info Section
+ * InfoSection Component
  *
- * A tall scrollable section (300vh) containing detailed information:
- * 1. About Me (New)
- * 2. Timeline
- * 3. Tech Stack
- * 4. Projects
+ * A multi-part vertical scroll section containing detailed portfolio information.
  *
- * Includes dynamic background color shifts and internal scroll snap points
- * for each sub-section to ensure content immersion.
+ * Sub-sections:
+ * 1. About Me: Introduction and bio.
+ * 2. Timeline: Chronological history.
+ * 3. Tech Stack: Hexagonal grid of skills.
+ * 4. Projects: Featured work.
+ *
+ * Features:
+ * - Dynamic background color shifting based on scroll position.
+ * - CSS Scroll Snapping for immersive section transitions.
+ * - Motion effects for entrance animations.
  */
 export default function InfoSection() {
   const containerRef = useRef<HTMLElement>(null);
@@ -81,7 +85,7 @@ export default function InfoSection() {
                 <p className="text-zinc-300 leading-relaxed mb-8 text-left text-lg">
                    I am a driven Computer Science student at Universiti Tenaga Nasional (UNITEN) with a passion for building complex, scalable systems and immersive digital experiences. Originally from Yemen and currently based in Malaysia, I operate under the alias <span className="text-cyan-400 font-mono">Roocky dev</span>, where I bridge the gap between technical logic and creative game design.
                    <br/><br/>
-                   My work is defined by an AI-first approach, whether I'm optimizing server environments or conceptualizing next-gen mechanics. I thrive at the intersection of low-level programming and high-level user experience.
+                   My work is defined by an AI-first approach, whether I&apos;m optimizing server environments or conceptualizing next-gen mechanics. I thrive at the intersection of low-level programming and high-level user experience.
                 </p>
 
                 <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
@@ -94,7 +98,7 @@ export default function InfoSection() {
                  {/* Decorative Quote */}
                  <div className="mt-12 pt-8 border-t border-white/5">
                     <p className="font-mono text-sm text-zinc-500 italic">
-                      "Turning complex problems into elegant code and boring games into technical masterpieces."
+                      &quot;Turning complex problems into elegant code and boring games into technical masterpieces.&quot;
                     </p>
                  </div>
             </div>

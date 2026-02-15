@@ -5,45 +5,19 @@ import { motion, useInView } from 'framer-motion';
 import TiltCard from '@/components/ui/TiltCard';
 import { playHoverSound } from '@/lib/sound';
 import Image from 'next/image';
+import { Project } from '@/lib/types';
+import { projects } from '@/lib/data';
 
-interface Project {
-  title: string;
-  category: string;
-  image: string;
-  video: string;
-  description: string;
-  className: string;
-}
-
-const projects: Project[] = [
-  {
-    title: 'Planetary Claim',
-    category: 'Game Dev',
-    image: 'https://images.unsplash.com/photo-1614726365723-49cfae963956?w=800&q=80',
-    video: '', // Placeholder
-    description: 'An ambitious MMO-RTS project built in Unity. It leverages an AI-first development philosophy to create a massive, persistent strategic environment based on the core foundations of Rusted Warfare.',
-    className: 'col-span-1 md:col-span-2 md:row-span-2', // Hero Item
-  },
-  {
-    title: 'Minecraft Ecosystems',
-    category: 'Infrastructure',
-    image: 'https://images.unsplash.com/photo-1623479322729-28b25c16b011?w=800&q=80', // Using a blocky/voxel-like image
-    video: '',
-    description: 'Head Developer & Admin for high-performance servers. Developed custom mods (KubeJS, Polymer) and designed unique gameplay loops including faction wars and custom death mechanics.',
-    className: 'col-span-1 md:col-span-1 md:row-span-1',
-  },
-  {
-    title: 'Problem Marketplace',
-    category: 'Web App',
-    image: 'https://images.unsplash.com/photo-1555680202-c86f0e12f086?w=800&q=80',
-    video: '',
-    description: 'A conceptual platform connecting users facing technical hurdles with developers. Built to turn real-world frustrations into innovative software solutions.',
-    className: 'col-span-1 md:col-span-1 md:row-span-1', // Regular Item
-  },
-];
-
+/**
+ * ProjectReveal Component
+ *
+ * Displays a grid of featured projects.
+ * Uses a dense grid layout where some items can span multiple columns/rows.
+ * Features a "Video Swap" effect where hovering over a card reveals a video preview.
+ */
 export default function ProjectReveal() {
   const containerRef = useRef<HTMLDivElement>(null);
+  // Trigger animation when the section comes into view
   const isInView = useInView(containerRef, { once: true, margin: "-100px" });
 
   return (
@@ -70,6 +44,10 @@ function ProjectCard({ project, index, isInView }: { project: Project, index: nu
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isHovered, setIsHovered] = useState(false);
 
+  /**
+   * Handles mouse enter event.
+   * Plays a sound effect and starts video playback if available.
+   */
   const handleMouseEnter = () => {
     setIsHovered(true);
     playHoverSound();
@@ -78,6 +56,10 @@ function ProjectCard({ project, index, isInView }: { project: Project, index: nu
     }
   };
 
+  /**
+   * Handles mouse leave event.
+   * Pauses and resets video playback.
+   */
   const handleMouseLeave = () => {
     setIsHovered(false);
     if (videoRef.current && project.video) {

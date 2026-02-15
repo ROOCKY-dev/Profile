@@ -2,42 +2,24 @@
 
 import { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
+import { TechCategory, TechItem } from '@/lib/types';
+import { techStack } from '@/lib/data';
 
-type TechCategory = 'ALL' | 'LANGUAGES' | 'GAME_ENGINES' | 'SPECIALIZATIONS' | 'INFRASTRUCTURE';
-
-interface TechItem {
-  name: string;
-  category: TechCategory;
-  level: string;
-  description: string;
-}
-
-const TECH_STACK: TechItem[] = [
-  // Languages
-  { name: 'C++', category: 'LANGUAGES', level: 'Intermediate', description: 'Systems Programming & Game Logic.' },
-  { name: 'Java', category: 'LANGUAGES', level: 'Senior', description: 'Enterprise Backend & Android.' },
-  { name: 'Python', category: 'LANGUAGES', level: 'Advanced', description: 'AI Integration & Scripting.' },
-  { name: 'JavaScript', category: 'LANGUAGES', level: 'Advanced', description: 'Web Interactivity & Logic.' },
-
-  // Game Engines
-  { name: 'Unity', category: 'GAME_ENGINES', level: 'Advanced', description: 'C# Scripting & Physics.' },
-  { name: 'Unreal', category: 'GAME_ENGINES', level: 'Intermediate', description: 'Blueprints & C++.' },
-
-  // Specializations
-  { name: 'UI/UX', category: 'SPECIALIZATIONS', level: 'Advanced', description: 'User-Centric Interfaces.' },
-  { name: 'Game Mech', category: 'SPECIALIZATIONS', level: 'Expert', description: 'Gameplay Loops & Systems.' },
-  { name: 'AI', category: 'SPECIALIZATIONS', level: 'Intermediate', description: 'Behavior Trees & Pathfinding.' },
-
-  // Infrastructure
-  { name: 'Linux', category: 'INFRASTRUCTURE', level: 'Expert', description: 'Ubuntu Server Administration.' },
-  { name: 'Minecraft', category: 'INFRASTRUCTURE', level: 'Expert', description: 'Fabric/Paper/Forge Architecture.' },
-];
-
+/**
+ * HexTechStack Component
+ *
+ * Displays the technical toolkit in a hexagonal grid layout.
+ * On desktop, it forms a honeycomb pattern. On mobile, it's a simple grid.
+ * Includes interactive hover effects with spotlight and tooltips.
+ */
 export default function HexTechStack() {
   const [activeCategory, setActiveCategory] = useState<TechCategory>('ALL');
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Spotlight Effect
+  /**
+   * Tracks mouse movement to create a spotlight effect over the grid.
+   * Updates CSS variables --mouse-x and --mouse-y.
+   */
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!containerRef.current) return;
     const rect = containerRef.current.getBoundingClientRect();
@@ -50,9 +32,9 @@ export default function HexTechStack() {
   // Organize for Honeycomb Layout (Desktop)
   // Rows: 4, 3, 4
   const rows = [
-    TECH_STACK.slice(0, 4),
-    TECH_STACK.slice(4, 7),
-    TECH_STACK.slice(7, 11),
+    techStack.slice(0, 4),
+    techStack.slice(4, 7),
+    techStack.slice(7, 11),
   ];
 
   return (
@@ -108,7 +90,7 @@ export default function HexTechStack() {
 
       {/* Hex Grid Container - Mobile (Simple Grid) */}
       <div className="flex md:hidden flex-wrap justify-center gap-4">
-         {TECH_STACK.map((tech) => (
+         {techStack.map((tech) => (
             <HexItem key={tech.name} tech={tech} activeCategory={activeCategory} />
          ))}
       </div>

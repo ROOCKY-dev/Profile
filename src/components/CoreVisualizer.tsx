@@ -15,7 +15,15 @@ interface TechOrbProps {
   focusLevel?: FocusLevel;
 }
 
+/**
+ * TechCore Component
+ *
+ * The 3D scene content for the visualizer.
+ * Renders a glowing core, a wireframe shell, and gyroscopic rings.
+ * Animations are driven by the `useFrame` loop and respond to `status`, `focusLevel`, and `voiceLevel`.
+ */
 function TechCore({ status, voiceLevel = 0, customColor, focusLevel = 'NORMAL' }: TechOrbProps) {
+  // References to 3D meshes for direct manipulation in the animation loop
   const coreRef = useRef<THREE.Mesh>(null!);
   const outerRef = useRef<THREE.Group>(null!);
   const ring1Ref = useRef<THREE.Mesh>(null!);
@@ -43,37 +51,43 @@ function TechCore({ status, voiceLevel = 0, customColor, focusLevel = 'NORMAL' }
   useFrame((state, delta) => {
     const t = state.clock.getElapsedTime();
     
-    // Core Pulse (Voice Reactive + Focus)
+    // --- Pulse Animation (Core) ---
+    // Reacts to voice level and focus intensity
     let pulseIntensity = 1;
     if (focusLevel === 'HYPER_FOCUSED') pulseIntensity = 2;
     if (focusLevel === 'CALM') pulseIntensity = 0.5;
 
     const baseScale = 1;
+    // Pulse calculation: Base + Voice Reaction + Rhythmic Breathing
     const pulse = 1 + (voiceLevel * 1.5) + (Math.sin(t * (pulseIntensity * 2)) * 0.05);
-    coreRef.current.scale.setScalar(baseScale * pulse);
 
-    // Rotation speeds based on status & focus
+    if (coreRef.current) {
+        coreRef.current.scale.setScalar(baseScale * pulse);
+    }
+
+    // --- Rotation Animation (Shell & Rings) ---
+    // Speed varies by status
     let speed = 0.5;
-    if (status === 'CODING') speed = 2;
-    if (status === 'GAMING') speed = 3;
-    if (status === 'DISCORD') speed = 1.5;
-    if (status === 'BROWSING') speed = 1;
-    if (status === 'OFFLINE') speed = 0.1;
+    switch (status) {
+        case 'CODING': speed = 2; break;
+        case 'GAMING': speed = 3; break;
+        case 'DISCORD': speed = 1.5; break;
+        case 'BROWSING': speed = 1; break;
+        case 'OFFLINE': speed = 0.1; break;
+        default: speed = 1;
+    }
 
-    // Focus Modifier
+    // Focus Level Modifiers
     if (focusLevel === 'HYPER_FOCUSED') speed *= 2.5;
     if (focusLevel === 'CALM') speed *= 0.5;
     
-    /**
-     * Animation Loop
-     * Rotates the wireframe shell and rings based on calculated speed.
-     * Uses delta time for frame-rate independent animation.
-     */
     // Rotate Wireframe Shell
-    outerRef.current.rotation.y += delta * speed * 0.2;
-    outerRef.current.rotation.z += delta * speed * 0.1;
+    if (outerRef.current) {
+        outerRef.current.rotation.y += delta * speed * 0.2;
+        outerRef.current.rotation.z += delta * speed * 0.1;
+    }
 
-    // Rotate Rings (Gyroscope style - more dynamic)
+    // Rotate Rings (Gyroscope style - multiple axes)
     // Ring 1 (Inner) - Primary X, secondary Y
     if (ring1Ref.current) {
         ring1Ref.current.rotation.x += delta * speed * 0.5;
@@ -134,6 +148,13 @@ function TechCore({ status, voiceLevel = 0, customColor, focusLevel = 'NORMAL' }
   );
 }
 
+/**
+ * CoreVisualizer Component
+ *
+ * Wrapper for the R3F Canvas. Sets up the camera, lighting, and post-processing.
+ *
+ * @param props TechOrbProps
+ */
 export default function CoreVisualizer({ status, voiceLevel, customColor, focusLevel }: TechOrbProps) {
   return (
     <div className="w-full h-full relative">
