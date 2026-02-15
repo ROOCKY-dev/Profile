@@ -1,8 +1,10 @@
 'use client';
 
+import { useState } from 'react';
 import { BotStatus, FocusLevel } from '@/lib/types';
 import CoreVisualizer from '@/components/CoreVisualizer';
 import DecryptText from '@/components/ui/DecryptText';
+import ContactModal from '@/components/ui/ContactModal';
 
 interface LandingSectionProps {
   status: BotStatus;
@@ -21,6 +23,7 @@ interface LandingSectionProps {
  * Uses `snap-start` to ensure the viewport snaps to this section.
  */
 export default function LandingSection({ status, focusLevel, errorCount, voiceLevel, customColor }: LandingSectionProps) {
+  const [isContactOpen, setIsContactOpen] = useState(false);
 
   const scrollToSection = (id: string) => {
      const element = document.getElementById(id);
@@ -32,14 +35,32 @@ export default function LandingSection({ status, focusLevel, errorCount, voiceLe
   return (
     // Main Landing Section - Snaps to start
     <section className="h-[100dvh] md:h-screen w-full flex flex-col md:flex-row items-center justify-between relative bg-black snap-start overflow-hidden">
-      {/* Left Column: Status */}
-      <div className="w-full md:w-1/4 h-auto md:h-full border-b md:border-b-0 md:border-r border-white/5 pt-20 pb-4 px-4 md:p-8 flex flex-row md:flex-col justify-between md:justify-center items-center md:items-start bg-black/30 backdrop-blur-sm z-30 pointer-events-auto">
 
-        {/* Mobile Header / Desktop Label */}
+      {/* Contact Modal */}
+      <ContactModal isOpen={isContactOpen} onClose={() => setIsContactOpen(false)} />
+
+      {/* Left Column: Status */}
+      <div className="w-full md:w-1/4 h-auto md:h-full border-b md:border-b-0 md:border-r border-white/5 pt-20 pb-4 px-4 md:p-8 flex flex-col justify-center bg-black/30 backdrop-blur-sm z-30 pointer-events-auto">
+
+        {/* Name and Roles - Hidden on mobile, shown on desktop */}
+        <div className="hidden md:block mb-12">
+            <h1 className="text-3xl font-bold text-white tracking-tight mb-2 leading-tight">
+               <span className="text-cyan-400">🚀</span> Ahmed Husam Ghaithan
+               <span className="block text-sm text-zinc-500 font-normal mt-1">(ROOCKY dev)</span>
+            </h1>
+            <p className="text-xs text-zinc-400 font-mono leading-relaxed border-l-2 border-cyan-500/30 pl-3">
+               Computer Science Student <br/>
+               Game Developer <br/>
+               Systems Architect <br/>
+               Gamer
+            </p>
+        </div>
+
+        {/* Mobile/Desktop Status Header */}
         <h2 className="hidden md:block text-zinc-500 font-mono text-sm uppercase tracking-widest mb-4">Current Status</h2>
 
-        {/* Main Status */}
-        <div className="mb-0 md:mb-8 flex flex-col items-center md:items-start">
+        {/* Main Status - Responsive layout */}
+        <div className="mb-0 md:mb-8 flex flex-col items-center md:items-start flex-shrink-0">
             <div className="text-3xl md:text-5xl font-bold text-white tracking-tighter mb-1 md:mb-2 min-h-[36px] md:min-h-[48px]">
                <DecryptText key={status} text={status} reveal={true} />
             </div>
@@ -54,8 +75,8 @@ export default function LandingSection({ status, focusLevel, errorCount, voiceLe
             </div>
         </div>
 
-        {/* Focus Level (Hidden on very small screens if needed, or row layout) */}
-        <div className="flex md:block items-center gap-4 md:gap-0 mb-0 md:mb-6">
+        {/* Focus Level - Responsive */}
+        <div className="flex md:block items-center gap-4 md:gap-0 mb-0 md:mb-6 flex-shrink-0">
             <h3 className="hidden md:block text-zinc-500 text-xs font-mono mb-2">Focus Level</h3>
             <div className="flex items-center gap-2">
                 <div className={`w-2 md:w-3 h-2 md:h-3 rounded-full ${
@@ -129,6 +150,28 @@ export default function LandingSection({ status, focusLevel, errorCount, voiceLe
                  </span>
                  <span className="hidden md:block w-2 h-2 rounded-full bg-zinc-800 group-hover:bg-cyan-400 transition-colors" />
              </button>
+
+             <div className="hidden md:block w-full h-[1px] bg-white/10 my-2" />
+
+             <button
+                onClick={() => setIsContactOpen(true)}
+                className="group hidden md:flex items-center gap-4 text-right transition-all hover:translate-x-[-10px]"
+             >
+                 <span className="text-2xl font-light text-zinc-300 group-hover:text-green-400 transition-colors">
+                   Contact Me
+                 </span>
+                 <span className="w-2 h-2 rounded-full bg-zinc-800 group-hover:bg-green-400 transition-colors" />
+             </button>
+
+             <a
+                href="#" // Placeholder for CV
+                className="group hidden md:flex items-center gap-4 text-right transition-all hover:translate-x-[-10px]"
+             >
+                 <span className="text-xl font-light text-zinc-500 group-hover:text-white transition-colors">
+                   My CV
+                 </span>
+                 <span className="w-2 h-2 rounded-full bg-zinc-800 group-hover:bg-white transition-colors" />
+             </a>
          </div>
       </div>
     </section>
