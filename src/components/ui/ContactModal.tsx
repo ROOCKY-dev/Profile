@@ -13,9 +13,13 @@ interface ContactModalProps {
 export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
   const { toast } = useToast();
 
-  const handleCopy = (text: string, label: string) => {
-    navigator.clipboard.writeText(text);
-    toast(`${label} copied to clipboard`, 'success');
+  const handleCopy = async (text: string, label: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      toast(`${label} copied to clipboard`, 'success');
+    } catch {
+      toast('Failed to copy to clipboard', 'error');
+    }
   };
 
   return (
