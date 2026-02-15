@@ -7,7 +7,6 @@ import LandingSection from '@/components/sections/LandingSection';
 import InfoSection from '@/components/sections/InfoSection';
 import GameSection from '@/components/sections/GameSection';
 import DevTools from '@/components/DevTools';
-import TerminalFooter from '@/components/info/TerminalFooter';
 import RippleEffect from '@/components/ui/RippleEffect';
 import LoadingScreen from '@/components/ui/LoadingScreen';
 
@@ -66,7 +65,6 @@ export default function Home() {
         setCustomColor={setCustomColor}
       />
 
-      <TerminalFooter />
       <RippleEffect />
     </main>
   );
