@@ -3,7 +3,7 @@
 import { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 
-type TechCategory = 'ALL' | 'BACKEND' | 'GAME_DEV' | 'SYS_ADMIN';
+type TechCategory = 'ALL' | 'LANGUAGES' | 'GAME_ENGINES' | 'SPECIALIZATIONS' | 'INFRASTRUCTURE';
 
 interface TechItem {
   name: string;
@@ -13,18 +13,24 @@ interface TechItem {
 }
 
 const TECH_STACK: TechItem[] = [
-  { name: 'Java', category: 'BACKEND', level: 'Senior', description: 'High-performance backend systems.' },
-  { name: 'Unity', category: 'GAME_DEV', level: 'Advanced', description: '3D Physics & Shaders.' },
-  { name: 'C#', category: 'GAME_DEV', level: 'Advanced', description: 'Scripting & Tool Development.' },
-  { name: 'Next.js', category: 'BACKEND', level: 'Intermediate', description: 'Full-stack web apps.' },
-  { name: 'Node.js', category: 'BACKEND', level: 'Senior', description: 'Microservices & APIs.' },
-  { name: 'Linux', category: 'SYS_ADMIN', level: 'Expert', description: 'Shell Scripting & Server Mgmt.' },
-  { name: 'Docker', category: 'SYS_ADMIN', level: 'Intermediate', description: 'Containerization & CI/CD.' },
-  { name: 'Python', category: 'BACKEND', level: 'Advanced', description: 'Data Analysis & Automation.' },
-  { name: 'PostgreSQL', category: 'BACKEND', level: 'Intermediate', description: 'Complex Queries & Optimization.' },
-  { name: 'TypeScript', category: 'BACKEND', level: 'Advanced', description: 'Type-safe scalable code.' },
-  { name: 'AWS', category: 'SYS_ADMIN', level: 'Intermediate', description: 'Cloud Infrastructure.' },
-  { name: 'Three.js', category: 'GAME_DEV', level: 'Intermediate', description: 'WebGL & 3D Web Experiences.' },
+  // Languages
+  { name: 'C++', category: 'LANGUAGES', level: 'Intermediate', description: 'Systems Programming & Game Logic.' },
+  { name: 'Java', category: 'LANGUAGES', level: 'Senior', description: 'Enterprise Backend & Android.' },
+  { name: 'Python', category: 'LANGUAGES', level: 'Advanced', description: 'AI Integration & Scripting.' },
+  { name: 'JavaScript', category: 'LANGUAGES', level: 'Advanced', description: 'Web Interactivity & Logic.' },
+
+  // Game Engines
+  { name: 'Unity', category: 'GAME_ENGINES', level: 'Advanced', description: 'C# Scripting & Physics.' },
+  { name: 'Unreal', category: 'GAME_ENGINES', level: 'Intermediate', description: 'Blueprints & C++.' },
+
+  // Specializations
+  { name: 'UI/UX', category: 'SPECIALIZATIONS', level: 'Advanced', description: 'User-Centric Interfaces.' },
+  { name: 'Game Mech', category: 'SPECIALIZATIONS', level: 'Expert', description: 'Gameplay Loops & Systems.' },
+  { name: 'AI', category: 'SPECIALIZATIONS', level: 'Intermediate', description: 'Behavior Trees & Pathfinding.' },
+
+  // Infrastructure
+  { name: 'Linux', category: 'INFRASTRUCTURE', level: 'Expert', description: 'Ubuntu Server Administration.' },
+  { name: 'Minecraft', category: 'INFRASTRUCTURE', level: 'Expert', description: 'Fabric/Paper/Forge Architecture.' },
 ];
 
 export default function HexTechStack() {
@@ -42,23 +48,22 @@ export default function HexTechStack() {
   };
 
   // Organize for Honeycomb Layout (Desktop)
-  // Rows: 4, 3, 4, 1
+  // Rows: 4, 3, 4
   const rows = [
     TECH_STACK.slice(0, 4),
     TECH_STACK.slice(4, 7),
     TECH_STACK.slice(7, 11),
-    TECH_STACK.slice(11, 12)
   ];
 
   return (
     <div className="w-full max-w-7xl mx-auto py-24 px-4">
       <h2 className="text-4xl md:text-5xl font-mono text-center mb-12 text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500">
-        {'< Hex Core />'}
+        {'< Technical Toolkit />'}
       </h2>
 
       {/* Filter Buttons */}
       <div className="flex justify-center gap-4 mb-16 flex-wrap">
-        {['ALL', 'BACKEND', 'GAME_DEV', 'SYS_ADMIN'].map((cat) => (
+        {['ALL', 'LANGUAGES', 'GAME_ENGINES', 'SPECIALIZATIONS', 'INFRASTRUCTURE'].map((cat) => (
           <button
             key={cat}
             onClick={() => setActiveCategory(cat as TechCategory)}
@@ -69,7 +74,7 @@ export default function HexTechStack() {
                 : 'bg-zinc-900/50 border-white/10 text-zinc-500 hover:border-white/30 hover:text-zinc-300'}
             `}
           >
-            {cat.replace('_', ' ')}
+            {cat.replace('_', ' ').replace(/(\w)(\w*)/g, (g0,g1,g2) => g1 + g2.toLowerCase())}
           </button>
         ))}
       </div>
@@ -157,7 +162,7 @@ function HexItem({ tech, activeCategory }: { tech: TechItem, activeCategory: Tec
 
           {/* Detail Tooltip on Hover */}
           <div className="absolute inset-0 bg-black/90 flex flex-col items-center justify-center p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-20">
-             <p className="text-xs text-cyan-300 font-mono mb-1">{'>'} {tech.category}</p>
+             <p className="text-xs text-cyan-300 font-mono mb-1">{'>'} {tech.category.replace('_', ' ')}</p>
              <p className="text-sm text-zinc-300 text-center leading-tight">{tech.description}</p>
           </div>
        </div>

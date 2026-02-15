@@ -20,33 +20,25 @@ const projects: Project[] = [
     title: 'Planetary Claim',
     category: 'Game Dev',
     image: 'https://images.unsplash.com/photo-1614726365723-49cfae963956?w=800&q=80',
-    video: 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4', // Placeholder
-    description: 'A 4X space exploration strategy game built with Unity & C#. Features procedural planet generation and AI factions.',
+    video: '', // Placeholder
+    description: 'An ambitious MMO-RTS project built in Unity. It leverages an AI-first development philosophy to create a massive, persistent strategic environment based on the core foundations of Rusted Warfare.',
     className: 'col-span-1 md:col-span-2 md:row-span-2', // Hero Item
   },
   {
-    title: 'Alto Clef',
-    category: 'System Tool',
-    image: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=800&q=80',
+    title: 'Minecraft Ecosystems',
+    category: 'Infrastructure',
+    image: 'https://images.unsplash.com/photo-1623479322729-28b25c16b011?w=800&q=80', // Using a blocky/voxel-like image
     video: '',
-    description: 'Advanced audio processing CLI for audiophiles. Written in Rust.',
+    description: 'Head Developer & Admin for high-performance servers. Developed custom mods (KubeJS, Polymer) and designed unique gameplay loops including faction wars and custom death mechanics.',
     className: 'col-span-1 md:col-span-1 md:row-span-1',
   },
   {
-    title: 'Neon Nexus',
+    title: 'Problem Marketplace',
     category: 'Web App',
     image: 'https://images.unsplash.com/photo-1555680202-c86f0e12f086?w=800&q=80',
     video: '',
-    description: 'Cyberpunk social dashboard with real-time WebSocket updates.',
-    className: 'col-span-1 md:col-span-1 md:row-span-2', // Tall Item
-  },
-  {
-    title: 'Void Walker',
-    category: 'Modding',
-    image: 'https://images.unsplash.com/photo-1623479322729-28b25c16b011?w=800&q=80',
-    video: '',
-    description: 'Content expansion mod for Minecraft adding new dimensions.',
-    className: 'col-span-1 md:col-span-1 md:row-span-1',
+    description: 'A conceptual platform connecting users facing technical hurdles with developers. Built to turn real-world frustrations into innovative software solutions.',
+    className: 'col-span-1 md:col-span-1 md:row-span-1', // Regular Item
   },
 ];
 
@@ -62,7 +54,7 @@ export default function ProjectReveal() {
         transition={{ duration: 0.6 }}
         className="text-4xl md:text-5xl font-mono mb-20 text-center text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500"
       >
-        {'< Deployed Systems />'}
+        {'< Featured Projects />'}
       </motion.h2>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-7xl w-full auto-rows-[300px] grid-flow-dense">
