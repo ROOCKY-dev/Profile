@@ -15,7 +15,34 @@ interface TechOrbProps {
   focusLevel?: FocusLevel;
 }
 
+// Animation Constants
+const ANIMATION_CONFIG = {
+  BASE_PULSE_INTENSITY: 1,
+  HYPER_FOCUS_INTENSITY: 2,
+  CALM_FOCUS_INTENSITY: 0.5,
+  BASE_SCALE: 1,
+  VOICE_SENSITIVITY: 1.5,
+  SPEED_MODIFIERS: {
+    CODING: 2,
+    GAMING: 3,
+    DISCORD: 1.5,
+    BROWSING: 1,
+    OFFLINE: 0.1,
+    DEFAULT: 0.5
+  }
+};
+
+/**
+ * TechCore Component
+ *
+ * The central 3D object representing the "AI Core".
+ * Composed of:
+ * 1. Inner Glowing Sphere (Pulse reactive)
+ * 2. Wireframe Icosahedron Shell (Rotates)
+ * 3. Three Torus Rings (Gyroscopic rotation)
+ */
 function TechCore({ status, voiceLevel = 0, customColor, focusLevel = 'NORMAL' }: TechOrbProps) {
+  // References to mesh objects for direct manipulation in the animation loop
   const coreRef = useRef<THREE.Mesh>(null!);
   const outerRef = useRef<THREE.Group>(null!);
   const ring1Ref = useRef<THREE.Mesh>(null!);
@@ -23,9 +50,11 @@ function TechCore({ status, voiceLevel = 0, customColor, focusLevel = 'NORMAL' }
   const ring3Ref = useRef<THREE.Mesh>(null!);
 
   /**
-   * Memoize the color based on status and focus level to prevent unnecessary recalculations.
-   * Prioritizes custom color if set.
-   * If status is CODING and HYPER_FOCUSED, uses a special magenta color.
+   * Memoize the color calculation.
+   * Logic:
+   * 1. Custom color takes precedence.
+   * 2. Special case: Coding + Hyper Focused = Magenta.
+   * 3. Fallback to standard status color map.
    */
   const color = useMemo(() => {
     const c = new THREE.Color();
@@ -36,44 +65,53 @@ function TechCore({ status, voiceLevel = 0, customColor, focusLevel = 'NORMAL' }
        return c.set('#d946ef'); // Magenta for hyper focus
     }
 
-    // Use the centralized status color map
     return c.set(STATUS_HEX_COLORS[status] || '#ffffff');
   }, [status, customColor, focusLevel]);
 
+  /**
+   * Main Animation Loop (running at ~60fps)
+   * Handles rotation, pulsing, and dynamic speed adjustments based on state.
+   */
   useFrame((state, delta) => {
     const t = state.clock.getElapsedTime();
     
-    // Core Pulse (Voice Reactive + Focus)
-    let pulseIntensity = 1;
-    if (focusLevel === 'HYPER_FOCUSED') pulseIntensity = 2;
-    if (focusLevel === 'CALM') pulseIntensity = 0.5;
+    // --- 1. Pulse Calculation ---
+    // Determine intensity based on focus level
+    let pulseIntensity = ANIMATION_CONFIG.BASE_PULSE_INTENSITY;
+    if (focusLevel === 'HYPER_FOCUSED') pulseIntensity = ANIMATION_CONFIG.HYPER_FOCUS_INTENSITY;
+    if (focusLevel === 'CALM') pulseIntensity = ANIMATION_CONFIG.CALM_FOCUS_INTENSITY;
 
-    const baseScale = 1;
-    const pulse = 1 + (voiceLevel * 1.5) + (Math.sin(t * (pulseIntensity * 2)) * 0.05);
-    coreRef.current.scale.setScalar(baseScale * pulse);
+    // Calculate scale pulse: Base + Voice Reaction + Sine Wave Heartbeat
+    const pulse = ANIMATION_CONFIG.BASE_SCALE + (voiceLevel * ANIMATION_CONFIG.VOICE_SENSITIVITY) + (Math.sin(t * (pulseIntensity * 2)) * 0.05);
 
-    // Rotation speeds based on status & focus
-    let speed = 0.5;
-    if (status === 'CODING') speed = 2;
-    if (status === 'GAMING') speed = 3;
-    if (status === 'DISCORD') speed = 1.5;
-    if (status === 'BROWSING') speed = 1;
-    if (status === 'OFFLINE') speed = 0.1;
+    // Apply scale to inner core
+    if (coreRef.current) {
+        coreRef.current.scale.setScalar(pulse);
+    }
 
-    // Focus Modifier
+    // --- 2. Rotation Speed Calculation ---
+    // Base speed derived from current status
+    let speed = ANIMATION_CONFIG.SPEED_MODIFIERS.DEFAULT;
+    if (status === 'CODING') speed = ANIMATION_CONFIG.SPEED_MODIFIERS.CODING;
+    if (status === 'GAMING') speed = ANIMATION_CONFIG.SPEED_MODIFIERS.GAMING;
+    if (status === 'DISCORD') speed = ANIMATION_CONFIG.SPEED_MODIFIERS.DISCORD;
+    if (status === 'BROWSING') speed = ANIMATION_CONFIG.SPEED_MODIFIERS.BROWSING;
+    if (status === 'OFFLINE') speed = ANIMATION_CONFIG.SPEED_MODIFIERS.OFFLINE;
+
+    // Apply Focus Level Modifiers to speed
     if (focusLevel === 'HYPER_FOCUSED') speed *= 2.5;
     if (focusLevel === 'CALM') speed *= 0.5;
     
-    /**
-     * Animation Loop
-     * Rotates the wireframe shell and rings based on calculated speed.
-     * Uses delta time for frame-rate independent animation.
-     */
-    // Rotate Wireframe Shell
-    outerRef.current.rotation.y += delta * speed * 0.2;
-    outerRef.current.rotation.z += delta * speed * 0.1;
+    // --- 3. Apply Rotations ---
+    // Use delta time for frame-rate independence
 
-    // Rotate Rings (Gyroscope style - more dynamic)
+    // Rotate Wireframe Shell
+    if (outerRef.current) {
+        outerRef.current.rotation.y += delta * speed * 0.2;
+        outerRef.current.rotation.z += delta * speed * 0.1;
+    }
+
+    // Rotate Rings (Gyroscopic style - varying axes and speeds)
     // Ring 1 (Inner) - Primary X, secondary Y
     if (ring1Ref.current) {
         ring1Ref.current.rotation.x += delta * speed * 0.5;
@@ -134,6 +172,11 @@ function TechCore({ status, voiceLevel = 0, customColor, focusLevel = 'NORMAL' }
   );
 }
 
+/**
+ * CoreVisualizer
+ *
+ * Top-level component that sets up the React Three Fiber Canvas, Lights, and Post-processing effects.
+ */
 export default function CoreVisualizer({ status, voiceLevel, customColor, focusLevel }: TechOrbProps) {
   return (
     <div className="w-full h-full relative">

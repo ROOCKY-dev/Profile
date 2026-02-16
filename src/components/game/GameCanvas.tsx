@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import DecryptText from '@/components/ui/DecryptText';
 import { useToast } from '@/components/ui/ToastSystem';
+import { GAME_CONSTANTS } from '@/lib/constants';
 
 interface Particle {
   id: string;
@@ -14,14 +15,16 @@ interface Particle {
   label?: string; // e.g. "React", "Next.js"
 }
 
-const DATA_LABELS = [
-  'React', 'Next.js', 'Typescript', 'Node.js',
-  'Postgres', 'Docker', 'AWS', 'GraphQL',
-  'Tailwind', 'Three.js'
-];
-
 type GameState = 'IDLE' | 'PLAYING' | 'GAME_OVER' | 'GAME_WON';
 
+/**
+ * GameCanvas
+ *
+ * An interactive HTML5 Canvas game where the user (Recovery Agent) collects data packets
+ * while avoiding corrupted glitch blocks.
+ *
+ * Implements a requestAnimationFrame loop for high-performance rendering.
+ */
 export default function GameCanvas() {
   const { toast } = useToast();
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -29,13 +32,16 @@ export default function GameCanvas() {
   const [gameState, setGameState] = useState<GameState>('IDLE');
   const [collectedData, setCollectedData] = useState<string[]>([]);
 
-  // Refs for loop state
+  // Refs for loop state to avoid closure staleness
   const gameStateRef = useRef<GameState>('IDLE');
   const scoreRef = useRef(0);
   const particlesRef = useRef<Particle[]>([]);
   const playerPosRef = useRef({ x: 0, y: 0 });
   const requestRef = useRef<number>(0);
   const loopRef = useRef<() => void>(null!);
+
+  // Cache the canvas bounding rect to avoid layout thrashing in mousemove
+  const canvasRectRef = useRef<DOMRect | null>(null);
 
   // Sync state to refs
   useEffect(() => {
@@ -46,6 +52,11 @@ export default function GameCanvas() {
     scoreRef.current = score;
   }, [score]);
 
+  /**
+   * The main game loop.
+   * Handles clearing the canvas, drawing the player, spawning/updating particles,
+   * and collision detection.
+   */
   const loop = useCallback(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -57,13 +68,13 @@ export default function GameCanvas() {
     }
 
     // Win Condition
-    if (scoreRef.current >= 500) {
+    if (scoreRef.current >= GAME_CONSTANTS.WIN_SCORE) {
         setGameState('GAME_WON');
         gameStateRef.current = 'GAME_WON';
         return;
     }
 
-    // Clear Screen with Fade
+    // Clear Screen with Fade (Trails effect)
     ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -71,17 +82,17 @@ export default function GameCanvas() {
 
     // Draw Player
     ctx.beginPath();
-    ctx.arc(px, py, 12, 0, Math.PI * 2);
-    ctx.fillStyle = '#06b6d4';
-    ctx.shadowColor = '#06b6d4';
+    ctx.arc(px, py, GAME_CONSTANTS.PLAYER_RADIUS, 0, Math.PI * 2);
+    ctx.fillStyle = GAME_CONSTANTS.PLAYER_COLOR;
+    ctx.shadowColor = GAME_CONSTANTS.PLAYER_SHADOW_COLOR;
     ctx.shadowBlur = 20;
     ctx.fill();
     ctx.shadowBlur = 0;
 
     // Spawn Particles
-    if (Math.random() < 0.05) {
-        const isGlitch = Math.random() > 0.7;
-        const label = !isGlitch ? DATA_LABELS[Math.floor(Math.random() * DATA_LABELS.length)] : undefined;
+    if (Math.random() < GAME_CONSTANTS.SPAWN_RATE) {
+        const isGlitch = Math.random() > GAME_CONSTANTS.GLITCH_CHANCE;
+        const label = !isGlitch ? GAME_CONSTANTS.DATA_LABELS[Math.floor(Math.random() * GAME_CONSTANTS.DATA_LABELS.length)] : undefined;
 
         particlesRef.current.push({
             id: crypto.randomUUID(),
@@ -100,22 +111,22 @@ export default function GameCanvas() {
         p.y += p.speed;
 
         if (p.type === 'DATA') {
-            ctx.fillStyle = '#22c55e';
+            ctx.fillStyle = GAME_CONSTANTS.DATA_COLOR;
             ctx.font = '14px monospace';
             ctx.fillText(p.label || '{}', p.x, p.y);
         } else {
-            ctx.fillStyle = '#ef4444';
+            ctx.fillStyle = GAME_CONSTANTS.GLITCH_COLOR;
             ctx.fillRect(p.x, p.y, p.size, p.size);
         }
 
-        // Collision
+        // Collision Detection
         const dx = px - p.x;
         const dy = py - p.y;
         const distance = Math.sqrt(dx*dx + dy*dy);
 
-        if (distance < 30) {
+        if (distance < GAME_CONSTANTS.COLLISION_DISTANCE) {
             if (p.type === 'DATA') {
-                setScore(prev => prev + 100);
+                setScore(prev => prev + GAME_CONSTANTS.SCORE_INCREMENT);
                 if (p.label) setCollectedData(prev => [...prev.slice(-4), p.label!]);
                 particlesRef.current.splice(i, 1);
             } else {
@@ -130,11 +141,14 @@ export default function GameCanvas() {
     requestRef.current = requestAnimationFrame(() => loopRef.current());
   }, []);
 
-  // Update ref
+  // Update loop ref
   useEffect(() => {
     loopRef.current = loop;
   }, [loop]);
 
+  /**
+   * Initializes game state and starts the loop.
+   */
   const startGame = useCallback(() => {
     setScore(0);
     setCollectedData([]);
@@ -151,19 +165,30 @@ export default function GameCanvas() {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    // Resize Handling
+    // Resize Handling & Rect Caching
+    const updateRect = () => {
+        if (canvas) {
+            canvasRectRef.current = canvas.getBoundingClientRect();
+        }
+    };
+
     const resize = () => {
         if (canvas.parentElement) {
             canvas.width = canvas.parentElement.clientWidth;
             canvas.height = canvas.parentElement.clientHeight;
+            updateRect();
         }
     };
+
     window.addEventListener('resize', resize);
+    window.addEventListener('scroll', updateRect);
     resize();
 
-    // Mouse Handling
+    // Mouse Handling - optimized to use cached rect
     const handleMouseMove = (e: MouseEvent) => {
-        const rect = canvas.getBoundingClientRect();
+        const rect = canvasRectRef.current;
+        if (!rect) return;
+
         playerPosRef.current = {
             x: e.clientX - rect.left,
             y: e.clientY - rect.top
@@ -174,6 +199,7 @@ export default function GameCanvas() {
     return () => {
         cancelAnimationFrame(requestRef.current);
         window.removeEventListener('resize', resize);
+        window.removeEventListener('scroll', updateRect);
         canvas.removeEventListener('mousemove', handleMouseMove);
     };
   }, []);
@@ -190,7 +216,7 @@ export default function GameCanvas() {
         {gameState === 'PLAYING' && (
             <>
                 <div className="absolute top-4 left-4 font-mono text-cyan-400 text-lg font-bold drop-shadow-[0_0_5px_rgba(6,182,212,0.8)] pointer-events-none">
-                    SCORE: {score} / 500
+                    SCORE: {score} / {GAME_CONSTANTS.WIN_SCORE}
                 </div>
 
                 <div className="absolute top-4 right-4 flex flex-col items-end space-y-1 pointer-events-none">

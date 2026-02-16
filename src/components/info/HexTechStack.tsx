@@ -2,42 +2,22 @@
 
 import { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
+import { TECH_STACK } from '@/lib/data';
+import { TechCategory, TechItem } from '@/lib/types';
 
-type TechCategory = 'ALL' | 'LANGUAGES' | 'GAME_ENGINES' | 'SPECIALIZATIONS' | 'INFRASTRUCTURE';
-
-interface TechItem {
-  name: string;
-  category: TechCategory;
-  level: string;
-  description: string;
-}
-
-const TECH_STACK: TechItem[] = [
-  // Languages
-  { name: 'C++', category: 'LANGUAGES', level: 'Intermediate', description: 'Systems Programming & Game Logic.' },
-  { name: 'Java', category: 'LANGUAGES', level: 'Senior', description: 'Enterprise Backend & Android.' },
-  { name: 'Python', category: 'LANGUAGES', level: 'Advanced', description: 'AI Integration & Scripting.' },
-  { name: 'JavaScript', category: 'LANGUAGES', level: 'Advanced', description: 'Web Interactivity & Logic.' },
-
-  // Game Engines
-  { name: 'Unity', category: 'GAME_ENGINES', level: 'Advanced', description: 'C# Scripting & Physics.' },
-  { name: 'Unreal', category: 'GAME_ENGINES', level: 'Intermediate', description: 'Blueprints & C++.' },
-
-  // Specializations
-  { name: 'UI/UX', category: 'SPECIALIZATIONS', level: 'Advanced', description: 'User-Centric Interfaces.' },
-  { name: 'Game Mech', category: 'SPECIALIZATIONS', level: 'Expert', description: 'Gameplay Loops & Systems.' },
-  { name: 'AI', category: 'SPECIALIZATIONS', level: 'Intermediate', description: 'Behavior Trees & Pathfinding.' },
-
-  // Infrastructure
-  { name: 'Linux', category: 'INFRASTRUCTURE', level: 'Expert', description: 'Ubuntu Server Administration.' },
-  { name: 'Minecraft', category: 'INFRASTRUCTURE', level: 'Expert', description: 'Fabric/Paper/Forge Architecture.' },
-];
-
+/**
+ * HexTechStack
+ *
+ * Displays a technical toolkit in a hexagonal grid layout.
+ * Supports filtering by category and interactive spotlight effects.
+ */
 export default function HexTechStack() {
   const [activeCategory, setActiveCategory] = useState<TechCategory>('ALL');
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Spotlight Effect
+  /**
+   * Updates CSS variables for the mouse position to create a spotlight effect.
+   */
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!containerRef.current) return;
     const rect = containerRef.current.getBoundingClientRect();
@@ -85,7 +65,7 @@ export default function HexTechStack() {
         onMouseMove={handleMouseMove}
         className="hidden md:flex flex-col items-center relative perspective-1000"
         style={{
-          // @ts-expect-error custom property
+          // @ts-expect-error custom property used for spotlight effect
           '--mouse-x': '0px',
           '--mouse-y': '0px',
         }}
@@ -113,6 +93,7 @@ export default function HexTechStack() {
          ))}
       </div>
 
+      {/* Global styles for hexagon clip path */}
       <style jsx global>{`
         .clip-path-hexagon {
           clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);

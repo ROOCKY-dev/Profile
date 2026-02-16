@@ -5,6 +5,7 @@ import { BotStatus, FocusLevel } from '@/lib/types';
 import CoreVisualizer from '@/components/CoreVisualizer';
 import DecryptText from '@/components/ui/DecryptText';
 import ContactModal from '@/components/ui/ContactModal';
+import { LANDING_CONTENT } from '@/lib/data';
 
 interface LandingSectionProps {
   status: BotStatus;
@@ -45,18 +46,17 @@ export default function LandingSection({ status, focusLevel, errorCount, voiceLe
         {/* Name and Roles */}
         <div className="mb-12">
             <h1 className="text-3xl font-bold text-white tracking-tight mb-2 leading-tight">
-               <span className="text-cyan-400">🚀</span> Ahmed Husam Ghaithan
-               <span className="block text-sm text-zinc-500 font-normal mt-1">(ROOCKY dev)</span>
+               <span className="text-cyan-400">🚀</span> {LANDING_CONTENT.name}
+               <span className="block text-sm text-zinc-500 font-normal mt-1">{LANDING_CONTENT.alias}</span>
             </h1>
             <p className="text-xs text-zinc-400 font-mono leading-relaxed border-l-2 border-cyan-500/30 pl-3">
-               Computer Science Student <br/>
-               Game Developer <br/>
-               Systems Architect <br/>
-               Gamer
+               {LANDING_CONTENT.jobTitles.map((title, index) => (
+                   <span key={index}>{title} <br/></span>
+               ))}
             </p>
         </div>
 
-        <h2 className="text-zinc-500 font-mono text-sm uppercase tracking-widest mb-4">Current Status</h2>
+        <h2 className="text-zinc-500 font-mono text-sm uppercase tracking-widest mb-4">{LANDING_CONTENT.currentStatusTitle}</h2>
 
         {/* Main Status */}
         <div className="mb-8">
@@ -76,7 +76,7 @@ export default function LandingSection({ status, focusLevel, errorCount, voiceLe
 
         {/* Focus Level */}
         <div className="mb-6">
-            <h3 className="text-zinc-500 text-xs font-mono mb-2">Focus Level</h3>
+            <h3 className="text-zinc-500 text-xs font-mono mb-2">{LANDING_CONTENT.focusLevelTitle}</h3>
             <div className="flex items-center gap-2">
                 <div className={`w-3 h-3 rounded-full ${
                     focusLevel === 'HYPER_FOCUSED' ? 'bg-purple-500 animate-pulse shadow-[0_0_10px_#a855f7]' :
@@ -89,7 +89,7 @@ export default function LandingSection({ status, focusLevel, errorCount, voiceLe
         {/* Error Count (Only relevant if CODING) */}
         {status === 'CODING' && (
             <div className="mb-6">
-                <h3 className="text-zinc-500 text-xs font-mono mb-2">Active Errors</h3>
+                <h3 className="text-zinc-500 text-xs font-mono mb-2">{LANDING_CONTENT.activeErrorsTitle}</h3>
                 <div className="text-2xl font-mono text-red-400">
                     {errorCount} <span className="text-xs text-red-500/50">ERR</span>
                 </div>

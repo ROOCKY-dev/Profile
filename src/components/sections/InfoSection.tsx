@@ -5,6 +5,7 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 import Timeline from '@/components/info/Timeline';
 import HexTechStack from '@/components/info/HexTechStack';
 import ProjectReveal from '@/components/info/ProjectReveal';
+import { ABOUT_ME } from '@/lib/data';
 
 /**
  * Info Section
@@ -27,7 +28,7 @@ export default function InfoSection() {
     offset: ["start start", "end end"]
   });
 
-  // Dynamic Background Colors
+  // Dynamic Background Colors based on scroll progress
   const backgroundColor = useTransform(
     scrollYProgress,
     [0, 0.2, 0.5, 0.8, 1],
@@ -40,6 +41,7 @@ export default function InfoSection() {
     ]
   );
 
+  // Dynamic Glow Colors based on scroll progress
   const glowColor = useTransform(
     scrollYProgress,
     [0, 0.2, 0.5, 0.8, 1],
@@ -75,26 +77,22 @@ export default function InfoSection() {
             <div className="bg-zinc-900/50 backdrop-blur-md border border-white/10 p-8 rounded-2xl shadow-2xl relative overflow-hidden group">
                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-cyan-500 to-purple-500" />
 
-                <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
-                   <span className="text-cyan-400">👨‍💻</span> About Me
-                </h3>
-                <p className="text-zinc-300 leading-relaxed mb-8 text-left text-lg">
-                   I am a driven Computer Science student at Universiti Tenaga Nasional (UNITEN) with a passion for building complex, scalable systems and immersive digital experiences. Originally from Yemen and currently based in Malaysia, I operate under the alias <span className="text-cyan-400 font-mono">Roocky dev</span>, where I bridge the gap between technical logic and creative game design.
-                   <br/><br/>
-                   My work is defined by an AI-first approach, whether I'm optimizing server environments or conceptualizing next-gen mechanics. I thrive at the intersection of low-level programming and high-level user experience.
-                </p>
-
-                <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
-                   <span className="text-purple-400">🎯</span> Current Focus
-                </h3>
-                <p className="text-zinc-300 leading-relaxed text-left text-lg">
-                   I am currently deep-diving into Discrete Structures and Computer Organization while expanding my portfolio in game development. My goal is to transition into the European or Chinese tech landscapes for the 2026-2027 academic year, bringing a global perspective to software engineering.
-                </p>
+                {ABOUT_ME.sections.map((section, index) => (
+                    <div key={index}>
+                        <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+                           <span className={section.iconColor}>{section.icon}</span> {section.title}
+                        </h3>
+                        <p
+                           className={`text-zinc-300 leading-relaxed text-left text-lg ${index < ABOUT_ME.sections.length - 1 ? 'mb-8' : ''}`}
+                           dangerouslySetInnerHTML={{ __html: section.content }}
+                        />
+                    </div>
+                ))}
 
                  {/* Decorative Quote */}
                  <div className="mt-12 pt-8 border-t border-white/5">
                     <p className="font-mono text-sm text-zinc-500 italic">
-                      "Turning complex problems into elegant code and boring games into technical masterpieces."
+                      {ABOUT_ME.quote}
                     </p>
                  </div>
             </div>
