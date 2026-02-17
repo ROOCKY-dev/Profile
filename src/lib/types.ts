@@ -42,3 +42,45 @@ export interface TimelineEventData {
   color: string;
   isEncrypted?: boolean;
 }
+
+export type TechCategory = 'ALL' | 'LANGUAGES' | 'GAME_ENGINES' | 'SPECIALIZATIONS' | 'INFRASTRUCTURE';
+
+export interface TechItem {
+  name: string;
+  category: TechCategory;
+  level: string;
+  description: string;
+}
+
+export interface Project {
+  title: string;
+  category: string;
+  image: string;
+  video: string;
+  description: string;
+  className: string;
+}
+
+export interface LandingContent {
+  name: string;
+  alias: string;
+  roles: string[];
+  statusTitle: string;
+  focusTitle: string;
+  modulesTitle: string;
+  navItems: {
+    label: string;
+    action: string; // section ID or 'modal'
+    colorClass: string;
+  }[];
+}
+
+export interface AboutMeContent {
+  title: string;
+  icon: string;
+  description: string;
+  currentFocusTitle: string;
+  currentFocusIcon: string;
+  currentFocusDescription: string;
+  quote: string;
+}
