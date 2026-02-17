@@ -15,6 +15,13 @@ interface TechOrbProps {
   focusLevel?: FocusLevel;
 }
 
+/**
+ * TechCore Component
+ *
+ * The 3D geometry of the visualizer.
+ * Consists of a glowing core sphere, a wireframe icosahedron shell, and three rotating toruses (rings).
+ * Animations are driven by the `useFrame` hook based on status and focus level.
+ */
 function TechCore({ status, voiceLevel = 0, customColor, focusLevel = 'NORMAL' }: TechOrbProps) {
   const coreRef = useRef<THREE.Mesh>(null!);
   const outerRef = useRef<THREE.Group>(null!);
@@ -49,8 +56,11 @@ function TechCore({ status, voiceLevel = 0, customColor, focusLevel = 'NORMAL' }
     if (focusLevel === 'CALM') pulseIntensity = 0.5;
 
     const baseScale = 1;
+    // Calculate pulse: Base + Voice Impact + Sine Wave Animation
     const pulse = 1 + (voiceLevel * 1.5) + (Math.sin(t * (pulseIntensity * 2)) * 0.05);
-    coreRef.current.scale.setScalar(baseScale * pulse);
+    if (coreRef.current) {
+        coreRef.current.scale.setScalar(baseScale * pulse);
+    }
 
     // Rotation speeds based on status & focus
     let speed = 0.5;
@@ -70,8 +80,10 @@ function TechCore({ status, voiceLevel = 0, customColor, focusLevel = 'NORMAL' }
      * Uses delta time for frame-rate independent animation.
      */
     // Rotate Wireframe Shell
-    outerRef.current.rotation.y += delta * speed * 0.2;
-    outerRef.current.rotation.z += delta * speed * 0.1;
+    if (outerRef.current) {
+        outerRef.current.rotation.y += delta * speed * 0.2;
+        outerRef.current.rotation.z += delta * speed * 0.1;
+    }
 
     // Rotate Rings (Gyroscope style - more dynamic)
     // Ring 1 (Inner) - Primary X, secondary Y
@@ -134,6 +146,12 @@ function TechCore({ status, voiceLevel = 0, customColor, focusLevel = 'NORMAL' }
   );
 }
 
+/**
+ * CoreVisualizer Component
+ *
+ * Sets up the React Three Fiber canvas and environment.
+ * Includes Post-Processing (Bloom) for the neon aesthetic.
+ */
 export default function CoreVisualizer({ status, voiceLevel, customColor, focusLevel }: TechOrbProps) {
   return (
     <div className="w-full h-full relative">

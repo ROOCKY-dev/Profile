@@ -5,43 +5,14 @@ import { motion, useInView } from 'framer-motion';
 import TiltCard from '@/components/ui/TiltCard';
 import { playHoverSound } from '@/lib/sound';
 import Image from 'next/image';
+import { PROJECTS } from '@/lib/data';
+import { Project } from '@/lib/types';
 
-interface Project {
-  title: string;
-  category: string;
-  image: string;
-  video: string;
-  description: string;
-  className: string;
-}
-
-const projects: Project[] = [
-  {
-    title: 'Planetary Claim',
-    category: 'Game Dev',
-    image: 'https://images.unsplash.com/photo-1614726365723-49cfae963956?w=800&q=80',
-    video: '', // Placeholder
-    description: 'An ambitious MMO-RTS project built in Unity. It leverages an AI-first development philosophy to create a massive, persistent strategic environment based on the core foundations of Rusted Warfare.',
-    className: 'col-span-1 md:col-span-2 md:row-span-2', // Hero Item
-  },
-  {
-    title: 'Minecraft Ecosystems',
-    category: 'Infrastructure',
-    image: 'https://images.unsplash.com/photo-1623479322729-28b25c16b011?w=800&q=80', // Using a blocky/voxel-like image
-    video: '',
-    description: 'Head Developer & Admin for high-performance servers. Developed custom mods (KubeJS, Polymer) and designed unique gameplay loops including faction wars and custom death mechanics.',
-    className: 'col-span-1 md:col-span-1 md:row-span-1',
-  },
-  {
-    title: 'Problem Marketplace',
-    category: 'Web App',
-    image: 'https://images.unsplash.com/photo-1555680202-c86f0e12f086?w=800&q=80',
-    video: '',
-    description: 'A conceptual platform connecting users facing technical hurdles with developers. Built to turn real-world frustrations into innovative software solutions.',
-    className: 'col-span-1 md:col-span-1 md:row-span-1', // Regular Item
-  },
-];
-
+/**
+ * ProjectReveal Component
+ *
+ * Displays a grid of projects with a tilt effect and video reveal on hover.
+ */
 export default function ProjectReveal() {
   const containerRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(containerRef, { once: true, margin: "-100px" });
@@ -58,7 +29,7 @@ export default function ProjectReveal() {
       </motion.h2>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-7xl w-full auto-rows-[300px] grid-flow-dense">
-        {projects.map((project, index) => (
+        {PROJECTS.map((project, index) => (
           <ProjectCard key={index} project={project} index={index} isInView={isInView} />
         ))}
       </div>

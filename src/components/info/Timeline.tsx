@@ -6,6 +6,12 @@ import DecryptText from '@/components/ui/DecryptText';
 import { timelineEvents } from '@/lib/data';
 import { TimelineEventData } from '@/lib/types';
 
+/**
+ * Timeline Component
+ *
+ * Visualizes the career/education path with a vertical scroll-driven line.
+ * Uses Framer Motion for scroll-linked animations (line drawing, data packet movement).
+ */
 export default function Timeline() {
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({

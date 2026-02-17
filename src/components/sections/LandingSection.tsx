@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { BotStatus, FocusLevel } from '@/lib/types';
+import { LANDING_CONTENT } from '@/lib/data';
 import CoreVisualizer from '@/components/CoreVisualizer';
 import DecryptText from '@/components/ui/DecryptText';
 import ContactModal from '@/components/ui/ContactModal';
@@ -25,11 +26,30 @@ interface LandingSectionProps {
 export default function LandingSection({ status, focusLevel, errorCount, voiceLevel, customColor }: LandingSectionProps) {
   const [isContactOpen, setIsContactOpen] = useState(false);
 
+  /**
+   * Smoothly scrolls to a specific section by ID.
+   * @param id The ID of the HTML element to scroll to.
+   */
   const scrollToSection = (id: string) => {
      const element = document.getElementById(id);
      if (element) {
         element.scrollIntoView({ behavior: 'smooth' });
      }
+  };
+
+  /**
+   * Handles navigation actions from the menu.
+   * If action is 'modal', opens the contact modal.
+   * Otherwise, attempts to scroll to the section ID.
+   */
+  const handleNavClick = (action: string) => {
+      if (action === 'modal') {
+          setIsContactOpen(true);
+      } else if (action.startsWith('#') || action.startsWith('http')) {
+           window.open(action, '_blank');
+      } else {
+          scrollToSection(action);
+      }
   };
 
   return (
@@ -45,18 +65,17 @@ export default function LandingSection({ status, focusLevel, errorCount, voiceLe
         {/* Name and Roles */}
         <div className="mb-12">
             <h1 className="text-3xl font-bold text-white tracking-tight mb-2 leading-tight">
-               <span className="text-cyan-400">🚀</span> Ahmed Husam Ghaithan
-               <span className="block text-sm text-zinc-500 font-normal mt-1">(ROOCKY dev)</span>
+               <span className="text-cyan-400">🚀</span> {LANDING_CONTENT.name}
+               <span className="block text-sm text-zinc-500 font-normal mt-1">{LANDING_CONTENT.alias}</span>
             </h1>
-            <p className="text-xs text-zinc-400 font-mono leading-relaxed border-l-2 border-cyan-500/30 pl-3">
-               Computer Science Student <br/>
-               Game Developer <br/>
-               Systems Architect <br/>
-               Gamer
-            </p>
+            <div className="text-xs text-zinc-400 font-mono leading-relaxed border-l-2 border-cyan-500/30 pl-3">
+               {LANDING_CONTENT.roles.map((role, index) => (
+                   <span key={index} className="block">{role}</span>
+               ))}
+            </div>
         </div>
 
-        <h2 className="text-zinc-500 font-mono text-sm uppercase tracking-widest mb-4">Current Status</h2>
+        <h2 className="text-zinc-500 font-mono text-sm uppercase tracking-widest mb-4">{LANDING_CONTENT.statusTitle}</h2>
 
         {/* Main Status */}
         <div className="mb-8">
@@ -76,7 +95,7 @@ export default function LandingSection({ status, focusLevel, errorCount, voiceLe
 
         {/* Focus Level */}
         <div className="mb-6">
-            <h3 className="text-zinc-500 text-xs font-mono mb-2">Focus Level</h3>
+            <h3 className="text-zinc-500 text-xs font-mono mb-2">{LANDING_CONTENT.focusTitle}</h3>
             <div className="flex items-center gap-2">
                 <div className={`w-3 h-3 rounded-full ${
                     focusLevel === 'HYPER_FOCUSED' ? 'bg-purple-500 animate-pulse shadow-[0_0_10px_#a855f7]' :
@@ -118,59 +137,36 @@ export default function LandingSection({ status, focusLevel, errorCount, voiceLe
 
       {/* Right Column: Nav */}
       <div className="w-1/4 h-full border-l border-white/5 p-8 flex flex-col justify-center items-end bg-black/30 backdrop-blur-sm z-10 pointer-events-auto">
-         <h2 className="text-zinc-500 font-mono text-sm uppercase tracking-widest mb-6">Modules</h2>
+         <h2 className="text-zinc-500 font-mono text-sm uppercase tracking-widest mb-6">{LANDING_CONTENT.modulesTitle}</h2>
          <div className="flex flex-col gap-6">
-             <button
-                onClick={() => scrollToSection('info-section')}
-                className="group flex items-center gap-4 text-right transition-all hover:translate-x-[-10px]"
-             >
-                 <span className="text-2xl font-light text-zinc-300 group-hover:text-cyan-400 transition-colors">
-                   Projects
-                 </span>
-                 <span className="w-2 h-2 rounded-full bg-zinc-800 group-hover:bg-cyan-400 transition-colors" />
-             </button>
-
-             <button
-                onClick={() => scrollToSection('info-section')}
-                className="group flex items-center gap-4 text-right transition-all hover:translate-x-[-10px]"
-             >
-                 <span className="text-2xl font-light text-zinc-300 group-hover:text-cyan-400 transition-colors">
-                   About
-                 </span>
-                 <span className="w-2 h-2 rounded-full bg-zinc-800 group-hover:bg-cyan-400 transition-colors" />
-             </button>
-
-             <button
-                onClick={() => scrollToSection('game-section')}
-                className="group flex items-center gap-4 text-right transition-all hover:translate-x-[-10px]"
-             >
-                 <span className="text-2xl font-light text-zinc-300 group-hover:text-cyan-400 transition-colors">
-                   Play Game
-                 </span>
-                 <span className="w-2 h-2 rounded-full bg-zinc-800 group-hover:bg-cyan-400 transition-colors" />
-             </button>
-
-             <div className="w-full h-[1px] bg-white/10 my-2" />
-
-             <button
-                onClick={() => setIsContactOpen(true)}
-                className="group flex items-center gap-4 text-right transition-all hover:translate-x-[-10px]"
-             >
-                 <span className="text-2xl font-light text-zinc-300 group-hover:text-green-400 transition-colors">
-                   Contact Me
-                 </span>
-                 <span className="w-2 h-2 rounded-full bg-zinc-800 group-hover:bg-green-400 transition-colors" />
-             </button>
-
-             <a
-                href="#" // Placeholder for CV
-                className="group flex items-center gap-4 text-right transition-all hover:translate-x-[-10px]"
-             >
-                 <span className="text-xl font-light text-zinc-500 group-hover:text-white transition-colors">
-                   My CV
-                 </span>
-                 <span className="w-2 h-2 rounded-full bg-zinc-800 group-hover:bg-white transition-colors" />
-             </a>
+             {LANDING_CONTENT.navItems.map((item, index) => (
+                 <div key={index} className="contents">
+                    {item.action === 'modal' && (
+                         <div className="w-full h-[1px] bg-white/10 my-2" />
+                    )}
+                    {item.action.startsWith('#') || item.action.startsWith('http') ? (
+                         <a
+                            href={item.action}
+                            className="group flex items-center gap-4 text-right transition-all hover:translate-x-[-10px]"
+                         >
+                             <span className={`text-xl font-light text-zinc-500 transition-colors ${item.colorClass}`}>
+                               {item.label}
+                             </span>
+                             <span className={`w-2 h-2 rounded-full bg-zinc-800 transition-colors ${item.colorClass.replace('text', 'bg')}`} />
+                         </a>
+                    ) : (
+                         <button
+                            onClick={() => handleNavClick(item.action)}
+                            className="group flex items-center gap-4 text-right transition-all hover:translate-x-[-10px]"
+                         >
+                             <span className={`text-2xl font-light text-zinc-300 transition-colors ${item.colorClass}`}>
+                               {item.label}
+                             </span>
+                             <span className={`w-2 h-2 rounded-full bg-zinc-800 transition-colors ${item.colorClass.replace('text', 'bg')}`} />
+                         </button>
+                    )}
+                 </div>
+             ))}
          </div>
       </div>
     </section>
