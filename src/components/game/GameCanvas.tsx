@@ -20,29 +20,36 @@ type GameState = 'IDLE' | 'PLAYING' | 'GAME_OVER' | 'GAME_WON';
 /**
  * GameCanvas Component
  *
- * An interactive canvas game where the user collects data packets and avoids glitches.
- * Uses a game loop via requestAnimationFrame.
+ * An interactive HTML5 Canvas game acting as a "System Restore" simulation.
+ * The user controls a "Recovery Agent" (cursor) to collect data packets while avoiding glitches.
+ *
+ * Architecture:
+ * - Uses a `requestAnimationFrame` loop for high-performance rendering.
+ * - Manages game state via React state (`useState`) for UI and React Refs (`useRef`) for the game loop to avoid stale closures.
+ * - Implements optimized collision detection and responsive canvas resizing.
  */
 export default function GameCanvas() {
   const { toast } = useToast();
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
+  // React State for UI updates (Score, Screens, HUD)
   const [score, setScore] = useState(0);
   const [gameState, setGameState] = useState<GameState>('IDLE');
   const [collectedData, setCollectedData] = useState<string[]>([]);
 
-  // Refs for loop state (avoid stale closures)
+  // Refs for the Game Loop (Mutable state accessible inside requestAnimationFrame)
+  // We use refs instead of state inside the loop to prevent re-creating the loop function on every frame.
   const gameStateRef = useRef<GameState>('IDLE');
   const scoreRef = useRef(0);
   const particlesRef = useRef<Particle[]>([]);
   const playerPosRef = useRef({ x: 0, y: 0 });
-  const requestRef = useRef<number>(0);
-  const loopRef = useRef<() => void>(null!);
+  const requestRef = useRef<number>(0); // Holds the ID of the current animation frame request
+  const loopRef = useRef<() => void>(null!); // Holds the current loop function reference
 
-  // Performance: Cache the bounding rectangle to avoid layout thrashing during mousemove
+  // Performance: Cache the bounding rectangle to avoid layout thrashing during mousemove events
   const canvasRectRef = useRef<DOMRect | null>(null);
 
-  // Sync state to refs
+  // Sync React State to Refs
   useEffect(() => {
     gameStateRef.current = gameState;
   }, [gameState]);
@@ -53,7 +60,13 @@ export default function GameCanvas() {
 
   /**
    * Main Game Loop
-   * Handles drawing, updates, particle spawning, and collision detection.
+   *
+   * Responsibilities:
+   * 1. Clear the canvas (with trail effect).
+   * 2. Draw the player.
+   * 3. Spawn new particles based on probability.
+   * 4. Update particle positions and handle collisions.
+   * 5. Request the next frame.
    */
   const loop = useCallback(() => {
     const canvas = canvasRef.current;
@@ -61,24 +74,25 @@ export default function GameCanvas() {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
+    // Stop rendering if not playing
     if (gameStateRef.current === 'IDLE' || gameStateRef.current === 'GAME_OVER' || gameStateRef.current === 'GAME_WON') {
          return;
     }
 
-    // Win Condition
+    // Win Condition Check
     if (scoreRef.current >= GAME_CONSTANTS.SCORE_TO_WIN) {
         setGameState('GAME_WON');
         gameStateRef.current = 'GAME_WON';
         return;
     }
 
-    // Clear Screen with Fade Effect (Trails)
+    // 1. Clear Screen with Fade Effect (Creates motion trails)
     ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     const { x: px, y: py } = playerPosRef.current;
 
-    // Draw Player
+    // 2. Draw Player (Cursor)
     ctx.beginPath();
     ctx.arc(px, py, 12, 0, Math.PI * 2);
     ctx.fillStyle = GAME_CONSTANTS.PLAYER_COLOR;
@@ -87,7 +101,7 @@ export default function GameCanvas() {
     ctx.fill();
     ctx.shadowBlur = 0;
 
-    // Spawn Particles
+    // 3. Spawn Particles logic
     if (Math.random() < GAME_CONSTANTS.SPAWN_CHANCE) {
         // Determine type based on probability
         const isGlitch = Math.random() < GAME_CONSTANTS.GLITCH_PROBABILITY;
@@ -98,10 +112,10 @@ export default function GameCanvas() {
         particlesRef.current.push({
             id: crypto.randomUUID(),
             x: Math.random() * canvas.width,
-            y: -30,
+            y: -30, // Start just above the screen
             type: isGlitch ? 'GLITCH' : 'DATA',
             size: isGlitch ? GAME_CONSTANTS.PARTICLE_SIZE_GLITCH : GAME_CONSTANTS.PARTICLE_SIZE_DATA,
-            // Speed increases with score
+            // Difficulty scaling: Speed increases with score
             speed: isGlitch
                 ? 3 + (scoreRef.current / 500)
                 : 2 + (scoreRef.current / 1000),
@@ -109,7 +123,7 @@ export default function GameCanvas() {
         });
     }
 
-    // Update & Draw Particles
+    // 4. Update & Draw Particles
     for (let i = particlesRef.current.length - 1; i >= 0; i--) {
         const p = particlesRef.current[i];
         p.y += p.speed;
@@ -123,21 +137,24 @@ export default function GameCanvas() {
             ctx.fillRect(p.x, p.y, p.size, p.size);
         }
 
-        // Collision Detection
+        // Collision Detection (Circle vs Point/Box approximation)
         const dx = px - p.x;
         const dy = py - p.y;
         const distance = Math.sqrt(dx*dx + dy*dy);
 
         if (distance < GAME_CONSTANTS.COLLISION_DISTANCE) {
             if (p.type === 'DATA') {
+                // Collected Good Data
                 setScore(prev => prev + GAME_CONSTANTS.SCORE_PER_DATA);
                 if (p.label) setCollectedData(prev => [...prev.slice(-4), p.label!]);
                 particlesRef.current.splice(i, 1);
             } else {
+                // Hit Glitch -> Game Over
                 setGameState('GAME_OVER');
                 gameStateRef.current = 'GAME_OVER';
             }
         } else if (p.y > canvas.height) {
+            // Remove particles that go off-screen
             particlesRef.current.splice(i, 1);
         }
     }
@@ -145,14 +162,14 @@ export default function GameCanvas() {
     requestRef.current = requestAnimationFrame(() => loopRef.current());
   }, []);
 
-  // Update loop ref
+  // Update loop ref whenever loop function changes (which is only on mount effectively due to empty deps)
   useEffect(() => {
     loopRef.current = loop;
   }, [loop]);
 
   /**
    * Starts or Restarts the game.
-   * Resets all state variables and starts the animation loop.
+   * Resets all state variables, clears particles, and starts the animation loop.
    */
   const startGame = useCallback(() => {
     setScore(0);
@@ -166,7 +183,7 @@ export default function GameCanvas() {
     requestRef.current = requestAnimationFrame(loop);
   }, [loop]);
 
-  // Setup Event Listeners
+  // Setup Event Listeners (Resize, Scroll, MouseMove)
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -181,7 +198,7 @@ export default function GameCanvas() {
         }
     };
 
-    // Also update rect on scroll to ensure accuracy relative to viewport
+    // Also update rect on scroll to ensure mouse coordinates remain accurate relative to viewport
     const updateRect = () => {
         if (canvas) {
             canvasRectRef.current = canvas.getBoundingClientRect();
@@ -189,10 +206,10 @@ export default function GameCanvas() {
     };
 
     window.addEventListener('resize', resize);
-    window.addEventListener('scroll', updateRect, { passive: true }); // Passive for performance
+    window.addEventListener('scroll', updateRect, { passive: true }); // Passive listener for better scroll performance
     resize();
 
-    // Mouse Handling using cached rect
+    // Mouse Handling using cached rect to prevent layout thrashing
     const handleMouseMove = (e: MouseEvent) => {
         const rect = canvasRectRef.current;
         if (!rect) return;
@@ -220,7 +237,7 @@ export default function GameCanvas() {
             className="w-full h-full bg-[url('https://upload.wikimedia.org/wikipedia/commons/7/76/Noise.png')] bg-opacity-5"
         />
 
-        {/* HUD */}
+        {/* HUD Overlay */}
         {gameState === 'PLAYING' && (
             <>
                 <div className="absolute top-4 left-4 font-mono text-cyan-400 text-lg font-bold drop-shadow-[0_0_5px_rgba(6,182,212,0.8)] pointer-events-none">
@@ -237,7 +254,7 @@ export default function GameCanvas() {
             </>
         )}
 
-        {/* Start Screen */}
+        {/* Start Screen Overlay */}
         {gameState === 'IDLE' && (
             <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/80 backdrop-blur-sm z-20 cursor-auto">
                 <h2 className="text-4xl font-bold text-white mb-2 tracking-tighter">SYSTEM RESTORE</h2>
@@ -255,7 +272,7 @@ export default function GameCanvas() {
             </div>
         )}
 
-        {/* Game Over Screen */}
+        {/* Game Over Screen Overlay */}
         {gameState === 'GAME_OVER' && (
             <div className="absolute inset-0 flex flex-col items-center justify-center bg-red-950/90 backdrop-blur-sm z-30 cursor-auto">
                 <h2 className="text-5xl font-bold text-white mb-2 tracking-tighter drop-shadow-[0_0_10px_rgba(239,68,68,0.8)]">CRITICAL ERROR</h2>
@@ -274,7 +291,7 @@ export default function GameCanvas() {
             </div>
         )}
 
-        {/* Win Screen */}
+        {/* Win Screen Overlay */}
         {gameState === 'GAME_WON' && (
             <div className="absolute inset-0 flex flex-col items-center justify-center bg-green-950/95 backdrop-blur-md z-30 cursor-auto">
                 <h2 className="text-5xl font-bold text-white mb-4 tracking-tighter drop-shadow-[0_0_10px_rgba(34,197,94,0.8)]">ACCESS GRANTED</h2>

@@ -10,7 +10,7 @@ import { EffectComposer, Bloom } from '@react-three/postprocessing';
 
 interface TechOrbProps {
   status: BotStatus;
-  voiceLevel?: number;
+  voiceLevel?: number; // 0 to 1, representing audio amplitude
   customColor?: string;
   focusLevel?: FocusLevel;
 }
@@ -18,11 +18,17 @@ interface TechOrbProps {
 /**
  * TechCore Component
  *
- * The 3D geometry of the visualizer.
- * Consists of a glowing core sphere, a wireframe icosahedron shell, and three rotating toruses (rings).
- * Animations are driven by the `useFrame` hook based on status and focus level.
+ * Represents the 3D geometry of the AI Core.
+ * Structure:
+ * 1. Inner Sphere: pulsates based on voice activity and focus level.
+ * 2. Outer Icosahedron: acts as a protective wireframe shell.
+ * 3. Gyroscopic Rings: three torus meshes rotating on different axes.
+ *
+ * Animations are driven by the `useFrame` hook, ensuring smooth 60fps updates
+ * independent of React renders.
  */
 function TechCore({ status, voiceLevel = 0, customColor, focusLevel = 'NORMAL' }: TechOrbProps) {
+  // References to mesh objects for direct manipulation in the animation loop
   const coreRef = useRef<THREE.Mesh>(null!);
   const outerRef = useRef<THREE.Group>(null!);
   const ring1Ref = useRef<THREE.Mesh>(null!);
@@ -30,9 +36,11 @@ function TechCore({ status, voiceLevel = 0, customColor, focusLevel = 'NORMAL' }
   const ring3Ref = useRef<THREE.Mesh>(null!);
 
   /**
-   * Memoize the color based on status and focus level to prevent unnecessary recalculations.
-   * Prioritizes custom color if set.
-   * If status is CODING and HYPER_FOCUSED, uses a special magenta color.
+   * Memoize the color calculation to optimize performance.
+   * Logic:
+   * - If status is CUSTOM and a color is provided, use it.
+   * - If status is CODING and focus is HYPER_FOCUSED, override with Magenta (#d946ef).
+   * - Otherwise, look up the color from STATUS_HEX_COLORS based on the status.
    */
   const color = useMemo(() => {
     const c = new THREE.Color();
@@ -47,22 +55,31 @@ function TechCore({ status, voiceLevel = 0, customColor, focusLevel = 'NORMAL' }
     return c.set(STATUS_HEX_COLORS[status] || '#ffffff');
   }, [status, customColor, focusLevel]);
 
+  /**
+   * Animation Loop (Run per frame)
+   *
+   * Uses `delta` (time since last frame) to ensure consistent speed across different refresh rates.
+   * `state.clock.getElapsedTime()` is used for sine wave calculations.
+   */
   useFrame((state, delta) => {
     const t = state.clock.getElapsedTime();
     
-    // Core Pulse (Voice Reactive + Focus)
+    // --- 1. Core Pulse Animation ---
+    // Intensity varies by focus level
     let pulseIntensity = 1;
-    if (focusLevel === 'HYPER_FOCUSED') pulseIntensity = 2;
-    if (focusLevel === 'CALM') pulseIntensity = 0.5;
+    if (focusLevel === 'HYPER_FOCUSED') pulseIntensity = 2; // Faster, stronger pulse
+    if (focusLevel === 'CALM') pulseIntensity = 0.5; // Slow, breathing pulse
 
     const baseScale = 1;
-    // Calculate pulse: Base + Voice Impact + Sine Wave Animation
+    // Calculate scale: Base + Voice Reactivity + Idle Breathing (Sine Wave)
     const pulse = 1 + (voiceLevel * 1.5) + (Math.sin(t * (pulseIntensity * 2)) * 0.05);
+
     if (coreRef.current) {
         coreRef.current.scale.setScalar(baseScale * pulse);
     }
 
-    // Rotation speeds based on status & focus
+    // --- 2. Rotation Speed Calculation ---
+    // Speed varies significantly by status to convey "energy level"
     let speed = 0.5;
     if (status === 'CODING') speed = 2;
     if (status === 'GAMING') speed = 3;
@@ -70,35 +87,33 @@ function TechCore({ status, voiceLevel = 0, customColor, focusLevel = 'NORMAL' }
     if (status === 'BROWSING') speed = 1;
     if (status === 'OFFLINE') speed = 0.1;
 
-    // Focus Modifier
+    // Apply Focus Level modifier to speed
     if (focusLevel === 'HYPER_FOCUSED') speed *= 2.5;
     if (focusLevel === 'CALM') speed *= 0.5;
     
-    /**
-     * Animation Loop
-     * Rotates the wireframe shell and rings based on calculated speed.
-     * Uses delta time for frame-rate independent animation.
-     */
-    // Rotate Wireframe Shell
+    // --- 3. Apply Rotations ---
+
+    // Rotate Wireframe Shell (Slow, steady background rotation)
     if (outerRef.current) {
         outerRef.current.rotation.y += delta * speed * 0.2;
         outerRef.current.rotation.z += delta * speed * 0.1;
     }
 
-    // Rotate Rings (Gyroscope style - more dynamic)
-    // Ring 1 (Inner) - Primary X, secondary Y
+    // Rotate Rings (Gyroscope style - interlocking motion)
+
+    // Ring 1 (Inner) - Primary X axis rotation
     if (ring1Ref.current) {
         ring1Ref.current.rotation.x += delta * speed * 0.5;
         ring1Ref.current.rotation.y += delta * speed * 0.2;
     }
 
-    // Ring 2 (Middle) - Primary Y, secondary Z
+    // Ring 2 (Middle) - Primary Y axis rotation
     if (ring2Ref.current) {
         ring2Ref.current.rotation.y += delta * speed * 0.4;
         ring2Ref.current.rotation.z += delta * speed * 0.2;
     }
 
-    // Ring 3 (Outer) - Primary Z, secondary X
+    // Ring 3 (Outer) - Primary Z axis rotation
     if (ring3Ref.current) {
         ring3Ref.current.rotation.z += delta * speed * 0.3;
         ring3Ref.current.rotation.x += delta * speed * 0.2;
@@ -149,8 +164,12 @@ function TechCore({ status, voiceLevel = 0, customColor, focusLevel = 'NORMAL' }
 /**
  * CoreVisualizer Component
  *
- * Sets up the React Three Fiber canvas and environment.
- * Includes Post-Processing (Bloom) for the neon aesthetic.
+ * The main container for the 3D scene.
+ * Responsibilities:
+ * - Initialize the R3F Canvas.
+ * - Set up lighting (Ambient + Point).
+ * - Configure Post-Processing (Bloom effect for the "neon" look).
+ * - Render the `TechCore` with current props.
  */
 export default function CoreVisualizer({ status, voiceLevel, customColor, focusLevel }: TechOrbProps) {
   return (

@@ -9,11 +9,19 @@ import { TimelineEventData } from '@/lib/types';
 /**
  * Timeline Component
  *
- * Visualizes the career/education path with a vertical scroll-driven line.
- * Uses Framer Motion for scroll-linked animations (line drawing, data packet movement).
+ * Visualizes the developer's career and education history as a vertical "Execution Trace".
+ *
+ * Features:
+ * - Scroll-Driven Animations: The central line and "data packet" move based on scroll progress.
+ * - Responsive Layout:
+ *   - Mobile: Line on the left, content on the right.
+ *   - Desktop: Central line with alternating left/right content.
+ * - Progressive Reveal: Cards animate in using 3D transforms as they enter the viewport.
  */
 export default function Timeline() {
   const containerRef = useRef<HTMLDivElement>(null);
+
+  // Track scroll progress within this specific section
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start center", "end center"]
@@ -21,8 +29,8 @@ export default function Timeline() {
 
   return (
     <div ref={containerRef} className="relative w-full max-w-5xl mx-auto py-32 px-4 md:px-8">
+      {/* Background Tech Grid */}
       <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
-         {/* Background Grid for tech feel */}
          <div className="absolute inset-0 opacity-[0.03] bg-[linear-gradient(rgba(6,182,212,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(6,182,212,0.1)_1px,transparent_1px)] bg-[size:40px_40px]" />
       </div>
 
@@ -33,14 +41,14 @@ export default function Timeline() {
       <div className="relative">
         {/* Central Line Container */}
         <div className="absolute left-[20px] md:left-1/2 top-0 bottom-0 w-[4px] md:-translate-x-1/2 h-full z-0 bg-white/5 rounded-full overflow-hidden">
-           {/* Gradient Fill Line */}
+           {/* Gradient Fill Line - height controlled by scroll */}
            <motion.div
              className="w-full bg-gradient-to-b from-cyan-500 via-blue-500 to-purple-500 origin-top"
              style={{ height: useTransform(scrollYProgress, [0, 1], ["0%", "100%"]) }}
            />
         </div>
 
-        {/* Pulsing Data Packet (Leading the line) */}
+        {/* Pulsing Data Packet - moves along the line with scroll */}
         <motion.div
              className="absolute left-[20px] md:left-1/2 md:-translate-x-1/2 w-4 h-4 bg-white rounded-full shadow-[0_0_15px_white] z-10"
              style={{
@@ -59,6 +67,15 @@ export default function Timeline() {
   );
 }
 
+/**
+ * TimelineEvent Component
+ *
+ * Represents a single node in the timeline.
+ * Handles:
+ * - Alternating layout (Left/Right) for desktop.
+ * - Intersection Observer animations (Reveal on scroll).
+ * - Decryption effects for text.
+ */
 function TimelineEvent({ event, index }: { event: TimelineEventData, index: number }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { margin: "-20% 0px", once: true });
@@ -67,10 +84,10 @@ function TimelineEvent({ event, index }: { event: TimelineEventData, index: numb
   return (
     <div ref={ref} className={`relative flex items-center md:justify-between ${isEven ? 'md:flex-row-reverse' : ''}`}>
 
-      {/* Spacer for alignment on desktop */}
+      {/* Spacer for alignment on desktop (pushes content to one side) */}
       <div className="hidden md:block w-5/12" />
 
-      {/* Connection Node */}
+      {/* Connection Node (The circle on the central line) */}
       <div className="absolute left-[20px] md:left-1/2 md:-translate-x-1/2 w-4 h-4 bg-black border-2 border-cyan-500 rounded-full z-10 flex items-center justify-center -translate-x-1/2 md:translate-x-[-50%]">
         <motion.div
           initial={{ scale: 0 }}

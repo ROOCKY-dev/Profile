@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { TECH_STACK } from '@/lib/data';
 import { TechCategory, TechItem } from '@/lib/types';
@@ -8,32 +8,43 @@ import { TechCategory, TechItem } from '@/lib/types';
 /**
  * HexTechStack Component
  *
- * Displays the technical skills in a hexagonal grid layout.
- * Supports filtering by category and interactive hover effects.
+ * Displays technical skills in a responsive hexagonal grid.
+ *
+ * Features:
+ * - Dynamic Honeycomb Layout: Automatically arranges items in a 4-3-4-3 pattern on desktop.
+ * - Interactive Spotlight: Each hex card tracks mouse movement to create a localized glow effect.
+ * - Category Filtering: Allows users to filter skills by type (Languages, Game Engines, etc.).
+ * - Responsive Design: Falls back to a simple flex grid on mobile devices.
  */
 export default function HexTechStack() {
   const [activeCategory, setActiveCategory] = useState<TechCategory>('ALL');
-  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Filter tech stack based on active category
+  const filteredTech = activeCategory === 'ALL'
+    ? TECH_STACK
+    : TECH_STACK.filter(t => t.category === activeCategory);
 
   /**
-   * Updates CSS variables for mouse position to create a spotlight effect.
+   * Generates rows for the honeycomb layout (Desktop).
+   * Pattern: 4 items, then 3 items, repeating.
+   * This ensures the "interlocking" look of the hexagons.
    */
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!containerRef.current) return;
-    const rect = containerRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    containerRef.current.style.setProperty('--mouse-x', `${x}px`);
-    containerRef.current.style.setProperty('--mouse-y', `${y}px`);
+  const generateRows = (items: TechItem[]) => {
+    const rows: TechItem[][] = [];
+    let i = 0;
+    let patternIndex = 0;
+    const pattern = [4, 3]; // Alternating row sizes
+
+    while (i < items.length) {
+      const size = pattern[patternIndex % pattern.length];
+      rows.push(items.slice(i, i + size));
+      i += size;
+      patternIndex++;
+    }
+    return rows;
   };
 
-  // Organize for Honeycomb Layout (Desktop)
-  // Rows: 4, 3, 4
-  const rows = [
-    TECH_STACK.slice(0, 4),
-    TECH_STACK.slice(4, 7),
-    TECH_STACK.slice(7, 11),
-  ];
+  const rows = generateRows(filteredTech);
 
   return (
     <div className="w-full max-w-7xl mx-auto py-24 px-4">
@@ -60,27 +71,18 @@ export default function HexTechStack() {
       </div>
 
       {/* Hex Grid Container - Desktop (Honeycomb) */}
-      <div
-        ref={containerRef}
-        onMouseMove={handleMouseMove}
-        className="hidden md:flex flex-col items-center relative perspective-1000"
-        style={{
-          // @ts-expect-error custom property
-          '--mouse-x': '0px',
-          '--mouse-y': '0px',
-        }}
-      >
+      <div className="hidden md:flex flex-col items-center relative perspective-1000">
         {rows.map((row, rowIndex) => (
           <div
             key={rowIndex}
             className="flex justify-center gap-4"
             style={{
-              marginTop: rowIndex === 0 ? 0 : '-35px', // Overlap rows vertically
+              marginTop: rowIndex === 0 ? 0 : '-35px', // Negative margin creates the vertical overlap
               marginBottom: '0px'
             }}
           >
             {row.map((tech) => (
-               <HexItem key={tech.name} tech={tech} activeCategory={activeCategory} />
+               <HexItem key={tech.name} tech={tech} isActive={true} />
             ))}
           </div>
         ))}
@@ -88,8 +90,8 @@ export default function HexTechStack() {
 
       {/* Hex Grid Container - Mobile (Simple Grid) */}
       <div className="flex md:hidden flex-wrap justify-center gap-4">
-         {TECH_STACK.map((tech) => (
-            <HexItem key={tech.name} tech={tech} activeCategory={activeCategory} />
+         {filteredTech.map((tech) => (
+            <HexItem key={tech.name} tech={tech} isActive={true} />
          ))}
       </div>
 
@@ -102,8 +104,30 @@ export default function HexTechStack() {
   );
 }
 
-function HexItem({ tech, activeCategory }: { tech: TechItem, activeCategory: TechCategory }) {
-  const isActive = activeCategory === 'ALL' || tech.category === activeCategory;
+interface HexItemProps {
+    tech: TechItem;
+    isActive: boolean;
+}
+
+/**
+ * HexItem Component
+ *
+ * Individual hexagon card representing a skill.
+ * Handles its own mouse tracking for the spotlight effect.
+ */
+function HexItem({ tech, isActive }: HexItemProps) {
+
+  /**
+   * Updates CSS variables locally on the element to track mouse position
+   * relative to the card itself.
+   */
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    e.currentTarget.style.setProperty('--mouse-x', `${x}px`);
+    e.currentTarget.style.setProperty('--mouse-y', `${y}px`);
+  };
 
   return (
     <motion.div
@@ -115,16 +139,24 @@ function HexItem({ tech, activeCategory }: { tech: TechItem, activeCategory: Tec
         filter: isActive ? 'grayscale(0%)' : 'grayscale(100%) blur(2px)'
       }}
       transition={{ duration: 0.4 }}
+      onMouseMove={handleMouseMove}
       className="relative group w-[180px] h-[200px] flex items-center justify-center"
+      style={{
+          // Initialize CSS variables to center or 0
+          // @ts-expect-error custom property
+          '--mouse-x': '0px',
+          '--mouse-y': '0px',
+      }}
     >
        {/* Hexagon Shape Wrapper */}
        <div className="absolute inset-0 bg-zinc-900/80 backdrop-blur-md clip-path-hexagon flex items-center justify-center transition-transform duration-300 group-hover:scale-105">
 
-          {/* Spotlight Overlay (Global) */}
+          {/* Spotlight Overlay (Local to Card) */}
           <div
             className="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300"
             style={{
-              background: `radial-gradient(300px circle at var(--mouse-x) var(--mouse-y), rgba(6,182,212,0.15), transparent 40%)`
+              // Uses local coordinates set by handleMouseMove
+              background: `radial-gradient(150px circle at var(--mouse-x) var(--mouse-y), rgba(6,182,212,0.2), transparent 100%)`
             }}
           />
 
@@ -132,7 +164,7 @@ function HexItem({ tech, activeCategory }: { tech: TechItem, activeCategory: Tec
           <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/0 via-cyan-500/0 to-purple-500/0 group-hover:from-cyan-500/20 group-hover:to-purple-500/20 transition-all duration-500" />
 
           {/* Content */}
-          <div className="text-center z-10 p-4">
+          <div className="text-center z-10 p-4 pointer-events-none">
              <div className="text-3xl mb-2 text-cyan-400 group-hover:scale-110 transition-transform duration-300">
                ⬡
              </div>

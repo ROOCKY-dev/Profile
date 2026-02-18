@@ -12,7 +12,7 @@ This information is used to shape Next.js' roadmap and prioritize features.
 You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:
 https://nextjs.org/telemetry
 
-✓ Ready in 1050ms
+✓ Ready in 1048ms
 ○ Compiling / ...
- GET / 200 in 9.6s (compile: 8.6s, render: 1046ms)
+ GET / 200 in 9.0s (compile: 8.0s, render: 943ms)
 ⨯ upstream image response failed for https://images.unsplash.com/photo-1614726365723-49cfae963956?w=800&q=80 404

@@ -16,12 +16,19 @@ interface LandingSectionProps {
 }
 
 /**
- * Landing Section
+ * Landing Section Component
  *
- * The first section the user sees. Contains the main status dashboard,
- * the 3D Orb Visualizer, and navigation links.
+ * The initial viewport of the application. It establishes the "Control Center" aesthetic.
  *
- * Uses `snap-start` to ensure the viewport snaps to this section.
+ * Layout Strategy:
+ * - Left Column (1/4): Real-time Status Dashboard (Status, Focus, Errors).
+ * - Center Column (Flex): The 3D Core Visualizer.
+ * - Right Column (1/4): Navigation Menu.
+ *
+ * Features:
+ * - Snap Scrolling: Uses `snap-start` to ensure the section fills the viewport.
+ * - Modal Integration: Handles the "Contact Me" modal state.
+ * - Dynamic Status: Updates UI based on passed props (simulating real-time bot data).
  */
 export default function LandingSection({ status, focusLevel, errorCount, voiceLevel, customColor }: LandingSectionProps) {
   const [isContactOpen, setIsContactOpen] = useState(false);
@@ -39,8 +46,9 @@ export default function LandingSection({ status, focusLevel, errorCount, voiceLe
 
   /**
    * Handles navigation actions from the menu.
-   * If action is 'modal', opens the contact modal.
-   * Otherwise, attempts to scroll to the section ID.
+   * - 'modal': Opens the contact modal.
+   * - '#...' or 'http...': Opens external links in a new tab.
+   * - otherwise: Scrolls to the internal section ID.
    */
   const handleNavClick = (action: string) => {
       if (action === 'modal') {
@@ -59,7 +67,7 @@ export default function LandingSection({ status, focusLevel, errorCount, voiceLe
       {/* Contact Modal */}
       <ContactModal isOpen={isContactOpen} onClose={() => setIsContactOpen(false)} />
 
-      {/* Left Column: Status */}
+      {/* Left Column: Status Dashboard */}
       <div className="w-1/4 h-full border-r border-white/5 p-8 flex flex-col justify-center bg-black/30 backdrop-blur-sm z-10 pointer-events-auto">
 
         {/* Name and Roles */}
@@ -77,7 +85,7 @@ export default function LandingSection({ status, focusLevel, errorCount, voiceLe
 
         <h2 className="text-zinc-500 font-mono text-sm uppercase tracking-widest mb-4">{LANDING_CONTENT.statusTitle}</h2>
 
-        {/* Main Status */}
+        {/* Main Status Indicator */}
         <div className="mb-8">
             <div className="text-5xl font-bold text-white tracking-tighter mb-2 min-h-[48px]">
                <DecryptText key={status} text={status} reveal={true} />
@@ -93,7 +101,7 @@ export default function LandingSection({ status, focusLevel, errorCount, voiceLe
             </div>
         </div>
 
-        {/* Focus Level */}
+        {/* Focus Level Indicator */}
         <div className="mb-6">
             <h3 className="text-zinc-500 text-xs font-mono mb-2">{LANDING_CONTENT.focusTitle}</h3>
             <div className="flex items-center gap-2">
@@ -105,7 +113,7 @@ export default function LandingSection({ status, focusLevel, errorCount, voiceLe
             </div>
         </div>
 
-        {/* Error Count (Only relevant if CODING) */}
+        {/* Error Count (Conditional: Only relevant if CODING) */}
         {status === 'CODING' && (
             <div className="mb-6">
                 <h3 className="text-zinc-500 text-xs font-mono mb-2">Active Errors</h3>
@@ -135,7 +143,7 @@ export default function LandingSection({ status, focusLevel, errorCount, voiceLe
           </div>
       </div>
 
-      {/* Right Column: Nav */}
+      {/* Right Column: Navigation Links */}
       <div className="w-1/4 h-full border-l border-white/5 p-8 flex flex-col justify-center items-end bg-black/30 backdrop-blur-sm z-10 pointer-events-auto">
          <h2 className="text-zinc-500 font-mono text-sm uppercase tracking-widest mb-6">{LANDING_CONTENT.modulesTitle}</h2>
          <div className="flex flex-col gap-6">
