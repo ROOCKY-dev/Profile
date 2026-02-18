@@ -1,13 +1,78 @@
 @import "tailwindcss";
 
-:root {
-  --background: #09090b;
-  --foreground: #ededed;
+@theme {
+  --font-display: var(--font-display);
+  --font-code: var(--font-code);
+  --font-body: var(--font-body);
+
+  --color-void: #030308;
+  --color-primary: #00F0FF;
+  --color-accent-purple: #7000FF;
+  --color-accent-red: #FF2A6D;
+  --color-accent-gold: #FFD700;
+  --color-glass: rgba(20, 20, 35, 0.6);
+  --color-text-primary: #F0F0F5;
+  --color-text-muted: #8888AA;
+  --color-glass-border: rgba(255, 255, 255, 0.1);
+  --color-glass-surface: rgba(20, 20, 35, 0.6);
+  --color-background-dark: #030308;
+  --color-emerald-glow: #10B981;
+
+  --animate-blink: blink 1s step-end infinite;
+  --animate-pulse-glow: pulseGlow 2s ease-in-out infinite;
+  --animate-scanline: scanline 8s linear infinite;
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-float-delayed: float 8s ease-in-out infinite;
+  --animate-float-fast: float 4s ease-in-out infinite;
+  --animate-orbit-x: orbitX 4s linear infinite;
+  --animate-orbit-y: orbitY 5s linear infinite;
+  --animate-orbit-z: orbitZ 6s linear infinite;
+  --animate-spin-slow: spin 8s linear infinite;
+  --animate-spin-reverse: spin-reverse 10s linear infinite;
+  --animate-pulse-slow: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  --animate-glare: glare 2s infinite;
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+  @keyframes pulseGlow {
+    0%, 100% { box-shadow: 0 0 10px rgba(0, 240, 255, 0.3); }
+    50% { box-shadow: 0 0 20px rgba(0, 240, 255, 0.6); }
+  }
+  @keyframes scanline {
+    0% { transform: translateY(-100%); }
+    100% { transform: translateY(100%); }
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
+  }
+  @keyframes orbitX {
+    0% { transform: translate(-50%, -50%) rotateX(0deg) rotateY(60deg); }
+    100% { transform: translate(-50%, -50%) rotateX(360deg) rotateY(60deg); }
+  }
+  @keyframes orbitY {
+    0% { transform: translate(-50%, -50%) rotateY(0deg) rotateX(60deg); }
+    100% { transform: translate(-50%, -50%) rotateY(360deg) rotateX(60deg); }
+  }
+  @keyframes orbitZ {
+    0% { transform: translate(-50%, -50%) rotateZ(0deg) rotateX(45deg); }
+    100% { transform: translate(-50%, -50%) rotateZ(360deg) rotateX(45deg); }
+  }
+  @keyframes spin-reverse {
+    from { transform: rotate(360deg); }
+    to { transform: rotate(0deg); }
+  }
+  @keyframes glare {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+  }
 }
 
-@theme {
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+:root {
+  --background: #030308;
+  --foreground: #F0F0F5;
 }
 
 html {
@@ -18,22 +83,49 @@ html {
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-sans), system-ui, sans-serif;
-  /* overflow: hidden; Removed to allow native scrolling with snap */
+  font-family: var(--font-body), system-ui, sans-serif;
   overflow-y: auto;
 }
 
-/* Custom Scrollbar for Logs */
+/* Custom Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #18181b; 
+  background: #030308;
 }
 ::-webkit-scrollbar-thumb {
-  background: #3f3f46; 
+  background: #1f2937;
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #52525b; 
+  background: #00F0FF;
+}
+
+/* Utilities */
+.glass-panel {
+  background: rgba(20, 20, 35, 0.4);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+.text-shadow-neon {
+  text-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+}
+
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+.transform-style-3d {
+  transform-style: preserve-3d;
+}
+
+.orbit-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform-style: preserve-3d;
 }

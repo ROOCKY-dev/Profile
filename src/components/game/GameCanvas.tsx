@@ -213,7 +213,7 @@ export default function GameCanvas() {
   }, []);
 
   return (
-    <div className="relative w-full max-w-4xl mx-auto h-[500px] bg-black border border-zinc-800 rounded-xl overflow-hidden shadow-2xl group cursor-none">
+    <div className="relative w-full h-full bg-transparent overflow-hidden group cursor-none">
 
         <canvas
             ref={canvasRef}

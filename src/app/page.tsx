@@ -35,7 +35,7 @@ export default function Home() {
   return (
     <main
       ref={containerRef}
-      className="min-h-screen w-full bg-black text-white relative overflow-x-hidden"
+      className="min-h-screen w-full bg-void text-white relative overflow-x-hidden"
     >
       <AnimatePresence mode="wait">
         {isLoading && <LoadingScreen onComplete={() => setIsLoading(false)} />}
@@ -44,7 +44,9 @@ export default function Home() {
       {/* Landing Section (Top) - Orb is now embedded here */}
       <LandingSection
         status={status}
+        setStatus={setStatus}
         focusLevel={focusLevel}
+        setFocusLevel={setFocusLevel}
         errorCount={errorCount}
         voiceLevel={voiceLevel}
         customColor={customColor}
