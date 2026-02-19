@@ -6,7 +6,15 @@ import GameCanvas from '../game/GameCanvas';
  * Game Section
  *
  * The final section of the website, containing the interactive game canvas.
- * Uses `snap-start` to lock the view when the user scrolls here.
+ * This section is designed to be fully immersive, locking the user's view
+ * with CSS scroll snapping.
+ *
+ * Components:
+ * - `GameCanvas`: The actual game logic and rendering.
+ *
+ * Layout:
+ * - Centered layout with a title and status footer.
+ * - Uses `h-screen` to occupy the full viewport height.
  */
 export default function GameSection() {
   return (

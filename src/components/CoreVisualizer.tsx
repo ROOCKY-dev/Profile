@@ -9,9 +9,13 @@ import { STATUS_HEX_COLORS } from '@/lib/constants';
 import { EffectComposer, Bloom } from '@react-three/postprocessing';
 
 interface TechOrbProps {
+  /** The current status of the bot, determining the base color. */
   status: BotStatus;
+  /** Audio input level (0-1) to drive pulse animations. */
   voiceLevel?: number;
+  /** Optional override color for the 'CUSTOM' status. */
   customColor?: string;
+  /** Focus level affecting rotation speed and emission intensity. */
   focusLevel?: FocusLevel;
 }
 
@@ -23,6 +27,7 @@ interface TechOrbProps {
  * Animations are driven by the `useFrame` hook based on status and focus level.
  */
 function TechCore({ status, voiceLevel = 0, customColor, focusLevel = 'NORMAL' }: TechOrbProps) {
+  // Refs for direct manipulation of Three.js objects in the animation loop
   const coreRef = useRef<THREE.Mesh>(null!);
   const outerRef = useRef<THREE.Group>(null!);
   const ring1Ref = useRef<THREE.Mesh>(null!);
@@ -50,7 +55,7 @@ function TechCore({ status, voiceLevel = 0, customColor, focusLevel = 'NORMAL' }
   useFrame((state, delta) => {
     const t = state.clock.getElapsedTime();
     
-    // Core Pulse (Voice Reactive + Focus)
+    // --- Core Pulse Animation (Voice Reactive + Focus) ---
     let pulseIntensity = 1;
     if (focusLevel === 'HYPER_FOCUSED') pulseIntensity = 2;
     if (focusLevel === 'CALM') pulseIntensity = 0.5;
@@ -58,11 +63,13 @@ function TechCore({ status, voiceLevel = 0, customColor, focusLevel = 'NORMAL' }
     const baseScale = 1;
     // Calculate pulse: Base + Voice Impact + Sine Wave Animation
     const pulse = 1 + (voiceLevel * 1.5) + (Math.sin(t * (pulseIntensity * 2)) * 0.05);
+
     if (coreRef.current) {
         coreRef.current.scale.setScalar(baseScale * pulse);
     }
 
-    // Rotation speeds based on status & focus
+    // --- Rotation Logic ---
+    // Base speed determined by status
     let speed = 0.5;
     if (status === 'CODING') speed = 2;
     if (status === 'GAMING') speed = 3;
@@ -70,15 +77,10 @@ function TechCore({ status, voiceLevel = 0, customColor, focusLevel = 'NORMAL' }
     if (status === 'BROWSING') speed = 1;
     if (status === 'OFFLINE') speed = 0.1;
 
-    // Focus Modifier
+    // Apply Focus Modifier to speed
     if (focusLevel === 'HYPER_FOCUSED') speed *= 2.5;
     if (focusLevel === 'CALM') speed *= 0.5;
     
-    /**
-     * Animation Loop
-     * Rotates the wireframe shell and rings based on calculated speed.
-     * Uses delta time for frame-rate independent animation.
-     */
     // Rotate Wireframe Shell
     if (outerRef.current) {
         outerRef.current.rotation.y += delta * speed * 0.2;

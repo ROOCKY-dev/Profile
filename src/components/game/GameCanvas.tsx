@@ -21,17 +21,24 @@ type GameState = 'IDLE' | 'PLAYING' | 'GAME_OVER' | 'GAME_WON';
  * GameCanvas Component
  *
  * An interactive canvas game where the user collects data packets and avoids glitches.
- * Uses a game loop via requestAnimationFrame.
+ * Uses a standard game loop pattern via requestAnimationFrame.
+ *
+ * Key Concepts:
+ * - **State Management**: Uses React state for UI updates (score, screens) and Refs for the game loop to avoid stale closures.
+ * - **Performance**: Caches the canvas bounding rect to minimize layout thrashing during mouse movement.
+ * - **Rendering**: Clears the canvas with a semi-transparent black each frame to create a trail effect.
  */
 export default function GameCanvas() {
   const { toast } = useToast();
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
+  // React State for UI rendering
   const [score, setScore] = useState(0);
   const [gameState, setGameState] = useState<GameState>('IDLE');
   const [collectedData, setCollectedData] = useState<string[]>([]);
 
-  // Refs for loop state (avoid stale closures)
+  // Refs for Game Loop State (Mutable, does not trigger re-renders)
+  // This is crucial for accessing the latest state inside the requestAnimationFrame callback without closure issues.
   const gameStateRef = useRef<GameState>('IDLE');
   const scoreRef = useRef(0);
   const particlesRef = useRef<Particle[]>([]);
@@ -42,7 +49,7 @@ export default function GameCanvas() {
   // Performance: Cache the bounding rectangle to avoid layout thrashing during mousemove
   const canvasRectRef = useRef<DOMRect | null>(null);
 
-  // Sync state to refs
+  // Sync React state to Refs so the loop can access them
   useEffect(() => {
     gameStateRef.current = gameState;
   }, [gameState]);
@@ -54,6 +61,7 @@ export default function GameCanvas() {
   /**
    * Main Game Loop
    * Handles drawing, updates, particle spawning, and collision detection.
+   * Runs at the browser's refresh rate (usually 60fps).
    */
   const loop = useCallback(() => {
     const canvas = canvasRef.current;
@@ -73,6 +81,7 @@ export default function GameCanvas() {
     }
 
     // Clear Screen with Fade Effect (Trails)
+    // Drawing a semi-transparent rectangle over the previous frame creates a motion trail effect.
     ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -101,7 +110,7 @@ export default function GameCanvas() {
             y: -30,
             type: isGlitch ? 'GLITCH' : 'DATA',
             size: isGlitch ? GAME_CONSTANTS.PARTICLE_SIZE_GLITCH : GAME_CONSTANTS.PARTICLE_SIZE_DATA,
-            // Speed increases with score
+            // Speed increases as score increases to add difficulty
             speed: isGlitch
                 ? 3 + (scoreRef.current / 500)
                 : 2 + (scoreRef.current / 1000),
@@ -124,6 +133,7 @@ export default function GameCanvas() {
         }
 
         // Collision Detection
+        // Simple distance-based collision check
         const dx = px - p.x;
         const dy = py - p.y;
         const distance = Math.sqrt(dx*dx + dy*dy);
@@ -138,6 +148,7 @@ export default function GameCanvas() {
                 gameStateRef.current = 'GAME_OVER';
             }
         } else if (p.y > canvas.height) {
+            // Remove particles that go off-screen
             particlesRef.current.splice(i, 1);
         }
     }

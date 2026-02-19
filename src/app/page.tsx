@@ -11,23 +11,35 @@ import RippleEffect from '@/components/ui/RippleEffect';
 import LoadingScreen from '@/components/ui/LoadingScreen';
 
 /**
- * Main Page Component
+ * Main Page Component (Home)
  *
- * Implements the core layout of the portfolio with three main sections:
- * 1. Landing Section - Initial view with status and orb visualizer.
- * 2. Info Section - Scrollable timeline, tech stack, and projects (300vh).
- * 3. Game Section - Interactive game canvas.
+ * This is the root layout component for the single-page portfolio application.
+ * It manages the global state (status, focus level, loading) and orchestrates
+ * the rendering of the three main sections.
  *
- * Uses CSS Scroll Snap to ensure the user is immersed in one section at a time.
+ * Structure:
+ * 1. **LoadingScreen**: Initial overlay that waits for assets or timeout.
+ * 2. **LandingSection**: Topmost section with the status dashboard and 3D visualizer.
+ * 3. **InfoSection**: Middle scrollable section containing detailed portfolio content.
+ * 4. **GameSection**: Bottom section with the interactive game.
+ *
+ * Features:
+ * - **Global State**: Manages `BotStatus` and `FocusLevel` which propagate down to child components
+ *   to affect visuals (colors, animations).
+ * - **DevTools**: A development helper (visible in UI) to manually toggle states.
+ * - **RippleEffect**: A global background effect for click feedback.
  */
 export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
+
+  // --- Global State ---
+  // Controls the theme and behavior of the visualizer and UI elements
   const [status, setStatus] = useState<BotStatus>('CODING');
   const [focusLevel, setFocusLevel] = useState<FocusLevel>('NORMAL');
-  const [voiceLevel] = useState(0);
+  const [voiceLevel] = useState(0); // Placeholder for future microphone integration
   const [customColor, setCustomColor] = useState<string | undefined>(undefined);
 
-  // Simulated Error Count
+  // Simulated Error Count (Can be hooked up to real linter/log data later)
   const [errorCount] = useState(0);
 
   const containerRef = useRef<HTMLElement>(null);
@@ -50,12 +62,13 @@ export default function Home() {
         customColor={customColor}
       />
 
-      {/* Info Section (Middle) */}
+      {/* Info Section (Middle) - Contains About, Timeline, Tech Stack, Projects */}
       <InfoSection />
 
-      {/* Game Section (Bottom) */}
+      {/* Game Section (Bottom) - Interactive mini-game */}
       <GameSection />
 
+      {/* Development Tools Overlay - Allows manual state testing */}
       <DevTools
         status={status}
         setStatus={setStatus}
@@ -65,6 +78,7 @@ export default function Home() {
         setCustomColor={setCustomColor}
       />
 
+      {/* Global Visual Effects */}
       <RippleEffect />
     </main>
   );

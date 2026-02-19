@@ -6,51 +6,45 @@ import Timeline from '@/components/info/Timeline';
 import HexTechStack from '@/components/info/HexTechStack';
 import ProjectReveal from '@/components/info/ProjectReveal';
 import { ABOUT_ME } from '@/lib/data';
+import { INFO_SECTION_BG_COLORS, INFO_SECTION_GLOW_COLORS } from '@/lib/constants';
 
 /**
  * Info Section
  *
- * A tall scrollable section (300vh) containing detailed information:
- * 1. About Me (New)
- * 2. Timeline
- * 3. Tech Stack
- * 4. Projects
+ * A multi-screen scrollable section (min-h-[400vh]) containing detailed information about the portfolio owner.
  *
- * Includes dynamic background color shifts and internal scroll snap points
- * for each sub-section to ensure content immersion.
+ * Structure:
+ * 1. **About Me**: Personal introduction and current focus.
+ * 2. **Timeline**: Chronological history of education and projects.
+ * 3. **Tech Stack**: Hexagonal grid displaying technical skills.
+ * 4. **Projects**: Showcase of key projects with video reveal.
+ *
+ * Features:
+ * - **Dynamic Background**: The background color and ambient glow shift smoothly as the user scrolls,
+ *   driven by Framer Motion's `useTransform` and the scroll progress.
+ * - **Scroll Snap**: Uses CSS scroll snapping to ensure each sub-section occupies the full viewport.
  */
 export default function InfoSection() {
   const containerRef = useRef<HTMLElement>(null);
 
-  // Track scroll progress within this section
+  // Track scroll progress within this section relative to the viewport
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start start", "end end"]
   });
 
-  // Dynamic Background Colors
+  // Map scroll progress (0 to 1) to specific background colors defined in constants
   const backgroundColor = useTransform(
     scrollYProgress,
     [0, 0.2, 0.5, 0.8, 1],
-    [
-      "rgba(10, 20, 30, 1)", // Dark Cyan/Black (About)
-      "rgba(10, 20, 30, 1)", // Dark Cyan/Black (Timeline)
-      "rgba(20, 10, 30, 1)", // Dark Purple (Tech)
-      "rgba(30, 10, 10, 1)", // Dark Red (Projects)
-      "rgba(5, 20, 10, 1)"   // Dark Green (End)
-    ]
+    INFO_SECTION_BG_COLORS
   );
 
+  // Map scroll progress to ambient glow colors
   const glowColor = useTransform(
     scrollYProgress,
     [0, 0.2, 0.5, 0.8, 1],
-    [
-      "rgba(0, 100, 255, 0.1)", // Blue Glow
-      "rgba(0, 100, 255, 0.1)", // Blue Glow
-      "rgba(200, 0, 255, 0.1)", // Purple Glow
-      "rgba(255, 0, 100, 0.1)", // Red/Pink Glow
-      "rgba(0, 255, 100, 0.1)"  // Green Glow
-    ]
+    INFO_SECTION_GLOW_COLORS
   );
 
   return (
@@ -60,13 +54,13 @@ export default function InfoSection() {
       style={{ backgroundColor }}
       className="relative w-full min-h-[400vh] snap-start flex flex-col items-center overflow-hidden"
     >
-      {/* Ambient Glow Background */}
+      {/* Ambient Glow Background - Shifts color based on scroll position */}
       <motion.div
         style={{ background: glowColor }}
         className="absolute inset-0 pointer-events-none blur-3xl opacity-50 transition-colors duration-1000"
       />
 
-      {/* About Me Section - Sub-section snap point */}
+      {/* --- Sub-Section 1: About Me --- */}
       <div className="w-full min-h-screen flex items-center justify-center relative z-10 snap-start">
         <div className="max-w-4xl px-8 text-center">
             <h2 className="text-4xl md:text-5xl font-mono mb-12 text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">
@@ -101,17 +95,17 @@ export default function InfoSection() {
         </div>
       </div>
 
-      {/* Timeline Section - Sub-section snap point */}
+      {/* --- Sub-Section 2: Timeline --- */}
       <div className="w-full min-h-screen flex items-center justify-center relative z-10 snap-start">
         <Timeline />
       </div>
 
-      {/* Tech Stack Section (Hexagonal Grid) - Sub-section snap point */}
+      {/* --- Sub-Section 3: Tech Stack (Hexagonal Grid) --- */}
       <div className="w-full min-h-screen flex items-center justify-center relative z-10 snap-start">
         <HexTechStack />
       </div>
 
-      {/* Portfolio Section - Sub-section snap point */}
+      {/* --- Sub-Section 4: Projects Portfolio --- */}
       <div className="w-full min-h-screen flex items-center justify-center relative z-10 snap-start">
         <ProjectReveal />
       </div>

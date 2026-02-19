@@ -21,7 +21,12 @@ interface LandingSectionProps {
  * The first section the user sees. Contains the main status dashboard,
  * the 3D Orb Visualizer, and navigation links.
  *
- * Uses `snap-start` to ensure the viewport snaps to this section.
+ * Layout:
+ * - Left Column: Status dashboard (Name, Role, Current Status, Focus Level).
+ * - Center: The interactive CoreVisualizer (3D Orb).
+ * - Right Column: Navigation menu for other sections and contact modal.
+ *
+ * Uses `snap-start` to ensure the viewport snaps to this section for a full-screen effect.
  */
 export default function LandingSection({ status, focusLevel, errorCount, voiceLevel, customColor }: LandingSectionProps) {
   const [isContactOpen, setIsContactOpen] = useState(false);
@@ -39,8 +44,11 @@ export default function LandingSection({ status, focusLevel, errorCount, voiceLe
 
   /**
    * Handles navigation actions from the menu.
-   * If action is 'modal', opens the contact modal.
-   * Otherwise, attempts to scroll to the section ID.
+   * - 'modal': Opens the ContactModal.
+   * - '#...' or 'http...': Opens external links.
+   * - default: Scrolls to the target section ID.
+   *
+   * @param action The action string defined in LANDING_CONTENT.navItems.
    */
   const handleNavClick = (action: string) => {
       if (action === 'modal') {
