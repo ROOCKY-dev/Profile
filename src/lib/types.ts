@@ -1,7 +1,16 @@
+/**
+ * Represents the current activity status of the bot/user.
+ */
 export type BotStatus = 'CODING' | 'BROWSING' | 'DISCORD' | 'GAMING' | 'OFFLINE' | 'CUSTOM';
 
+/**
+ * Represents the current focus level, affecting animation intensity.
+ */
 export type FocusLevel = 'CALM' | 'NORMAL' | 'HYPER_FOCUSED';
 
+/**
+ * Structure for system log entries.
+ */
 export interface LogEntry {
   id: string;
   timestamp: string;
@@ -9,24 +18,9 @@ export interface LogEntry {
   message: string;
 }
 
-export const STATUS_COLORS = {
-  CODING: 'bg-cyan-500 shadow-cyan-500/50',
-  BROWSING: 'bg-orange-500 shadow-orange-500/50',
-  DISCORD: 'bg-indigo-500 shadow-indigo-500/50',
-  GAMING: 'bg-green-500 shadow-green-500/50',
-  OFFLINE: 'bg-zinc-700 shadow-zinc-700/50',
-  CUSTOM: 'bg-pink-500 shadow-pink-500/50', // Default custom color, can be overridden
-};
-
-export const STATUS_TEXT = {
-  CODING: 'Coding in VS Code',
-  BROWSING: 'Browsing / Email',
-  DISCORD: 'Active on Discord',
-  GAMING: 'Chilling / Playing',
-  OFFLINE: 'Do Not Disturb',
-  CUSTOM: 'Custom Status',
-};
-
+/**
+ * Represents the full system state including status, focus, and errors.
+ */
 export interface SystemState {
   status: BotStatus;
   focusLevel: FocusLevel;
@@ -35,6 +29,9 @@ export interface SystemState {
   errorCount: number;
 }
 
+/**
+ * Data structure for timeline events in the Info Section.
+ */
 export interface TimelineEventData {
   year: string;
   title: string;
@@ -43,8 +40,14 @@ export interface TimelineEventData {
   isEncrypted?: boolean;
 }
 
+/**
+ * Categories for technical skills.
+ */
 export type TechCategory = 'ALL' | 'LANGUAGES' | 'GAME_ENGINES' | 'SPECIALIZATIONS' | 'INFRASTRUCTURE';
 
+/**
+ * Data structure for a technical skill item.
+ */
 export interface TechItem {
   name: string;
   category: TechCategory;
@@ -52,6 +55,9 @@ export interface TechItem {
   description: string;
 }
 
+/**
+ * Data structure for a project showcase item.
+ */
 export interface Project {
   title: string;
   category: string;
@@ -61,6 +67,9 @@ export interface Project {
   className: string;
 }
 
+/**
+ * Content structure for the Landing Section.
+ */
 export interface LandingContent {
   name: string;
   alias: string;
@@ -75,6 +84,9 @@ export interface LandingContent {
   }[];
 }
 
+/**
+ * Content structure for the About Me section.
+ */
 export interface AboutMeContent {
   title: string;
   icon: string;

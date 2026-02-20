@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { BotStatus, FocusLevel } from '@/lib/types';
 import { LANDING_CONTENT } from '@/lib/data';
+import { STATUS_DISPLAY_TEXT } from '@/lib/constants';
 import CoreVisualizer from '@/components/CoreVisualizer';
 import DecryptText from '@/components/ui/DecryptText';
 import ContactModal from '@/components/ui/ContactModal';
@@ -85,11 +86,7 @@ export default function LandingSection({ status, focusLevel, errorCount, voiceLe
             <div className={`text-xs font-mono px-2 py-1 inline-block rounded ${
                 status === 'OFFLINE' ? 'bg-zinc-800 text-zinc-400' : 'bg-cyan-900/30 text-cyan-400 border border-cyan-500/30'
             }`}>
-              {status === 'CODING' ? 'VS Code Active' :
-               status === 'BROWSING' ? 'Chrome Active' :
-               status === 'DISCORD' ? 'Discord Active' :
-               status === 'GAMING' ? 'Steam Active' :
-               status === 'CUSTOM' ? 'User Defined' : 'System Offline'}
+              {STATUS_DISPLAY_TEXT[status]}
             </div>
         </div>
 
