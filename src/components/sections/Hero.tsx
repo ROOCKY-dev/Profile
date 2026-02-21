@@ -2,9 +2,11 @@
 
 import { motion } from 'framer-motion';
 import { PORTFOLIO_DATA } from '@/lib/portfolio-data';
+import { usePerformance } from '@/lib/PerformanceContext';
 
 export default function Hero() {
   const { hero } = PORTFOLIO_DATA;
+  const { performanceLevel } = usePerformance();
 
   return (
     <section className="relative min-h-screen flex flex-col justify-center px-6 pt-24 pb-12 border-b border-border-dark overflow-hidden">
@@ -18,7 +20,9 @@ export default function Hero() {
       />
 
       {/* Gradient Orb */}
-      <div className="absolute top-1/4 right-0 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[120px] pointer-events-none animate-pulse-fast" />
+      {performanceLevel !== 'low' && (
+        <div className={`absolute top-1/4 right-0 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[120px] pointer-events-none ${performanceLevel === 'high' ? 'animate-pulse-fast' : ''}`} />
+      )}
 
       <div className="relative z-10 max-w-[1400px] mx-auto w-full">
         <div className="flex flex-col gap-2 mb-8">

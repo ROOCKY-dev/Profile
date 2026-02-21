@@ -1,6 +1,7 @@
 'use client';
 
 import { AnimatePresence, motion } from 'framer-motion';
+import { usePerformance } from '@/lib/PerformanceContext';
 
 interface ServiceMenuProps {
   isOpen: boolean;
@@ -8,6 +9,8 @@ interface ServiceMenuProps {
 }
 
 export default function ServiceMenu({ isOpen, onClose }: ServiceMenuProps) {
+  const { performanceLevel } = usePerformance();
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -20,7 +23,7 @@ export default function ServiceMenu({ isOpen, onClose }: ServiceMenuProps) {
           {/* Header */}
           <header className="flex items-center justify-between px-6 py-6 md:px-12 md:py-8 sticky top-0 z-50 border-b border-border-dark">
             <div className="flex items-center gap-2">
-              <span className="material-symbols-outlined text-primary text-2xl animate-pulse-fast">bolt</span>
+              <span className={`material-symbols-outlined text-primary text-2xl ${performanceLevel === 'high' ? 'animate-pulse-fast' : ''}`}>bolt</span>
               <span className="font-display font-bold text-xl tracking-tight text-white">THE OFFER</span>
             </div>
             <button

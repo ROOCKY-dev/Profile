@@ -101,6 +101,60 @@
   color: #0A0A0A;
 }
 
+/* Performance Mode Overrides */
+.perf-low * {
+  transition-duration: 0.01s !important;
+  animation-duration: 0.01s !important;
+}
+
+.perf-mid * {
+  transition-duration: 0.1s !important;
+}
+
+.perf-low .animate-pulse-fast,
+.perf-low .animate-marquee,
+.perf-low .animate-spin-slow,
+.perf-low .animate-glitch,
+.perf-low .animate-float,
+.perf-low .glitch-text::before,
+.perf-low .glitch-text::after,
+.perf-low .glitch-hover::before,
+.perf-low .glitch-hover::after,
+.perf-mode .animate-pulse-fast,
+.perf-mode .animate-marquee,
+.perf-mode .animate-spin-slow,
+.perf-mode .animate-glitch,
+.perf-mode .animate-float,
+.perf-mode .glitch-text::before,
+.perf-mode .glitch-text::after,
+.perf-mode .glitch-hover::before,
+.perf-mode .glitch-hover::after {
+  display: none !important;
+  animation: none !important;
+}
+
+.perf-mid .animate-glitch,
+.perf-mid .glitch-text::before,
+.perf-mid .glitch-text::after,
+.perf-mid .glitch-hover::before,
+.perf-mid .glitch-hover::after {
+  display: none !important;
+  animation: none !important;
+}
+
+.perf-low, .perf-mode {
+  cursor: auto !important;
+}
+
+.perf-low a, 
+.perf-low button, 
+.perf-low .cursor-hover,
+.perf-mode a, 
+.perf-mode button, 
+.perf-mode .cursor-hover {
+  cursor: pointer !important;
+}
+
 /* Hide Default Cursor */
 body {
   cursor: none;

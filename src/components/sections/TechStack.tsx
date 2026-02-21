@@ -1,8 +1,14 @@
+'use client';
+import { useState } from 'react';
 import { PORTFOLIO_DATA } from '@/lib/portfolio-data';
+import { PC_SHAPES } from '@/lib/Status';
 
 export default function TechStack() {
   const { techStack } = PORTFOLIO_DATA;
 
+  const [currentStatus, setCurrentStatus] = useState<keyof typeof PC_SHAPES>(
+      (PORTFOLIO_DATA.stat.status as keyof typeof PC_SHAPES)
+  );
   return (
     <section className="grid grid-cols-1 lg:grid-cols-2 border-b border-border-dark min-h-[60vh]" id="about">
       {/* Tech List */}
@@ -32,27 +38,31 @@ export default function TechStack() {
                 </li>
               ))}
             </ul>
+          </div>{/* AI */}
+          <div>
+            <h4 className="font-bold text-xl mb-6 border-b border-border-dark pb-2">AI</h4>
+            <ul className="font-mono text-text-muted space-y-3">
+              {techStack.AI.map((tech, i) => (
+                <li key={i} className="hover:text-primary transition-colors cursor-hover flex items-center gap-2">
+                  <span className="w-1 h-1 bg-primary rounded-full" />
+                  {tech.name}
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
       </div>
 
       {/* ASCII Art Area */}
       <div className="p-8 md:p-16 flex items-center justify-center bg-background-dark overflow-hidden relative">
-        <div className="absolute top-4 right-4 text-xs font-mono text-border-dark animate-pulse">SYSTEM_MONITOR_ACTIVE</div>
-        <pre className="font-mono text-[10px] md:text-xs leading-[10px] md:leading-3 text-primary/50 whitespace-pre text-center select-none cursor-hover hover:text-primary transition-colors duration-300">
-{`   ._________________.
-   | ._____________. |
-   | |  _       _  | |
-   | | |_| |_| |_| | |
-   | |             | |
-   | |  PROCESSING | |
-   | |             | |
-   | |_____________| |
-   |_________________|
-      _[_______]_
-  ___[___________]___
- |                   |
- |___________________|`}
+        <div className="absolute top-4 right-4 text-xs font-mono text-border-dark animate-pulse">
+          SYSTEM_MONITOR: {currentStatus}
+        </div>
+        <pre
+
+            className="font-mono text-[10px] md:text-xs leading-[10px] md:leading-3 text-primary/50 whitespace-pre text-left select-none cursor-pointer hover:text-primary transition-colors duration-300"
+        >
+          {PC_SHAPES[currentStatus]}
         </pre>
       </div>
     </section>

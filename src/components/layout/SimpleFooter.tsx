@@ -5,12 +5,12 @@ export default function SimpleFooter() {
   return (
     <footer className="bg-background-dark border-t border-border-dark py-8 px-6 md:px-12 flex justify-between items-center text-sm font-mono text-text-muted">
       <div>
-        © 2025 CREATIVE SPARK
+        © 2026 ROOCKYDEV PORTFOLIO.
       </div>
       <div className="flex gap-6">
-        <Link href={PORTFOLIO_DATA.personal.socials.twitter} className="hover:text-primary transition-colors cursor-hover">TWITTER</Link>
+        <Link href={PORTFOLIO_DATA.personal.socials.instagram} className="hover:text-primary transition-colors cursor-hover">INSTAGRAM</Link>
         <Link href={PORTFOLIO_DATA.personal.socials.github} className="hover:text-primary transition-colors cursor-hover">GITHUB</Link>
-        <Link href={PORTFOLIO_DATA.personal.socials.linkedin} className="hover:text-primary transition-colors cursor-hover">LINKEDIN</Link>
+        <Link href={PORTFOLIO_DATA.personal.socials.wa} className="hover:text-primary transition-colors cursor-hover">WHATSAPP</Link>
       </div>
     </footer>
   );

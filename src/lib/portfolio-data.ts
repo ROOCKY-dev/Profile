@@ -16,32 +16,33 @@ export interface TechItem {
 export interface Capability {
   title: string;
   description: string;
-  icon: string; // Material Symbol name
+  icon: string;
 }
 
 export const PORTFOLIO_DATA = {
   personal: {
     name: 'Ahmed Husam Ghaithan',
     alias: 'ROOCKY dev',
-    role: 'Game Developer & Systems Architect',
-    location: 'Malaysia', // From bio
-    email: 'hello@roocky.dev', // Placeholder or extract if available
+    role: 'Creative Thinker & Tech Enthusiast',
+    location: 'Malaysia',
+    email: 'ahmedghithan.official.email@gmail.com', // Placeholder or extract if available
     socials: {
-      github: '#',
-      linkedin: '#',
-      twitter: '#'
+      github: 'https://github.com/ROOCKY-dev/',
+      instagram: 'https://www.instagram.com/roocky_dev/',
+      wa: 'https://wa.link/jpl25x'
     }
   },
   hero: {
-    title: ['GAME', 'DEV', 'ARCHITECT'], // Split for the layout
-    subtitle: '<System.Init> Portfolio_v2.0',
-    description: 'Crafting immersive digital experiences. Bridging the gap between technical logic and creative game design.'
+    title: ['VIBECODER' , 'STUDENT' , 'GAMER' ], // Split for the layout
+    subtitle: '<System.Init> Portfolio_v3.0',
+    description: 'Crafting immersive digital experiences. Bridging the gap between Imagination and reality'
   },
   marquee: [
-    '3+ YEARS EXP',
-    '3 MAJOR PROJECTS',
-    'UNITY / UNREAL',
-    'AVAILABLE FOR HIRE'
+    '1+ YEARS EXP',
+    '1+ MAJOR PROJECTS',
+    'AI / VibeCoding',
+    'Cyber Security Student @ UNITEN',
+    'AVAILABLE FOR WORK'
   ],
   capabilities: [
     {
@@ -50,55 +51,58 @@ export const PORTFOLIO_DATA = {
       icon: 'videogame_asset'
     },
     {
-      title: 'Infrastructure',
-      description: 'Expertise in server administration, Linux, and scalable backend architecture.',
+      title: 'Adminsitrative',
+      description: 'Expertise in server administration, Linux, Ubuntu and Game servers.',
       icon: 'dns'
     },
     {
-      title: 'UI/UX Design',
-      description: 'Creating user-centric interfaces that feel alive and responsive.',
+      title: 'AI Development',
+      description: 'Strong Grab over ai tools and vibeCoding agents.',
       icon: 'layers'
+    },
+    {
+      title: 'Minecraft Mods Development',
+      description: 'making minecraft mods for NeoForge and Fabric',
+      icon: 'brush'
     }
   ],
   projects: [
     {
-      id: 'planetary-claim',
-      title: 'PLANETARY CLAIM',
-      category: 'GAME DEV',
-      year: '2025',
-      description: 'An ambitious MMO-RTS project built in Unity with an AI-first development philosophy.',
-      image: 'https://images.unsplash.com/photo-1614726365723-49cfae963956?w=800&q=80'
-    },
-    {
-      id: 'minecraft-ecosystems',
-      title: 'MC ECOSYSTEMS',
-      category: 'INFRASTRUCTURE',
+      id: 'StackerForge',
+      title: 'STACKERFORGE',
+      category: 'MC MOD DEVELOPMENT',
       year: '2024',
-      description: 'High-performance server architecture with custom mods and unique gameplay loops.',
-      image: 'https://images.unsplash.com/photo-1623479322729-28b25c16b011?w=800&q=80'
+      description: 'An experiment in developing MC mods using AI that went better than expected i used Google antiGravity and Open ai image Gen to give the final product.',
+      image: 'https://static0.gamerantimages.com/wordpress/wp-content/uploads/2025/02/minecraft-key-art-feature.jpg',
     },
-    {
-      id: 'problem-marketplace',
-      title: 'PROBLEM MARKET',
-      category: 'WEB APP',
-      year: '2025',
-      description: 'A platform connecting users facing technical hurdles with developers.',
-      image: 'https://images.unsplash.com/photo-1555680202-c86f0e12f086?w=800&q=80'
-    }
   ],
   techStack: {
     core: [
-      { name: 'Unity', category: 'GAME_ENGINES' },
-      { name: 'Unreal Engine', category: 'GAME_ENGINES' },
       { name: 'C++', category: 'LANGUAGES' },
       { name: 'Java', category: 'LANGUAGES' },
-      { name: 'Python', category: 'LANGUAGES' }
+      { name: 'C#', category: 'LANGUAGES' },
+      { name: 'WebDev', category: 'STACKS' },
+      { name: 'Git', category: 'TOOLS' },
     ],
     tools: [
+      { name: 'Unity', category: 'GAME_ENGINES' },
       { name: 'Linux', category: 'INFRASTRUCTURE' },
-      { name: 'Git', category: 'TOOLS' },
-      { name: 'Blender', category: 'TOOLS' }, // Assumed
-      { name: 'Figma', category: 'TOOLS' }    // Assumed
+      { name: 'Blender', category: 'TOOLS' },
+    ],
+    AI: [
+      { name: 'Lovable', category: 'TOOLS' },
+      { name: 'AntiGravity', category: 'TOOLS' },
+      { name: 'CursorCode', category: 'TOOLS' },
+      { name: 'ClaudCode', category: 'TOOLS' },
+      { name: 'Ollama', category: 'TOOLS' },
     ]
-  }
+  },
+  /*
+ Options :
+  AVAILABLE
+  STUDYING
+  WORKING
+  RESTING
+  */
+  stat:{ status : 'WORKING' }
 };

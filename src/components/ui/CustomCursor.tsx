@@ -1,12 +1,15 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import { usePerformance } from '@/lib/PerformanceContext';
 
 export default function CustomCursor() {
   const cursorRef = useRef<HTMLDivElement>(null);
   const dotRef = useRef<HTMLDivElement>(null);
+  const { performanceLevel } = usePerformance();
 
   useEffect(() => {
+    if (performanceLevel === 'low') return;
     const cursor = cursorRef.current;
     const dot = dotRef.current;
     if (!cursor || !dot) return;
@@ -67,7 +70,9 @@ export default function CustomCursor() {
         el.removeEventListener('mouseleave', handleMouseLeave);
       });
     };
-  }, []);
+  }, [performanceLevel]);
+
+  if (performanceLevel === 'low') return null;
 
   return (
     <div

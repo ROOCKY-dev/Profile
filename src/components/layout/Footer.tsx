@@ -2,6 +2,9 @@ import Link from 'next/link';
 import { PORTFOLIO_DATA } from '@/lib/portfolio-data';
 
 export default function Footer() {
+  const email = PORTFOLIO_DATA.personal.email;
+  const [localPart, domainPart] = email.split('@');
+
   return (
     <footer className="relative py-20 px-6 border-b border-border-dark bg-surface-highlight overflow-hidden">
       {/* Background Grid */}
@@ -21,20 +24,44 @@ export default function Footer() {
         </div>
 
         <a
-          href={`mailto:${PORTFOLIO_DATA.personal.email}`}
-          className="block w-full border-y border-border-dark py-12 md:py-24 group cursor-hover relative overflow-hidden"
+            href={`mailto:${email}`}
+            className="block w-full border-y border-border-dark py-12 md:py-24 group cursor-hover relative overflow-hidden"
         >
+          {/* Background Hover Reveal */}
           <span className="absolute inset-0 bg-primary translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out z-0"></span>
-          <h3 className="relative z-10 text-[8vw] leading-none font-bold text-text-main group-hover:text-background-dark transition-colors duration-300 glitch-hover">
-            {PORTFOLIO_DATA.personal.email.toUpperCase()}
-          </h3>
+
+          <div className="relative z-10 overflow-hidden">
+
+            {/* --- DEFAULT STATE --- */}
+            <div className="flex flex-col group-hover:-translate-y-full transition-all duration-500 ease-in-out">
+              {/* Part 1: Before '@' (Smaller, No Wrap, Truncates if too long) */}
+              <span className="text-[5vw] md:text-[4vw] font-bold text-text-main leading-tight whitespace-nowrap overflow-hidden text-ellipsis w-full">
+                {localPart.toUpperCase()}
+              </span>
+              {/* Part 2: After '@' (Bigger, Breaks words if needed) */}
+              <span className="text-[6vw] md:text-[7vw] font-bold text-text-main leading-none break-all mt-[-1vw]">
+                @{domainPart.toUpperCase()}
+              </span>
+            </div>
+
+            {/* --- HOVER STATE --- */}
+            <div className="absolute inset-0 flex flex-col translate-y-full group-hover:translate-y-0 transition-all duration-500 ease-in-out">
+              <span className="text-[5vw] md:text-[4vw] font-bold text-background-dark leading-tight whitespace-nowrap overflow-hidden text-ellipsis w-full">
+                {localPart.toUpperCase()}
+              </span>
+              <span className="text-[6vw] md:text-[7vw] font-bold text-background-dark leading-none break-all mt-[-1vw]">
+                @{domainPart.toUpperCase()}
+              </span>
+            </div>
+
+          </div>
         </a>
 
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mt-12 gap-8">
           <div className="flex gap-8">
-            <Link href={PORTFOLIO_DATA.personal.socials.linkedin} className="font-mono text-sm text-text-muted hover:text-primary border-b border-transparent hover:border-primary transition-all cursor-hover">LINKEDIN</Link>
+            <Link href={PORTFOLIO_DATA.personal.socials.instagram} className="font-mono text-sm text-text-muted hover:text-primary border-b border-transparent hover:border-primary transition-all cursor-hover">INSTAGRAM</Link>
             <Link href={PORTFOLIO_DATA.personal.socials.github} className="font-mono text-sm text-text-muted hover:text-primary border-b border-transparent hover:border-primary transition-all cursor-hover">GITHUB</Link>
-            <Link href={PORTFOLIO_DATA.personal.socials.twitter} className="font-mono text-sm text-text-muted hover:text-primary border-b border-transparent hover:border-primary transition-all cursor-hover">TWITTER</Link>
+            <Link href={PORTFOLIO_DATA.personal.socials.wa} className="font-mono text-sm text-text-muted hover:text-primary border-b border-transparent hover:border-primary transition-all cursor-hover">WHATSAPP</Link>
           </div>
 
           <div className="text-right">

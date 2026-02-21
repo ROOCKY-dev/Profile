@@ -4,6 +4,7 @@ import "./globals.css";
 import NoiseOverlay from "@/components/ui/NoiseOverlay";
 import CustomCursor from "@/components/ui/CustomCursor";
 import Navbar from "@/components/layout/Navbar";
+import { PerformanceProvider } from "@/lib/PerformanceContext";
 
 const spaceGrotesk = Space_Grotesk({
   variable: "--font-display",
@@ -33,10 +34,12 @@ export default function RootLayout({
       <body
         className={`${spaceGrotesk.variable} ${jetBrainsMono.variable} antialiased bg-background-dark text-text-main font-display selection:bg-primary selection:text-background-dark overflow-x-hidden`}
       >
-        <NoiseOverlay />
-        <CustomCursor />
-        <Navbar />
-        {children}
+        <PerformanceProvider>
+          <NoiseOverlay />
+          <CustomCursor />
+          <Navbar />
+          {children}
+        </PerformanceProvider>
       </body>
     </html>
   );
