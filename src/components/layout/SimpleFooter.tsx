@@ -5,7 +5,7 @@ export default function SimpleFooter() {
   return (
     <footer className="bg-background-dark border-t border-border-dark py-8 px-6 md:px-12 flex justify-between items-center text-sm font-mono text-text-muted">
       <div>
-        © 2026 ROOCKYDEV PORTFOLIO.
+        © 2026 ROOCKYdev PORTFOLIO.
       </div>
       <div className="flex gap-6">
         <Link href={PORTFOLIO_DATA.personal.socials.instagram} className="hover:text-primary transition-colors cursor-hover">INSTAGRAM</Link>

@@ -65,8 +65,8 @@ export default function Footer() {
           </div>
 
           <div className="text-right">
-            <p className="font-mono text-xs text-text-muted">© 2025 CREATIVE SPARK PORTFOLIO.</p>
-            <p className="font-mono text-xs text-text-muted mt-1">DESIGNED IN THE VOID.</p>
+            <p className="font-mono text-xs text-text-muted">© 2026 ROOCKYdev PORTFOLIO.</p>
+            <p className="font-mono text-xs text-text-muted mt-1">DESIGNED IN THE FORGE.</p>
           </div>
         </div>
       </div>
