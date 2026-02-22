@@ -25,7 +25,7 @@ export const PORTFOLIO_DATA = {
     alias: 'ROOCKY dev',
     role: 'Creative Thinker & Tech Enthusiast',
     location: 'Malaysia',
-    email: 'ahmedghithan.official.email@gmail.com', // Placeholder or extract if available
+    email: 'letsbuild@roocky.dev',
     socials: {
       github: 'https://github.com/ROOCKY-dev/',
       instagram: 'https://www.instagram.com/roocky_dev/',

@@ -13,8 +13,8 @@ export default function Home() {
       <Hero />
       <Marquee />
       <Capabilities />
-      <SelectedProjects />
       <TechStack />
+      <SelectedProjects />
       <Footer />
     </main>
   );

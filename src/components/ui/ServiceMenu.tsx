@@ -1,5 +1,6 @@
 'use client';
 
+
 import { AnimatePresence, motion } from 'framer-motion';
 import { usePerformance } from '@/lib/PerformanceContext';
 
@@ -40,42 +41,43 @@ export default function ServiceMenu({ isOpen, onClose }: ServiceMenuProps) {
             <div className="grid w-full grid-cols-1 gap-6 md:grid-cols-3 md:gap-8 lg:gap-12">
               {/* Tier 1 */}
               <ServiceCard
-                tier="TIER_01"
-                icon="rocket_launch"
-                title="The Sprint"
-                subtitle="Rapid prototyping for startups."
-                price="$5k"
-                unit="/ week"
-                features={['React/Next.js Framework', 'CMS Integration', 'Responsive Implementation', 'Vercel Deployment Setup']}
-                cta="Book Consultation"
-              />
-              {/* Tier 2 */}
-              <ServiceCard
-                tier="TIER_02"
-                icon="deployed_code"
-                title="System Arch"
-                subtitle="Scalable libraries for scale-ups."
-                price="$8k"
-                unit="/ fixed"
-                features={['Figma Tokenization', 'Storybook Component Lib', 'Accessibility Audit (WCAG)', 'Usage Documentation', 'Tailwind Configuration']}
+                tier="Web Development"
+                icon="developer_mode_tv"
+                title="Website Design"
+                subtitle="Designing setting up Websites with scale for individuals or companies."
+                price="100$ "
+                unit="/ website"
+                features={['React/Next.js Framework', 'CMS Integration', 'Responsive Implementation', 'Vercel Deployment SetUp' , 'VPS Deployment SetUp']}
                 cta="Start Project"
                 isPopular
               />
+              {/* Tier 2 */}
+              <ServiceCard
+                tier="Solotions"
+                icon="data_table"
+                title="Web Hosting & server adminstarition."
+                subtitle="Scalable libraries for scale-ups."
+                price="50$"
+                unit="/ month / website"
+                features={['deployment and updates', 'Security and safety', 'Reach management', 'Usage Documentation', 'Internet Services SetUp' , 'Emergency Response']}
+                cta="BOOK Meeting"
+              />
               {/* Tier 3 */}
               <ServiceCard
-                tier="TIER_03"
-                icon="palette"
-                title="Creative Dev"
-                subtitle="High-end interaction & motion."
-                price="$150"
+                tier="Game Development"
+                icon="videogame_asset"
+                title="Game Develpment"
+                subtitle="Using unity to make Puroused Games For Schools to Tech Student or individuals ."
+                price="$75"
                 unit="/ hour"
-                features={['WebGL / Three.js Shaders', 'GSAP Motion Design', 'Performance Tuning', 'Awwwards Submission Prep']}
+                features={['Unity', 'Mobile / DiskTop', 'Performance Tuning', 'UI / UX Design' , 'Creative Takes'] }
                 cta="Book Consultation"
+                isUnavailable
               />
             </div>
              <div className="mt-12 text-center">
                 <p className="font-mono text-xs text-text-muted uppercase tracking-widest">
-                    Custom requirements? <a href="mailto:hello@roocky.dev" className="text-primary hover:underline hover:text-white transition-colors cursor-hover">Contact for bespoke quote</a>
+                    Custom requirements? <a href="mailto:LetsBuild@roocky.dev" className="text-primary hover:underline hover:text-white transition-colors cursor-hover">Contact for bespoke quote</a>
                 </p>
             </div>
           </main>
@@ -86,57 +88,123 @@ export default function ServiceMenu({ isOpen, onClose }: ServiceMenuProps) {
 }
 
 interface ServiceCardProps {
-  tier: string;
-  icon: string;
-  title: string;
-  subtitle: string;
-  price: string;
-  unit: string;
-  features: string[];
-  cta: string;
-  isPopular?: boolean;
+    cta: string;
+    features: string[];
+    icon: string;
+    isPopular?: boolean;
+    isUnavailable?: boolean;
+    price: string;
+    subtitle: string;
+    tier: string;
+    title: string;
+    unit: string;
 }
 
-function ServiceCard({ tier, icon, title, subtitle, price, unit, features, cta, isPopular }: ServiceCardProps) {
-  return (
-    <div className={`group relative flex flex-col justify-between border ${isPopular ? 'border-primary/50 bg-[#1a1d13]' : 'border-border-dark bg-surface'} p-8 transition-transform hover:-translate-y-2 hover:border-primary hover:shadow-[0_0_20px_-5px_rgba(204,255,0,0.15)] cursor-hover`}>
-      {isPopular && (
-        <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-black shadow-lg">
-          Most Popular
-        </div>
-      )}
-      <div className="mb-8">
-        <div className="mb-4 flex items-center justify-between">
-          <span className="font-mono text-xs font-bold text-primary tracking-widest uppercase">[{tier}]</span>
-          <span className="material-symbols-outlined text-text-muted group-hover:text-primary transition-colors">{icon}</span>
-        </div>
-        <h2 className="mb-2 font-display text-3xl font-bold uppercase tracking-tighter text-white">{title}</h2>
-        <p className="font-mono text-sm text-text-muted">{subtitle}</p>
-      </div>
+import clsx from 'clsx';
 
-      <div className="mb-8 border-y border-dashed border-border-dark py-6 group-hover:border-primary/30 transition-colors">
-        <div className="flex items-baseline gap-1">
-          <span className="text-4xl font-bold text-primary">{price}</span>
-          <span className="font-mono text-sm text-text-muted">{unit}</span>
-        </div>
-        <div className="mt-2 flex items-center gap-2">
-             <div className="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse"></div>
-             <span className="font-mono text-xs text-green-500">AVAILABLE NOW</span>
-        </div>
-      </div>
+function getCardClassName(isPopular: boolean | undefined, isUnavailable: boolean | undefined) {
+    return clsx(
+        'group relative flex flex-col justify-between border p-8 transition-all duration-300',
+        isUnavailable
+            ? 'border-border-dark bg-surface/40 opacity-70 cursor-not-allowed'
+            : [
+                'cursor-hover hover:-translate-y-2 hover:border-primary hover:shadow-[0_0_20px_-5px_rgba(204,255,0,0.15)]',
+                isPopular ? 'border-primary/50 bg-[#1a1d13]' : 'border-border-dark bg-surface',
+            ],
+    );
+}
 
-      <ul className="mb-10 space-y-4 font-mono text-sm text-text-main flex-grow">
-        {features.map((feature: string, i: number) => (
-          <li key={i} className="flex items-start gap-3">
-            <span className="material-symbols-outlined text-primary text-[18px]">check</span>
+function getCtaClassName(isPopular: boolean | undefined, isUnavailable: boolean | undefined) {
+    return clsx(
+        'w-full py-4 text-center font-display text-sm font-bold uppercase tracking-wider transition-colors duration-300',
+        isUnavailable
+            ? 'border border-border-dark bg-transparent text-text-muted cursor-not-allowed'
+            : isPopular
+                ? 'bg-primary text-black hover:bg-white'
+                : 'border border-primary text-white hover:bg-primary hover:text-black',
+    );
+}
+
+function FeatureItem({feature, isUnavailable}: { feature: string; isUnavailable?: boolean }) {
+    return (
+        <li className="flex items-start gap-3">
+      <span
+          className={clsx('material-symbols-outlined text-[18px]', isUnavailable ? 'text-text-muted/50' : 'text-primary')}>
+        {isUnavailable ? 'close' : 'check'}
+      </span>
             <span>{feature}</span>
-          </li>
-        ))}
-      </ul>
+        </li>
+    );
+}
 
-      <button className={`w-full py-4 text-center font-display text-sm font-bold uppercase tracking-wider transition-colors duration-300 ${isPopular ? 'bg-primary text-black hover:bg-white' : 'border border-primary text-white hover:bg-primary hover:text-black'}`}>
-        {cta}
-      </button>
-    </div>
-  );
+function ServiceCard({
+                         tier,
+                         icon,
+                         title,
+                         subtitle,
+                         price,
+                         unit,
+                         features,
+                         cta,
+                         isPopular,
+                         isUnavailable
+                     }: ServiceCardProps) {
+    const mailtoHref = 'mailto:letsbuild@roocky.dev';
+
+    return (
+        <div className={getCardClassName(isPopular, isUnavailable)}>
+            {isPopular && !isUnavailable && (
+                <div
+                    className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-black shadow-lg">
+                    Most Popular
+                </div>
+            )}
+
+            <div className="mb-8">
+                <div className="mb-4 flex items-center justify-between">
+          <span
+              className={clsx('font-mono text-xs font-bold tracking-widest uppercase', isUnavailable ? 'text-text-muted' : 'text-primary')}>
+            [{tier}]
+          </span>
+                    <span
+                        className={clsx('material-symbols-outlined text-text-muted transition-colors', !isUnavailable && 'group-hover:text-primary')}>
+            {icon}
+          </span>
+                </div>
+                <h2 className={clsx('mb-2 font-display text-3xl font-bold uppercase tracking-tighter', isUnavailable ? 'text-text-muted' : 'text-white')}>
+                    {title}
+                </h2>
+                <p className="font-mono text-sm text-text-muted">{subtitle}</p>
+            </div>
+
+            <div
+                className={clsx('mb-8 border-y border-dashed border-border-dark py-6 transition-colors', !isUnavailable && 'group-hover:border-primary/30')}>
+                <div className="flex items-baseline gap-1">
+          <span className={clsx('text-4xl font-bold', isUnavailable ? 'text-text-muted' : 'text-primary')}>
+            {price}
+          </span>
+                    <span className="font-mono text-sm text-text-muted">{unit}</span>
+                </div>
+                <div className="mt-2 flex items-center gap-2">
+          <span className={clsx('font-mono text-xs', isUnavailable ? 'text-red-500' : 'text-green-500')}>
+            {isUnavailable ? 'UNAVAILABLE AT THE MOMENT' : 'AVAILABLE NOW'}
+          </span>
+                </div>
+            </div>
+
+            <ul className={clsx('mb-10 space-y-4 font-mono text-sm flex-grow', isUnavailable ? 'text-text-muted/60' : 'text-text-main')}>
+                {features.map((feature, i) => (
+                    <FeatureItem key={i} feature={feature} isUnavailable={isUnavailable}/>
+                ))}
+            </ul>
+
+            {isUnavailable ? (
+                <span className={getCtaClassName(isPopular, isUnavailable)}>Currently Unavailable</span>
+            ) : (
+                <a href={mailtoHref} className={getCtaClassName(isPopular, isUnavailable)}>
+                    {cta}
+                </a>
+            )}
+        </div>
+    );
 }

@@ -30,7 +30,7 @@ export default function Navbar() {
         <div className="w-full px-6 py-4 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2 group cursor-hover magnet-target">
             <span className={`material-symbols-outlined text-primary text-2xl ${performanceLevel === 'high' ? 'animate-pulse-fast' : ''}`}>bolt</span>
-            <span className="font-bold tracking-tighter text-xl">CREATIVE SPARK</span>
+            <span className="font-bold tracking-tighter text-xl">ROOCKY . dev</span>
           </Link>
 
           <div className="hidden md:flex items-center gap-8">

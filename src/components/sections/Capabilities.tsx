@@ -9,7 +9,7 @@ export default function Capabilities() {
       <div className="lg:col-span-3 p-8 lg:p-12 border-b lg:border-b-0 lg:border-r border-border-dark lg:sticky lg:top-0 lg:h-screen flex flex-col justify-between bg-background-dark z-20">
         <div>
           <span className="font-mono text-primary text-xs mb-4 block">02 // SERVICES</span>
-          <h2 className="text-5xl font-bold tracking-tighter uppercase leading-none">Capa-<br/>bili-<br/>ties</h2>
+          <h2 className="text-5xl font-bold tracking-tighter uppercase leading-none">Capabilities</h2>
         </div>
         <div className="hidden lg:block w-12 h-12 rounded-full border border-border-dark flex items-center justify-center animate-spin-slow">
           <span className="material-symbols-outlined text-text-muted">asterisk</span>
