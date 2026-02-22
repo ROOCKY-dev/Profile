@@ -1,10 +1,13 @@
 'use client';
 
 import Link from 'next/link';
-import { PORTFOLIO_DATA, Project } from '@/lib/portfolio-data';
+import { PROJECTS, ProjectData } from '@/lib/project-data';
 
 export default function SelectedProjects() {
-  const { projects } = PORTFOLIO_DATA;
+  // Only show featured projects on the homepage
+  const featured = PROJECTS.filter((p) => p.featured);
+  // Fallback: if nothing is featured, show the first 3
+  const displayProjects = featured.length > 0 ? featured : PROJECTS.slice(0, 3);
 
   return (
     <section className="border-b border-border-dark relative" id="work">
@@ -20,14 +23,33 @@ export default function SelectedProjects() {
         </div>
       </div>
 
-      {projects.map((project) => (
+      {displayProjects.map((project) => (
         <ProjectCard key={project.id} project={project} />
       ))}
+
+      {/* View All Projects CTA */}
+      <Link
+        href="/work"
+        className="group relative block w-full border-b border-border-dark overflow-hidden cursor-hover"
+      >
+        <div className="px-6 py-16 md:py-24 flex flex-col items-center justify-center gap-4 bg-surface/30 hover:bg-surface transition-colors duration-500">
+          <span className="font-mono text-text-muted text-sm tracking-[0.2em] uppercase group-hover:text-white transition-colors">
+            {PROJECTS.length} Projects in Archive
+          </span>
+          <h3 className="text-4xl md:text-6xl font-bold tracking-tighter uppercase text-white group-hover:text-primary transition-colors duration-300">
+            VIEW ALL PROJECTS
+          </h3>
+          <div className="h-[2px] w-0 group-hover:w-48 bg-primary transition-all duration-700 ease-in-out" />
+          <span className="material-symbols-outlined text-primary text-3xl mt-2 group-hover:translate-x-4 transition-transform duration-300">
+            arrow_forward
+          </span>
+        </div>
+      </Link>
     </section>
   );
 }
 
-function ProjectCard({ project }: { project: Project }) {
+function ProjectCard({ project }: { project: ProjectData }) {
   return (
     <Link href={`/work/${project.id}`} className="group relative block w-full h-[80vh] border-b border-border-dark overflow-hidden cursor-hover">
       {/* Background Image */}
@@ -51,6 +73,16 @@ function ProjectCard({ project }: { project: Project }) {
           <h3 className="text-6xl md:text-9xl font-bold text-white tracking-tighter mix-blend-overlay group-hover:mix-blend-normal transition-all duration-300">
             {project.title}
           </h3>
+          {/* Tags */}
+          {project.tags && project.tags.length > 0 && (
+            <div className="flex flex-wrap gap-2 mt-4 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+              {project.tags.map((tag) => (
+                <span key={tag} className="font-mono text-xs text-primary/80 border border-primary/30 px-2 py-1 bg-black/50 backdrop-blur-sm">
+                  {tag}
+                </span>
+              ))}
+            </div>
+          )}
           <div className="h-[1px] w-0 group-hover:w-full bg-primary mt-4 transition-all duration-700 ease-in-out" />
         </div>
       </div>

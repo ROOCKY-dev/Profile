@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import Link from 'next/link';
 import { PORTFOLIO_DATA } from '@/lib/portfolio-data';
 import { usePerformance } from '@/lib/PerformanceContext';
 
@@ -69,10 +70,10 @@ export default function Hero() {
               <span className="relative z-10">Start Project</span>
               <div className="absolute inset-0 bg-white transform translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
             </button>
-            <button className="px-8 py-4 border border-primary text-primary font-bold uppercase tracking-wider hover:bg-primary/10 transition-all cursor-hover flex items-center gap-2">
+            <Link href="/work" className="px-8 py-4 border border-primary text-primary font-bold uppercase tracking-wider hover:bg-primary/10 transition-all cursor-hover flex items-center gap-2">
               <span>View Work</span>
-              <span className="material-symbols-outlined text-sm">arrow_downward</span>
-            </button>
+              <span className="material-symbols-outlined text-sm">arrow_forward</span>
+            </Link>
           </div>
         </div>
       </div>

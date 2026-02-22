@@ -1,12 +1,8 @@
-export interface Project {
-  id: string;
-  title: string;
-  category: string;
-  year: string;
-  description: string;
-  image: string;
-  link?: string;
-}
+import { PROJECTS, ProjectData } from './project-data';
+
+// Re-export for backward compatibility
+export type Project = ProjectData;
+export { PROJECTS };
 
 export interface TechItem {
   name: string;
@@ -66,16 +62,8 @@ export const PORTFOLIO_DATA = {
       icon: 'brush'
     }
   ],
-  projects: [
-    {
-      id: 'StackerForge',
-      title: 'STACKERFORGE',
-      category: 'MC MOD DEVELOPMENT',
-      year: '2024',
-      description: 'An experiment in developing MC mods using AI that went better than expected i used Google antiGravity and Open ai image Gen to give the final product.',
-      image: 'https://static0.gamerantimages.com/wordpress/wp-content/uploads/2025/02/minecraft-key-art-feature.jpg',
-    },
-  ],
+  // Projects are now sourced from project-data.ts
+  projects: PROJECTS,
   techStack: {
     core: [
       { name: 'C++', category: 'LANGUAGES' },
