@@ -17,8 +17,35 @@ const jetBrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Creative Spark Portfolio",
-  description: "Crafting immersive digital experiences.",
+    title: {
+        default: 'Roocky | Developer Portfolio',
+        template: '%s | Roocky',
+    },
+
+    description: 'A brutalist, high-performance portfolio showcasing web development and creative coding projects of ROOCKYdev | Ahmed Ghaithan.',
+    metadataBase: new URL('https://roocky.dev'),
+    openGraph: {
+        title: 'Roocky | Developer Portfolio',
+        description: 'Web development and creative coding projects of ROOCKYdev | Ahmed Ghaithan. ',
+        url: 'https://roocky.dev',
+        siteName: 'Roockydev Portfolio',
+        locale: 'en_US',
+        type: 'website',
+    },
+    twitter: {
+        card: 'summary_large_image',
+        title: 'Roocky | Developer Portfolio',
+        description: 'Web development and creative coding projects of ROOCKYdev | Ahmed Ghaithan.',
+    },
+    robots: {
+        index: true,
+        follow: true,
+    },
+    /*
+    verification: {
+        google: 'YOUR_GOOGLE_VERIFICATION_CODE',
+    },
+    */
 };
 
 export default function RootLayout({
