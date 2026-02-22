@@ -59,9 +59,7 @@ src/
 │   ├── layout/             # Navbar, Footer, SimpleFooter
 │   ├── sections/           # Hero, Marquee, Capabilities, SelectedProjects, TechStack
 │   └── ui/                 # CustomCursor, NoiseOverlay, ServiceMenu
-└── lib/
-├── constants.ts        # Color maps, game constants
-├── data.ts             # Timeline, tech stack, projects, about/landing content
+└── lib/ # Color maps, game constants
 ├── portfolio-data.ts   # Portfolio data models & structured content
 ├── sound.ts            # Sound utilities
 └── types.ts            # TypeScript type definitions
