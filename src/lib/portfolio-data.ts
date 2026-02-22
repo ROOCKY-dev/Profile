@@ -47,7 +47,7 @@ export const PORTFOLIO_DATA = {
       icon: 'videogame_asset'
     },
     {
-      title: 'Adminsitrative',
+      title: 'Administrative',
       description: 'Expertise in server administration, Linux, Ubuntu and Game servers.',
       icon: 'dns'
     },
