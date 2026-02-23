@@ -49,7 +49,8 @@ export const PROJECTS: ProjectData[] = [
     tags: ['Minecraft', 'AI', 'Modding', 'Java'],
     role: 'Lead Developer',
     stack: ['Java', 'NeoForge', 'Google AntiGravity', 'OpenAI'],
-    featured: true,
+    featured: false,
+    link: 'https://modrinth.com/mod/stackerforge',
   },
   {
     id: 'portfolio-v3',

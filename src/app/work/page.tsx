@@ -52,7 +52,7 @@ export default function WorkPage() {
             <span className="text-primary">PROJECTS</span>
           </h1>
           <p className="font-mono text-text-muted text-sm max-w-lg">
-            A complete archive of work — from Minecraft mods to full-stack web apps.
+            A complete archive of My work — from small mods to full-stack web apps.
             Click any project to dive into the case study.
           </p>
 
