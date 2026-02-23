@@ -1,4 +1,8 @@
 // ============================================================
+/**
+ * Centralized project data source.
+ * Defines the structure and content for portfolio projects.
+ */
 // PROJECT DATA — Add new projects by simply appending to the array!
 // ============================================================
 

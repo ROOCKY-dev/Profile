@@ -15,6 +15,10 @@ export interface Capability {
   icon: string;
 }
 
+/**
+ * Centralized data source for the portfolio website.
+ * Contains personal information, hero section content, capabilities, tech stack, and contact details.
+ */
 export const PORTFOLIO_DATA = {
   personal: {
     name: 'Ahmed Husam Ghaithan',
@@ -92,5 +96,14 @@ export const PORTFOLIO_DATA = {
   WORKING
   RESTING
   */
-  stat:{ status : 'WORKING' }
+  stat:{ status : 'WORKING' },
+  contact: {
+    methods: [
+      { id: 'email', label: 'Email', value: 'letsbuild@roocky.dev', url: 'mailto:letsbuild@roocky.dev', icon: 'mail' },
+      { id: 'whatsapp', label: 'WhatsApp', value: 'Chat on WhatsApp', url: 'https://wa.link/jpl25x', icon: 'chat' },
+      { id: 'github', label: 'GitHub', value: '@ROOCKY-dev', url: 'https://github.com/ROOCKY-dev/', icon: 'code' },
+      { id: 'instagram', label: 'Instagram', value: '@roocky_dev', url: 'https://www.instagram.com/roocky_dev/', icon: 'photo_camera' }
+    ],
+    resumeUrl: '#' // Placeholder URL for now
+  }
 };

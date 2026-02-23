@@ -1,14 +1,12 @@
 'use client';
-import { useState } from 'react';
+
 import { PORTFOLIO_DATA } from '@/lib/portfolio-data';
 import { PC_SHAPES } from '@/lib/Status';
 
 export default function TechStack() {
   const { techStack } = PORTFOLIO_DATA;
+  const currentStatus = PORTFOLIO_DATA.stat.status as keyof typeof PC_SHAPES;
 
-  const [currentStatus, setCurrentStatus] = useState<keyof typeof PC_SHAPES>(
-      (PORTFOLIO_DATA.stat.status as keyof typeof PC_SHAPES)
-  );
   return (
     <section className="grid grid-cols-1 lg:grid-cols-2 border-b border-border-dark min-h-[60vh]" id="about">
       {/* Tech List */}
