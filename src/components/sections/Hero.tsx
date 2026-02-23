@@ -67,7 +67,7 @@ export default function Hero() {
 
           <div className="flex gap-4">
             <button className="group relative px-8 py-4 bg-primary text-background-dark font-bold uppercase tracking-wider hover:bg-white transition-all overflow-hidden cursor-hover">
-              <span className="relative z-10">Start Project</span>
+              <span className="relative z-10">CONTACT ME</span>
               <div className="absolute inset-0 bg-white transform translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
             </button>
             <Link href="/work" className="px-8 py-4 border border-primary text-primary font-bold uppercase tracking-wider hover:bg-primary/10 transition-all cursor-hover flex items-center gap-2">
