@@ -5,6 +5,10 @@ import Link from 'next/link';
 import ServiceMenu from '@/components/ui/ServiceMenu';
 import { usePerformance } from '@/lib/PerformanceContext';
 
+/**
+ * Main navigation component.
+ * Handles desktop and mobile navigation, service menu toggle, and performance settings.
+ */
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { performanceLevel, cyclePerformanceLevel } = usePerformance();
@@ -35,8 +39,9 @@ export default function Navbar() {
 
           <div className="hidden md:flex items-center gap-8">
             <Link href="/work" className="text-sm font-mono text-text-muted hover:text-primary transition-colors hover:line-through decoration-primary decoration-2 cursor-hover">01. WORK</Link>
-            <a href="#capabilities" className="text-sm font-mono text-text-muted hover:text-primary transition-colors hover:line-through decoration-primary decoration-2 cursor-hover">02. CAPABILITIES</a>
-            <a href="#about" className="text-sm font-mono text-text-muted hover:text-primary transition-colors hover:line-through decoration-primary decoration-2 cursor-hover">03. ABOUT</a>
+            <Link href="/#capabilities" className="text-sm font-mono text-text-muted hover:text-primary transition-colors hover:line-through decoration-primary decoration-2 cursor-hover">02. CAPABILITIES</Link>
+            {/* Assuming "about" section exists or will exist, mapping it to a suitable section or keeping it if it works */}
+            <Link href="/#about" className="text-sm font-mono text-text-muted hover:text-primary transition-colors hover:line-through decoration-primary decoration-2 cursor-hover">03. ABOUT</Link>
             <button
                 onClick={() => setIsMenuOpen(true)}
                 className="text-sm font-mono text-text-muted hover:text-primary transition-colors hover:line-through decoration-primary decoration-2 cursor-hover"

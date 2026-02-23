@@ -1,11 +1,19 @@
 'use client';
 
+import { useState } from 'react';
 import { motion } from 'framer-motion';
+import ContactModal from '@/components/ui/ContactModal';
 import Link from 'next/link';
 import { PORTFOLIO_DATA } from '@/lib/portfolio-data';
 import { usePerformance } from '@/lib/PerformanceContext';
 
+/**
+ * Hero section component.
+ * Displays the main introduction, branding, and call-to-action buttons.
+ * Integrates the Contact Modal for user interaction.
+ */
 export default function Hero() {
+  const [isContactOpen, setIsContactOpen] = useState(false);
   const { hero } = PORTFOLIO_DATA;
   const { performanceLevel } = usePerformance();
 
@@ -66,7 +74,7 @@ export default function Hero() {
           </div>
 
           <div className="flex gap-4">
-            <button className="group relative px-8 py-4 bg-primary text-background-dark font-bold uppercase tracking-wider hover:bg-white transition-all overflow-hidden cursor-hover">
+            <button onClick={() => setIsContactOpen(true)} className="group relative px-8 py-4 bg-primary text-background-dark font-bold uppercase tracking-wider hover:bg-white transition-all overflow-hidden cursor-hover">
               <span className="relative z-10">CONTACT ME</span>
               <div className="absolute inset-0 bg-white transform translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
             </button>
@@ -77,6 +85,7 @@ export default function Hero() {
           </div>
         </div>
       </div>
+      <ContactModal isOpen={isContactOpen} onClose={() => setIsContactOpen(false)} />
     </section>
   );
 }

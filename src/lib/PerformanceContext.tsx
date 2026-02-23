@@ -22,6 +22,7 @@ export function PerformanceProvider({ children }: { children: React.ReactNode })
     // Load preference from localStorage
     const saved = localStorage.getItem('performance-level') as PerformanceLevel;
     if (saved && ['high', 'mid', 'low'].includes(saved)) {
+      // eslint-disable-next-line
       setPerformanceLevelState(saved);
     }
   }, []);
