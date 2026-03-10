@@ -1,8 +1,3 @@
-
-
-Great, go ahead and create the `README.md` file in your project root with that content. Here's the final version ready to drop in:
-
-```markdown
 # 🚀 Creative Spark Portfolio
 
 A modern, immersive developer portfolio built with **Next.js 16**, **React 19**, **Three.js**, and **Framer Motion**. Featuring a sleek dark UI with noise overlays, custom cursors, smooth scrolling, and 3D visual effects.
@@ -116,7 +111,3 @@ npm run lint
 ## 📄 License
 
 This project is private and not licensed for redistribution.
-```
-
-
-You're all set! 🎉 Just save this as `README.md` in the project root alongside `package.json`.
