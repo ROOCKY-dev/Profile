@@ -1,37 +1,130 @@
-import { PORTFOLIO_DATA } from '@/lib/portfolio-data';
+'use client';
 
+import { motion } from 'framer-motion';
+import { PORTFOLIO_DATA } from '@/lib/portfolio-data';
+import { GlassCard, GradientOrbs, SectionHeader, IconContainer, GlassDivider } from '@/components/ui/glass';
+import { usePerformance } from '@/lib/PerformanceContext';
+
+/**
+ * Capabilities/services section with premium glass card grid.
+ * Features hover animations, gradient orbs, and staggered reveals.
+ */
 export default function Capabilities() {
   const { capabilities } = PORTFOLIO_DATA;
+  const { performanceLevel } = usePerformance();
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.2,
+      },
+    },
+  };
+
+  const cardVariants = {
+    hidden: { opacity: 0, y: 40 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.6,
+        ease: [0.16, 1, 0.3, 1],
+      },
+    },
+  };
 
   return (
-    <section className="grid grid-cols-1 lg:grid-cols-12 border-b border-border-dark" id="capabilities">
-      {/* Sticky Title */}
-      <div className="lg:col-span-3 p-8 lg:p-12 border-b lg:border-b-0 lg:border-r border-border-dark lg:sticky lg:top-0 lg:h-screen flex flex-col justify-between bg-background-dark z-20">
-        <div>
-          <span className="font-mono text-primary text-xs mb-4 block">02 // SERVICES</span>
-          <h2 className="text-5xl font-bold tracking-tighter uppercase leading-none">Capabilities</h2>
+    <section className="relative py-24 md:py-32 overflow-hidden" id="capabilities">
+      {/* Background orbs */}
+      {performanceLevel !== 'low' && <GradientOrbs variant="section" />}
+
+      <div className="relative z-10 max-w-[1400px] mx-auto px-6">
+        {/* Section Header */}
+        <div className="mb-16 md:mb-20">
+          <SectionHeader
+            badgeNumber="02"
+            badge="Services"
+            title="What I"
+            titleAccent="Build"
+            description="Specialized skills honed through real-world projects and continuous learning. From game mechanics to AI-powered solutions."
+          />
         </div>
-        <div className="hidden lg:block w-12 h-12 rounded-full border border-border-dark flex items-center justify-center animate-spin-slow">
-          <span className="material-symbols-outlined text-text-muted">asterisk</span>
-        </div>
+
+        {/* Capabilities Grid */}
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-100px' }}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+        >
+          {capabilities.map((capability, i) => (
+            <motion.div key={i} variants={cardVariants}>
+              <GlassCard
+                variant="hover"
+                padding="lg"
+                className="h-full min-h-[320px] flex flex-col justify-between group"
+              >
+                {/* Icon */}
+                <div className="mb-8">
+                  <IconContainer
+                    size="lg"
+                    variant="default"
+                    className="group-hover:border-primary/50 group-hover:bg-primary/10 transition-all duration-500"
+                  >
+                    <span className="material-symbols-outlined text-2xl text-text-muted group-hover:text-primary transition-colors duration-500">
+                      {capability.icon}
+                    </span>
+                  </IconContainer>
+                </div>
+
+                {/* Content */}
+                <div>
+                  <h3 className="text-xl font-bold mb-3 text-text-main group-hover:text-primary transition-colors duration-300">
+                    {capability.title}
+                  </h3>
+                  <p className="font-mono text-sm text-text-muted leading-relaxed">
+                    {capability.description}
+                  </p>
+                </div>
+
+                {/* Bottom accent line */}
+                <motion.div 
+                  className="mt-6 h-px bg-gradient-to-r from-primary/50 to-secondary/30 origin-left"
+                  initial={{ scaleX: 0 }}
+                  whileInView={{ scaleX: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.8, delay: 0.3 + i * 0.1 }}
+                />
+              </GlassCard>
+            </motion.div>
+          ))}
+        </motion.div>
+
+        {/* Decorative element */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.6 }}
+          className="flex justify-center mt-16"
+        >
+          <div className="flex items-center gap-4 text-text-muted/40">
+            <div className="w-12 h-px bg-gradient-to-r from-transparent to-primary/30" />
+            <span className="material-symbols-outlined text-sm animate-pulse">
+              code
+            </span>
+            <div className="w-12 h-px bg-gradient-to-l from-transparent to-primary/30" />
+          </div>
+        </motion.div>
       </div>
 
-      {/* Grid Content */}
-      <div className="lg:col-span-9 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-        {capabilities.map((capability, i) => (
-          <div
-            key={i}
-            className="group border-b lg:border-r border-border-dark p-8 md:p-12 hover:bg-surface transition-colors duration-300 cursor-hover min-h-[400px] flex flex-col justify-between"
-          >
-            <div className="w-12 h-12 border border-border-dark group-hover:border-primary rounded-full flex items-center justify-center transition-all duration-300 group-hover:rotate-[15deg] group-hover:bg-primary group-hover:text-background-dark">
-              <span className="material-symbols-outlined">{capability.icon}</span>
-            </div>
-            <div>
-              <h3 className="text-2xl font-bold mb-4 group-hover:translate-x-2 transition-transform">{capability.title}</h3>
-              <p className="font-mono text-text-muted text-sm leading-relaxed">{capability.description}</p>
-            </div>
-          </div>
-        ))}
+      {/* Bottom divider */}
+      <div className="absolute bottom-0 left-0 right-0">
+        <GlassDivider />
       </div>
     </section>
   );

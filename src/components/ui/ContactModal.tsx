@@ -2,21 +2,15 @@
 
 import { AnimatePresence, motion } from 'framer-motion';
 import { PORTFOLIO_DATA } from '@/lib/portfolio-data';
+import { GlassCard, GlassButton, GlassBadge } from '@/components/ui/glass';
 
 interface ContactModalProps {
-  /**
-   * Controls whether the modal is visible.
-   */
   isOpen: boolean;
-  /**
-   * Callback function to close the modal.
-   */
   onClose: () => void;
 }
 
 /**
- * A modal component that displays contact information and a download CV button.
- * Uses Framer Motion for entrance/exit animations.
+ * Glass-styled contact modal with premium animations.
  */
 export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
   const { contact } = PORTFOLIO_DATA;
@@ -28,73 +22,101 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[60] flex items-center justify-center bg-background-dark/90 backdrop-blur-sm p-4"
+          transition={{ duration: 0.3 }}
+          className="fixed inset-0 z-[60] flex items-center justify-center p-4"
           onClick={onClose}
         >
+          {/* Backdrop with blur */}
+          <motion.div 
+            className="absolute inset-0 bg-background-dark/80 backdrop-blur-xl"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          />
+
+          {/* Modal Content */}
           <motion.div
-            initial={{ scale: 0.95, opacity: 0, y: 20 }}
+            initial={{ scale: 0.9, opacity: 0, y: 30 }}
             animate={{ scale: 1, opacity: 1, y: 0 }}
-            exit={{ scale: 0.95, opacity: 0, y: 20 }}
-            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-            className="w-full max-w-md bg-surface border border-border-dark p-6 md:p-8 relative overflow-hidden shadow-2xl"
+            exit={{ scale: 0.9, opacity: 0, y: 30 }}
+            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
             onClick={(e) => e.stopPropagation()}
+            className="relative w-full max-w-md"
           >
-             {/* Decorative Elements */}
-            <div className="absolute top-0 left-0 w-full h-1 bg-primary" />
-            <div className="absolute -right-20 -top-20 w-40 h-40 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
+            <GlassCard variant="glow" padding="lg" className="relative overflow-visible">
+              {/* Decorative gradient orb */}
+              <div className="absolute -top-20 -right-20 w-40 h-40 bg-primary/20 rounded-full blur-[60px] pointer-events-none" />
+              <div className="absolute -bottom-10 -left-10 w-24 h-24 bg-secondary/20 rounded-full blur-[40px] pointer-events-none" />
 
-            {/* Header */}
-            <div className="flex justify-between items-start mb-8 relative z-10">
-              <div>
-                <p className="font-mono text-xs text-primary tracking-widest uppercase mb-2">Connect</p>
-                <h2 className="text-3xl font-display font-bold uppercase tracking-tighter text-white">
-                  Get in Touch
-                </h2>
+              {/* Header */}
+              <div className="flex justify-between items-start mb-8 relative z-10">
+                <div>
+                  <GlassBadge variant="primary" className="mb-3">
+                    Connect
+                  </GlassBadge>
+                  <h2 className="text-2xl md:text-3xl font-bold text-text-main">
+                    Get in <span className="gradient-text-static">Touch</span>
+                  </h2>
+                </div>
+                <motion.button
+                  onClick={onClose}
+                  whileHover={{ scale: 1.1, rotate: 90 }}
+                  whileTap={{ scale: 0.9 }}
+                  aria-label="Close modal"
+                  className="w-10 h-10 flex items-center justify-center rounded-lg border border-primary/20 bg-primary/5 text-text-muted hover:text-primary hover:border-primary/50 transition-colors cursor-hover"
+                >
+                  <span className="material-symbols-outlined">close</span>
+                </motion.button>
               </div>
-              <button
-                onClick={onClose}
-                aria-label="Close modal"
-                className="group flex w-10 h-10 items-center justify-center border border-border-dark bg-background-dark text-white hover:bg-primary hover:text-black hover:border-primary transition-all duration-300"
+
+              {/* Contact Methods */}
+              <div className="space-y-3 mb-8 relative z-10">
+                {contact.methods.map((method, index) => (
+                  <motion.a
+                    key={method.id}
+                    href={method.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.1 + index * 0.05 }}
+                    className="flex items-center gap-4 p-4 rounded-xl border border-primary/10 bg-white/[0.02] hover:bg-primary/5 hover:border-primary/30 transition-all duration-300 group cursor-hover"
+                  >
+                    <div className="w-10 h-10 flex-shrink-0 flex items-center justify-center rounded-lg bg-primary/10 border border-primary/20 group-hover:bg-primary group-hover:border-primary transition-all duration-300">
+                      <span className="material-symbols-outlined text-lg text-primary group-hover:text-white transition-colors">
+                        {method.icon}
+                      </span>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-mono text-[10px] text-text-muted/60 uppercase tracking-wider mb-0.5">
+                        {method.label}
+                      </p>
+                      <p className="font-medium text-text-main truncate group-hover:text-primary transition-colors">
+                        {method.value}
+                      </p>
+                    </div>
+                    <span className="material-symbols-outlined text-text-muted/40 group-hover:text-primary group-hover:translate-x-1 transition-all">
+                      arrow_outward
+                    </span>
+                  </motion.a>
+                ))}
+              </div>
+
+              {/* Download CV Button */}
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+                className="pt-6 border-t border-primary/10 relative z-10"
               >
-                <span className="material-symbols-outlined transition-transform duration-300 group-hover:rotate-90">close</span>
-              </button>
-            </div>
-
-            {/* Contact Methods */}
-            <div className="space-y-3 mb-8 relative z-10">
-              {contact.methods.map((method) => (
-                <a
-                  key={method.id}
-                  href={method.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-4 p-4 border border-border-dark bg-background-dark/50 hover:bg-surface hover:border-primary/50 transition-all duration-300 group"
-                >
-                  <div className="w-10 h-10 flex-shrink-0 flex items-center justify-center bg-surface border border-border-dark group-hover:bg-primary group-hover:text-black transition-colors duration-300">
-                    <span className="material-symbols-outlined text-[20px]">{method.icon}</span>
-                  </div>
-                  <div className="overflow-hidden">
-                    <p className="font-mono text-[10px] text-text-muted uppercase tracking-wider mb-0.5 group-hover:text-primary transition-colors">{method.label}</p>
-                    <p className="font-display font-bold text-base text-white group-hover:text-white transition-colors truncate">{method.value}</p>
-                  </div>
-                  <span className="material-symbols-outlined ml-auto text-text-muted group-hover:text-primary group-hover:translate-x-1 transition-all text-[20px]">arrow_outward</span>
+                <a href={contact.resumeUrl} target="_blank" rel="noopener noreferrer">
+                  <GlassButton variant="primary" className="w-full justify-center">
+                    <span className="material-symbols-outlined">download</span>
+                    Download CV
+                  </GlassButton>
                 </a>
-              ))}
-            </div>
-
-            {/* CV Button */}
-            <div className="pt-6 border-t border-border-dark border-dashed relative z-10">
-                <a
-                  href={contact.resumeUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-2 w-full py-4 bg-primary text-black font-display font-bold uppercase tracking-wider hover:bg-white transition-colors duration-300 group relative overflow-hidden"
-                >
-                  <div className="absolute inset-0 bg-white transform translate-y-full group-hover:translate-y-0 transition-transform duration-300 z-0" />
-                  <span className="material-symbols-outlined relative z-10">download</span>
-                  <span className="relative z-10">Grab CV</span>
-                </a>
-            </div>
+              </motion.div>
+            </GlassCard>
           </motion.div>
         </motion.div>
       )}

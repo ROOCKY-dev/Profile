@@ -1,8 +1,8 @@
 'use client';
 
-
 import { AnimatePresence, motion } from 'framer-motion';
-import { usePerformance } from '@/lib/PerformanceContext';
+import { GlassCard, GlassButton, GlassBadge } from '@/components/ui/glass';
+import { cn } from '@/lib/utils';
 
 interface ServiceMenuProps {
   isOpen: boolean;
@@ -10,8 +10,6 @@ interface ServiceMenuProps {
 }
 
 export default function ServiceMenu({ isOpen, onClose }: ServiceMenuProps) {
-  const { performanceLevel } = usePerformance();
-
   return (
     <AnimatePresence>
       {isOpen && (
@@ -19,67 +17,91 @@ export default function ServiceMenu({ isOpen, onClose }: ServiceMenuProps) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[60] flex flex-col bg-background-dark/95 backdrop-blur-md"
+          className="fixed inset-0 z-[60] flex flex-col bg-background-dark/95 backdrop-blur-xl overflow-y-auto"
         >
+          {/* Gradient orbs */}
+          <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[150px] pointer-events-none" />
+          <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-secondary/10 rounded-full blur-[120px] pointer-events-none" />
+
           {/* Header */}
-          <header className="flex items-center justify-between px-6 py-6 md:px-12 md:py-8 sticky top-0 z-50 border-b border-border-dark">
-            <div className="flex items-center gap-2">
-              <span className={`material-symbols-outlined text-primary text-2xl ${performanceLevel === 'high' ? 'animate-pulse-fast' : ''}`}>bolt</span>
-              <span className="font-display font-bold text-xl tracking-tight text-white">THE OFFER</span>
+          <header className="sticky top-0 z-50 border-b border-primary/10 bg-background-dark/60 backdrop-blur-xl">
+            <div className="flex items-center justify-between px-6 py-6 md:px-12 max-w-7xl mx-auto w-full">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 flex items-center justify-center rounded-lg bg-primary/10 border border-primary/20">
+                  <span className="material-symbols-outlined text-primary">storefront</span>
+                </div>
+                <span className="font-bold text-xl text-text-main">Services</span>
+              </div>
+              <motion.button
+                onClick={onClose}
+                whileHover={{ scale: 1.1, rotate: 90 }}
+                whileTap={{ scale: 0.9 }}
+                aria-label="Close Menu"
+                className="w-12 h-12 flex items-center justify-center rounded-lg border border-primary/20 bg-primary/5 text-text-muted hover:text-primary hover:border-primary/50 transition-colors cursor-hover"
+              >
+                <span className="material-symbols-outlined text-2xl">close</span>
+              </motion.button>
             </div>
-            <button
-              onClick={onClose}
-              aria-label="Close Menu"
-              className="group flex w-12 h-12 items-center justify-center border border-border-dark bg-surface text-white transition-colors hover:border-primary hover:bg-primary hover:text-black cursor-hover"
-            >
-              <span className="material-symbols-outlined text-3xl transition-transform duration-500 group-hover:rotate-90">close</span>
-            </button>
           </header>
 
           {/* Main Content */}
-          <main className="flex-1 overflow-y-auto px-4 py-12 md:px-12 w-full max-w-7xl mx-auto">
-            <div className="grid w-full grid-cols-1 gap-6 md:grid-cols-3 md:gap-8 lg:gap-12">
-              {/* Tier 1 */}
+          <main className="flex-1 px-6 py-12 md:px-12 w-full max-w-7xl mx-auto relative z-10">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="grid w-full grid-cols-1 gap-6 md:grid-cols-3 md:gap-8"
+            >
               <ServiceCard
                 tier="Web Development"
                 icon="developer_mode_tv"
                 title="Website Design"
-                subtitle="Designing setting up Websites with scale for individuals or companies."
-                price="100$ "
+                subtitle="Designing and setting up websites with scale for individuals or companies."
+                price="$100"
                 unit="/ website"
-                features={['React/Next.js Framework', 'CMS Integration', 'Responsive Implementation', 'Vercel Deployment SetUp' , 'VPS Deployment SetUp']}
+                features={['React/Next.js Framework', 'CMS Integration', 'Responsive Implementation', 'Vercel Deployment SetUp', 'VPS Deployment SetUp']}
                 cta="Start Project"
                 isPopular
               />
-              {/* Tier 2 */}
               <ServiceCard
-                tier="Solotions"
-                icon="data_table"
-                title="Web Hosting & server adminstarition."
-                subtitle="Scalable libraries for scale-ups."
-                price="50$"
-                unit="/ month / website"
-                features={['deployment and updates', 'Security and safety', 'Reach management', 'Usage Documentation', 'Internet Services SetUp' , 'Emergency Response']}
-                cta="BOOK Meeting"
+                tier="Solutions"
+                icon="dns"
+                title="Web Hosting & Admin"
+                subtitle="Scalable server solutions for growing businesses."
+                price="$50"
+                unit="/ month"
+                features={['Deployment & Updates', 'Security & Safety', 'Reach Management', 'Usage Documentation', 'Internet Services SetUp', 'Emergency Response']}
+                cta="Book Meeting"
               />
-              {/* Tier 3 */}
               <ServiceCard
                 tier="Game Development"
                 icon="videogame_asset"
-                title="Game Develpment"
-                subtitle="Using unity to make Puroused Games For Schools to Tech Student or individuals ."
+                title="Game Development"
+                subtitle="Using Unity to create purposeful games for education or individuals."
                 price="$75"
                 unit="/ hour"
-                features={['Unity', 'Mobile / DiskTop', 'Performance Tuning', 'UI / UX Design' , 'Creative Takes'] }
+                features={['Unity Engine', 'Mobile / Desktop', 'Performance Tuning', 'UI / UX Design', 'Creative Takes']}
                 cta="Book Consultation"
                 isUnavailable
               />
-            </div>
-             <div className="mt-12 text-center">
-                <p className="font-mono text-xs text-text-muted uppercase tracking-widest">
-                    Custom requirements? <a href="mailto:LetsBuild@roocky.dev" className="text-primary hover:underline hover:text-white transition-colors cursor-hover">Contact for bespoke quote</a>
-                </p>
-            </div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.4 }}
+              className="mt-12 text-center"
+            >
+              <p className="font-mono text-xs text-text-muted">
+                Custom requirements?{' '}
+                <a 
+                  href="mailto:LetsBuild@roocky.dev" 
+                  className="text-primary hover:text-secondary transition-colors cursor-hover underline underline-offset-4"
+                >
+                  Contact for bespoke quote
+                </a>
+              </p>
+            </motion.div>
           </main>
         </motion.div>
       )}
@@ -88,123 +110,133 @@ export default function ServiceMenu({ isOpen, onClose }: ServiceMenuProps) {
 }
 
 interface ServiceCardProps {
-    cta: string;
-    features: string[];
-    icon: string;
-    isPopular?: boolean;
-    isUnavailable?: boolean;
-    price: string;
-    subtitle: string;
-    tier: string;
-    title: string;
-    unit: string;
-}
-
-import clsx from 'clsx';
-
-function getCardClassName(isPopular: boolean | undefined, isUnavailable: boolean | undefined) {
-    return clsx(
-        'group relative flex flex-col justify-between border p-8 transition-all duration-300',
-        isUnavailable
-            ? 'border-border-dark bg-surface/40 opacity-70 cursor-not-allowed'
-            : [
-                'cursor-hover hover:-translate-y-2 hover:border-primary hover:shadow-[0_0_20px_-5px_rgba(204,255,0,0.15)]',
-                isPopular ? 'border-primary/50 bg-[#1a1d13]' : 'border-border-dark bg-surface',
-            ],
-    );
-}
-
-function getCtaClassName(isPopular: boolean | undefined, isUnavailable: boolean | undefined) {
-    return clsx(
-        'w-full py-4 text-center font-display text-sm font-bold uppercase tracking-wider transition-colors duration-300',
-        isUnavailable
-            ? 'border border-border-dark bg-transparent text-text-muted cursor-not-allowed'
-            : isPopular
-                ? 'bg-primary text-black hover:bg-white'
-                : 'border border-primary text-white hover:bg-primary hover:text-black',
-    );
-}
-
-function FeatureItem({feature, isUnavailable}: { feature: string; isUnavailable?: boolean }) {
-    return (
-        <li className="flex items-start gap-3">
-      <span
-          className={clsx('material-symbols-outlined text-[18px]', isUnavailable ? 'text-text-muted/50' : 'text-primary')}>
-        {isUnavailable ? 'close' : 'check'}
-      </span>
-            <span>{feature}</span>
-        </li>
-    );
+  cta: string;
+  features: string[];
+  icon: string;
+  isPopular?: boolean;
+  isUnavailable?: boolean;
+  price: string;
+  subtitle: string;
+  tier: string;
+  title: string;
+  unit: string;
 }
 
 function ServiceCard({
-                         tier,
-                         icon,
-                         title,
-                         subtitle,
-                         price,
-                         unit,
-                         features,
-                         cta,
-                         isPopular,
-                         isUnavailable
-                     }: ServiceCardProps) {
-    const mailtoHref = 'mailto:letsbuild@roocky.dev';
+  tier,
+  icon,
+  title,
+  subtitle,
+  price,
+  unit,
+  features,
+  cta,
+  isPopular,
+  isUnavailable
+}: ServiceCardProps) {
+  const mailtoHref = 'mailto:letsbuild@roocky.dev';
 
-    return (
-        <div className={getCardClassName(isPopular, isUnavailable)}>
-            {isPopular && !isUnavailable && (
-                <div
-                    className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-black shadow-lg">
-                    Most Popular
-                </div>
-            )}
+  return (
+    <GlassCard
+      variant={isUnavailable ? 'default' : 'hover'}
+      padding="lg"
+      className={cn(
+        'relative flex flex-col justify-between min-h-[500px]',
+        isUnavailable && 'opacity-60',
+        isPopular && 'border-primary/30 shadow-[0_0_40px_rgba(124,92,255,0.1)]'
+      )}
+    >
+      {/* Popular badge */}
+      {isPopular && !isUnavailable && (
+        <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-20">
+          <GlassBadge variant="primary">Most Popular</GlassBadge>
+        </div>
+      )}
 
-            <div className="mb-8">
-                <div className="mb-4 flex items-center justify-between">
-          <span
-              className={clsx('font-mono text-xs font-bold tracking-widest uppercase', isUnavailable ? 'text-text-muted' : 'text-primary')}>
+      <div>
+        {/* Header */}
+        <div className="flex items-center justify-between mb-6">
+          <span className={cn(
+            'font-mono text-xs font-bold tracking-widest uppercase',
+            isUnavailable ? 'text-text-muted' : 'text-primary'
+          )}>
             [{tier}]
           </span>
-                    <span
-                        className={clsx('material-symbols-outlined text-text-muted transition-colors', !isUnavailable && 'group-hover:text-primary')}>
+          <span className={cn(
+            'material-symbols-outlined text-2xl',
+            isUnavailable ? 'text-text-muted/50' : 'text-text-muted'
+          )}>
             {icon}
           </span>
-                </div>
-                <h2 className={clsx('mb-2 font-display text-3xl font-bold uppercase tracking-tighter', isUnavailable ? 'text-text-muted' : 'text-white')}>
-                    {title}
-                </h2>
-                <p className="font-mono text-sm text-text-muted">{subtitle}</p>
-            </div>
-
-            <div
-                className={clsx('mb-8 border-y border-dashed border-border-dark py-6 transition-colors', !isUnavailable && 'group-hover:border-primary/30')}>
-                <div className="flex items-baseline gap-1">
-          <span className={clsx('text-4xl font-bold', isUnavailable ? 'text-text-muted' : 'text-primary')}>
-            {price}
-          </span>
-                    <span className="font-mono text-sm text-text-muted">{unit}</span>
-                </div>
-                <div className="mt-2 flex items-center gap-2">
-          <span className={clsx('font-mono text-xs', isUnavailable ? 'text-red-500' : 'text-green-500')}>
-            {isUnavailable ? 'UNAVAILABLE AT THE MOMENT' : 'AVAILABLE NOW'}
-          </span>
-                </div>
-            </div>
-
-            <ul className={clsx('mb-10 space-y-4 font-mono text-sm flex-grow', isUnavailable ? 'text-text-muted/60' : 'text-text-main')}>
-                {features.map((feature, i) => (
-                    <FeatureItem key={i} feature={feature} isUnavailable={isUnavailable}/>
-                ))}
-            </ul>
-
-            {isUnavailable ? (
-                <span className={getCtaClassName(isPopular, isUnavailable)}>Currently Unavailable</span>
-            ) : (
-                <a href={mailtoHref} className={getCtaClassName(isPopular, isUnavailable)}>
-                    {cta}
-                </a>
-            )}
         </div>
-    );
+
+        {/* Title */}
+        <h2 className={cn(
+          'text-2xl font-bold mb-2',
+          isUnavailable ? 'text-text-muted' : 'text-text-main'
+        )}>
+          {title}
+        </h2>
+        <p className="font-mono text-sm text-text-muted mb-6">{subtitle}</p>
+
+        {/* Price */}
+        <div className="py-6 border-y border-primary/10 mb-6">
+          <div className="flex items-baseline gap-1">
+            <span className={cn(
+              'text-4xl font-bold',
+              isUnavailable ? 'text-text-muted' : 'gradient-text-static'
+            )}>
+              {price}
+            </span>
+            <span className="font-mono text-sm text-text-muted">{unit}</span>
+          </div>
+          <div className="mt-2 flex items-center gap-2">
+            <span className={cn(
+              'w-2 h-2 rounded-full',
+              isUnavailable ? 'bg-red-500/50' : 'bg-green-400 animate-pulse'
+            )} />
+            <span className={cn(
+              'font-mono text-xs',
+              isUnavailable ? 'text-red-400/60' : 'text-green-400/80'
+            )}>
+              {isUnavailable ? 'UNAVAILABLE' : 'AVAILABLE NOW'}
+            </span>
+          </div>
+        </div>
+
+        {/* Features */}
+        <ul className="space-y-3 mb-8">
+          {features.map((feature, i) => (
+            <li key={i} className="flex items-start gap-3 font-mono text-sm">
+              <span className={cn(
+                'material-symbols-outlined text-base mt-0.5',
+                isUnavailable ? 'text-text-muted/40' : 'text-primary'
+              )}>
+                {isUnavailable ? 'close' : 'check'}
+              </span>
+              <span className={isUnavailable ? 'text-text-muted/50' : 'text-text-muted'}>
+                {feature}
+              </span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {/* CTA Button */}
+      {isUnavailable ? (
+        <div className="w-full py-4 text-center font-mono text-sm text-text-muted/50 border border-primary/10 rounded-lg">
+          Currently Unavailable
+        </div>
+      ) : (
+        <a href={mailtoHref}>
+          <GlassButton 
+            variant={isPopular ? 'primary' : 'outline'} 
+            className="w-full justify-center"
+          >
+            {cta}
+          </GlassButton>
+        </a>
+      )}
+    </GlassCard>
+  );
 }

@@ -14,25 +14,40 @@ export default function CustomCursor() {
     const dot = dotRef.current;
     if (!cursor || !dot) return;
 
+    let mouseX = 0;
+    let mouseY = 0;
+    let cursorX = 0;
+    let cursorY = 0;
+
     const moveCursor = (e: MouseEvent) => {
-      cursor.style.transform = `translate(${e.clientX}px, ${e.clientY}px) translate(-50%, -50%)`;
+      mouseX = e.clientX;
+      mouseY = e.clientY;
     };
 
+    // Smooth cursor animation
+    const animate = () => {
+      const ease = 0.15;
+      cursorX += (mouseX - cursorX) * ease;
+      cursorY += (mouseY - cursorY) * ease;
+      
+      cursor.style.transform = `translate(${cursorX}px, ${cursorY}px) translate(-50%, -50%)`;
+      requestAnimationFrame(animate);
+    };
+    animate();
+
     const handleMouseEnter = () => {
-      cursor.classList.add('w-12', 'h-12', 'bg-transparent', 'border-primary');
-      cursor.classList.remove('w-6', 'h-6');
+      cursor.classList.add('scale-150', 'border-primary', 'bg-primary/10');
+      cursor.classList.remove('border-primary/50');
       if (dot) {
-        dot.classList.remove('bg-primary');
-        dot.classList.add('bg-primary/50', 'w-2', 'h-2');
+        dot.classList.add('scale-0');
       }
     };
 
     const handleMouseLeave = () => {
-      cursor.classList.remove('w-12', 'h-12', 'bg-transparent', 'border-primary');
-      cursor.classList.add('w-6', 'h-6');
+      cursor.classList.remove('scale-150', 'border-primary', 'bg-primary/10');
+      cursor.classList.add('border-primary/50');
       if (dot) {
-        dot.classList.add('bg-primary');
-        dot.classList.remove('bg-primary/50', 'w-2', 'h-2');
+        dot.classList.remove('scale-0');
       }
     };
 
@@ -51,7 +66,7 @@ export default function CustomCursor() {
         if (mutation.addedNodes.length) {
           const newInteractiveElements = document.querySelectorAll('a, button, .cursor-hover');
           newInteractiveElements.forEach((el) => {
-            el.removeEventListener('mouseenter', handleMouseEnter); // Prevent duplicates
+            el.removeEventListener('mouseenter', handleMouseEnter);
             el.removeEventListener('mouseleave', handleMouseLeave);
             el.addEventListener('mouseenter', handleMouseEnter);
             el.addEventListener('mouseleave', handleMouseLeave);
@@ -78,9 +93,12 @@ export default function CustomCursor() {
     <div
       ref={cursorRef}
       id="custom-cursor"
-      className="fixed top-0 left-0 w-6 h-6 border border-primary rounded-full pointer-events-none z-[9999] flex items-center justify-center mix-blend-difference transition-all duration-100 ease-out"
+      className="fixed top-0 left-0 w-8 h-8 border border-primary/50 rounded-full pointer-events-none z-[9999] flex items-center justify-center transition-all duration-200 ease-out backdrop-blur-sm"
     >
-      <div ref={dotRef} className="w-1 h-1 bg-primary rounded-full transition-all duration-300" />
+      <div 
+        ref={dotRef} 
+        className="w-1.5 h-1.5 bg-primary rounded-full transition-transform duration-200"
+      />
     </div>
   );
 }
