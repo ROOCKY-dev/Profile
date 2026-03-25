@@ -6,6 +6,7 @@ import CustomCursor from "@/components/ui/CustomCursor";
 import Navbar from "@/components/layout/Navbar";
 import { PerformanceProvider } from "@/lib/PerformanceContext";
 import { Analytics } from "@vercel/analytics/next"
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
 const spaceGrotesk = Space_Grotesk({
   variable: "--font-display",
@@ -69,6 +70,7 @@ export default function RootLayout({
           <Navbar />
           {children}
         </PerformanceProvider>
+        <SpeedInsights />
       </body>
     </html>
   );
