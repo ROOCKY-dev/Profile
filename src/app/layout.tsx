@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/layout/Navbar";
+import FloatingShapes from "@/components/ui/FloatingShapes";
 import { Analytics } from "@vercel/analytics/next";
 
 const inter = Inter({
@@ -57,6 +58,7 @@ export default function RootLayout({
         className={`${inter.variable} ${jetBrainsMono.variable} font-sans antialiased bg-white text-black overflow-x-hidden`}
       >
         <Navbar />
+        <FloatingShapes />
         {children}
       </body>
     </html>
