@@ -96,7 +96,10 @@ export const PORTFOLIO_DATA = {
   WORKING
   RESTING
   */
-  stat:{ status : 'WORKING' },
+  stat: {
+    status: 'WORKING',
+    currentlyWorkingOn: 'Redesigning the portfolio — Swiss/Bauhaus style',
+  },
   contact: {
     methods: [
       { id: 'email', label: 'Email', value: 'letsbuild@roocky.dev', url: 'mailto:letsbuild@roocky.dev', icon: 'mail' },
