@@ -1,33 +1,39 @@
-import { PORTFOLIO_DATA } from '@/lib/portfolio-data';
+'use client';
+
+import { motion } from 'framer-motion';
+import { fadeSlideUp } from '@/lib/animations';
+
+const ITEMS = [
+  'WEB DEVELOPMENT',
+  'GAME DEVELOPMENT',
+  'AI TOOLS',
+  'MINECRAFT MODS',
+  'AVAILABLE FOR PROJECTS',
+  'MALAYSIA BASED',
+  'FULL STACK',
+];
 
 export default function Marquee() {
-  const { marquee } = PORTFOLIO_DATA;
+  const content = ITEMS.map((item) => `${item} —`).join(' ');
 
   return (
-    <div className="border-b border-border-dark bg-background-dark py-6 overflow-hidden relative group cursor-hover select-none">
-      {/* Gradients to fade edges */}
-      <div className="absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-background-dark to-transparent z-10" />
-      <div className="absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-background-dark to-transparent z-10" />
-
-      <div className="flex whitespace-nowrap animate-marquee group-hover:[animation-play-state:paused]">
-        <MarqueeItem marquee={marquee} />
-        <MarqueeItem marquee={marquee} />
+    <motion.div
+      className="bg-black text-white py-4 overflow-hidden border-b-[3px] border-black"
+      variants={fadeSlideUp}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true }}
+    >
+      <div className="flex whitespace-nowrap">
+        {[0, 1].map((i) => (
+          <div
+            key={i}
+            className="animate-marquee flex-shrink-0 text-[10px] font-bold tracking-[4px] uppercase px-4"
+          >
+            {content}
+          </div>
+        ))}
       </div>
-    </div>
-  );
-}
-
-function MarqueeItem({ marquee }: { marquee: string[] }) {
-  return (
-    <div className="flex items-center gap-16 px-8">
-      {marquee.map((item, i) => (
-        <div key={i} className="flex items-center gap-16">
-          <span className="text-4xl font-bold text-text-muted hover:text-primary transition-colors whitespace-nowrap">
-            {item}
-          </span>
-          <span className="text-2xl text-border-dark font-mono">{"///"}</span>
-        </div>
-      ))}
-    </div>
+    </motion.div>
   );
 }
