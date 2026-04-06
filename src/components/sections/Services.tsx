@@ -1,7 +1,13 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { fadeSlideUp, staggerContainer } from '@/lib/animations';
+import {
+  borderDraw,
+  scaleUp,
+  slideFromLeft,
+  slideFromRight,
+  staggerContainerSlow,
+} from '@/lib/animations';
 
 const SERVICES = [
   {
@@ -33,19 +39,37 @@ const SERVICES = [
   },
 ];
 
+const CARD_VARIANTS = [slideFromLeft, scaleUp, slideFromRight];
+
 export default function Services() {
   return (
-    <section id="services" className="py-16 px-6 md:px-12">
+    <section id="services" className="diagonal-lines py-16 px-6 md:px-12">
       {/* Header */}
       <div className="mb-12">
-        <div className="section-number">04</div>
-        <div className="label-text mt-2">Services & Pricing</div>
+        <motion.div
+          variants={slideFromLeft}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+        >
+          <div className="section-number">04</div>
+          <div className="label-text mt-2">Services &amp; Pricing</div>
+        </motion.div>
+
+        {/* Decorative horizontal rule */}
+        <motion.div
+          className="mt-4 h-[3px] bg-black origin-left"
+          variants={borderDraw}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+        />
       </div>
 
       {/* Grid */}
       <motion.div
         className="grid grid-cols-1 md:grid-cols-3 border-[3px] border-black"
-        variants={staggerContainer}
+        variants={staggerContainerSlow}
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, amount: 0.2 }}
@@ -53,7 +77,7 @@ export default function Services() {
         {SERVICES.map((service, i) => (
           <motion.div
             key={service.name}
-            variants={fadeSlideUp}
+            variants={CARD_VARIANTS[i]}
             className={`p-8 flex flex-col ${
               i < SERVICES.length - 1
                 ? 'border-b-[3px] md:border-b-0 md:border-r-[3px] border-black'

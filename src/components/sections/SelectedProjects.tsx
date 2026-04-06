@@ -4,21 +4,36 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
 import { PROJECTS } from '@/lib/project-data';
-import { fadeSlideUp, staggerContainer } from '@/lib/animations';
+import { fadeSlideUp, staggerContainer, slideFromLeft, slideFromRight, borderDraw } from '@/lib/animations';
 
 export default function SelectedProjects() {
   const featured = PROJECTS.filter((p) => p.featured);
   const projects = featured.length > 0 ? featured : PROJECTS.slice(0, 3);
 
   return (
-    <section className="py-16 px-6 md:px-12">
+    <section className="py-16 px-6 md:px-12 grid-bg">
       {/* Header */}
-      <div className="flex items-end justify-between mb-12">
+      <motion.div
+        className="flex items-end justify-between mb-6"
+        variants={slideFromLeft}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true }}
+      >
         <div>
           <div className="section-number">03</div>
           <div className="label-text mt-2">Selected Work</div>
         </div>
-      </div>
+      </motion.div>
+
+      {/* Decorative ruled line */}
+      <motion.div
+        className="h-[3px] bg-black w-full mb-12 origin-left"
+        variants={borderDraw}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true }}
+      />
 
       {/* Grid */}
       <motion.div
@@ -29,7 +44,10 @@ export default function SelectedProjects() {
         viewport={{ once: true, amount: 0.1 }}
       >
         {projects.map((project, i) => (
-          <motion.div key={project.id} variants={fadeSlideUp}>
+          <motion.div
+            key={project.id}
+            variants={i % 2 === 0 ? slideFromLeft : slideFromRight}
+          >
             <Link
               href={`/work/${project.id}`}
               className="group block border-[3px] border-black hover:bg-gray-bg transition-colors"
@@ -72,14 +90,20 @@ export default function SelectedProjects() {
       </motion.div>
 
       {/* View All Link */}
-      <div className="flex justify-end mt-8">
+      <motion.div
+        className="flex justify-end mt-8"
+        variants={fadeSlideUp}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true }}
+      >
         <Link
           href="/work"
           className="text-[10px] font-bold tracking-[3px] uppercase border-b-[3px] border-black pb-1 hover:text-gray transition-colors"
         >
           View All Projects →
         </Link>
-      </div>
+      </motion.div>
     </section>
   );
 }

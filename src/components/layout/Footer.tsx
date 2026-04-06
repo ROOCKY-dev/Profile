@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion';
 import AnimatedText from '@/components/ui/AnimatedText';
 import { PORTFOLIO_DATA } from '@/lib/portfolio-data';
-import { fadeSlideUp } from '@/lib/animations';
+import { staggerContainer, slideFromLeft, slideFromRight, borderDraw } from '@/lib/animations';
 
 export default function Footer() {
   const { personal } = PORTFOLIO_DATA;
@@ -12,17 +12,21 @@ export default function Footer() {
     <motion.footer
       id="contact"
       className="bg-black text-white px-6 md:px-12 py-12 md:py-16"
-      variants={fadeSlideUp}
+      variants={staggerContainer}
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true }}
     >
       <div className="flex flex-col md:flex-row justify-between md:items-end gap-12">
         {/* Left — Email CTA */}
-        <div>
+        <motion.div variants={slideFromLeft}>
           <div className="text-[10px] font-bold tracking-[4px] uppercase text-[#555] mb-4">
             Let&apos;s build something
           </div>
+          <motion.div
+            variants={borderDraw}
+            className="h-[2px] bg-white my-3 origin-left"
+          />
           <a
             href={`mailto:${personal.email}`}
             className="group block"
@@ -34,10 +38,10 @@ export default function Footer() {
               className="text-[clamp(20px,4vw,32px)] font-black tracking-[-1px] border-b-2 border-white group-hover:border-gray transition-colors inline-flex flex-wrap"
             />
           </a>
-        </div>
+        </motion.div>
 
         {/* Right — Links */}
-        <div className="flex flex-col gap-2 md:text-right">
+        <motion.div variants={slideFromRight} className="flex flex-col gap-2 md:text-right">
           <a
             href={personal.socials.github}
             target="_blank"
@@ -65,7 +69,7 @@ export default function Footer() {
           <span className="text-[10px] font-bold tracking-[3px] uppercase text-[#555] mt-4">
             © {new Date().getFullYear()} {personal.name}
           </span>
-        </div>
+        </motion.div>
       </div>
     </motion.footer>
   );

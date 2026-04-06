@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { motion } from 'framer-motion';
 import WorkshopStatus from '@/components/ui/WorkshopStatus';
 
 export default function Navbar() {
@@ -14,7 +15,10 @@ export default function Navbar() {
   }, []);
 
   return (
-    <nav
+    <motion.nav
+      initial={{ y: -60, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
       className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-12 h-[60px] border-b-[3px] border-black transition-colors duration-300 ${
         scrolled ? 'bg-white/95 backdrop-blur-sm' : 'bg-white'
       }`}
@@ -32,19 +36,19 @@ export default function Navbar() {
       <div className="hidden md:flex items-center gap-8">
         <Link
           href="/work"
-          className="text-[10px] font-bold tracking-[3px] uppercase text-gray hover:text-black transition-colors"
+          className="text-[10px] font-bold tracking-[3px] uppercase text-gray hover:text-black transition-colors hover-border-expand pb-1"
         >
           Work
         </Link>
         <a
           href="#about"
-          className="text-[10px] font-bold tracking-[3px] uppercase text-gray hover:text-black transition-colors"
+          className="text-[10px] font-bold tracking-[3px] uppercase text-gray hover:text-black transition-colors hover-border-expand pb-1"
         >
           About
         </a>
         <a
           href="#services"
-          className="text-[10px] font-bold tracking-[3px] uppercase text-gray hover:text-black transition-colors"
+          className="text-[10px] font-bold tracking-[3px] uppercase text-gray hover:text-black transition-colors hover-border-expand pb-1"
         >
           Services
         </a>
@@ -55,6 +59,6 @@ export default function Navbar() {
           Contact
         </a>
       </div>
-    </nav>
+    </motion.nav>
   );
 }
