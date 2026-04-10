@@ -1,69 +1,64 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import ServiceMenu from '@/components/ui/ServiceMenu';
-import { usePerformance } from '@/lib/PerformanceContext';
+import { motion } from 'framer-motion';
+import WorkshopStatus from '@/components/ui/WorkshopStatus';
 
-/**
- * Main navigation component.
- * Handles desktop and mobile navigation, service menu toggle, and performance settings.
- */
 export default function Navbar() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { performanceLevel, cyclePerformanceLevel } = usePerformance();
+  const [scrolled, setScrolled] = useState(false);
 
-  const getPerformanceConfig = () => {
-    switch (performanceLevel) {
-      case 'high':
-        return { label: 'High Quality', icon: 'bolt', color: 'border-primary/30 text-primary' };
-      case 'mid':
-        return { label: 'Balanced', icon: 'settings_slow_motion', color: 'border-yellow-400/50 text-yellow-400' };
-      case 'low':
-        return { label: 'Performance', icon: 'speed', color: 'bg-primary text-background-dark border-primary' };
-      default:
-        return { label: 'High Quality', icon: 'bolt', color: 'border-primary/30 text-primary' };
-    }
-  };
-
-  const perfConfig = getPerformanceConfig();
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   return (
-    <>
-      <nav className="fixed top-0 left-0 right-0 z-40 border-b border-border-dark bg-background-dark/90 backdrop-blur-sm">
-        <div className="w-full px-6 py-4 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 group cursor-hover magnet-target">
-            <span className={`material-symbols-outlined text-primary text-2xl ${performanceLevel === 'high' ? 'animate-pulse-fast' : ''}`}>bolt</span>
-            <span className="font-bold tracking-tighter text-xl">ROOCKY . dev</span>
-          </Link>
+    <motion.nav
+      initial={{ y: -60, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+      className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-12 h-[60px] border-b-[3px] border-black transition-colors duration-300 ${
+        scrolled ? 'bg-white/95 backdrop-blur-sm' : 'bg-white'
+      }`}
+    >
+      <div className="flex items-center gap-4">
+        <Link
+          href="/"
+          className="text-[13px] font-black tracking-[4px] uppercase"
+        >
+          AG — ROOCKY.DEV
+        </Link>
+        <WorkshopStatus className="hidden md:inline-flex" />
+      </div>
 
-          <div className="hidden md:flex items-center gap-8">
-            <Link href="/work" className="text-sm font-mono text-text-muted hover:text-primary transition-colors hover:line-through decoration-primary decoration-2 cursor-hover">01. WORK</Link>
-            <Link href="/#capabilities" className="text-sm font-mono text-text-muted hover:text-primary transition-colors hover:line-through decoration-primary decoration-2 cursor-hover">02. CAPABILITIES</Link>
-            {/* Assuming "about" section exists or will exist, mapping it to a suitable section or keeping it if it works */}
-            <Link href="/#about" className="text-sm font-mono text-text-muted hover:text-primary transition-colors hover:line-through decoration-primary decoration-2 cursor-hover">03. ABOUT</Link>
-            <button
-                onClick={() => setIsMenuOpen(true)}
-                className="text-sm font-mono text-text-muted hover:text-primary transition-colors hover:line-through decoration-primary decoration-2 cursor-hover"
-            >
-                04. SERVICES
-            </button>
-          </div>
-
-          <button 
-            onClick={cyclePerformanceLevel}
-            className={`flex items-center gap-2 px-4 py-2 border transition-all cursor-hover magnet-target font-mono text-xs uppercase tracking-widest ${perfConfig.color}`}
-          >
-            <span className="material-symbols-outlined text-sm">
-              {perfConfig.icon}
-            </span>
-            {perfConfig.label}
-          </button>
-        </div>
-      </nav>
-
-      {/* Service Menu Overlay */}
-      {isMenuOpen && <ServiceMenu isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />}
-    </>
+      <div className="hidden md:flex items-center gap-8">
+        <Link
+          href="/work"
+          className="text-[10px] font-bold tracking-[3px] uppercase text-gray hover:text-black transition-colors hover-border-expand pb-1"
+        >
+          Work
+        </Link>
+        <a
+          href="#about"
+          className="text-[10px] font-bold tracking-[3px] uppercase text-gray hover:text-black transition-colors hover-border-expand pb-1"
+        >
+          About
+        </a>
+        <a
+          href="#services"
+          className="text-[10px] font-bold tracking-[3px] uppercase text-gray hover:text-black transition-colors hover-border-expand pb-1"
+        >
+          Services
+        </a>
+        <a
+          href="#contact"
+          className="text-[10px] font-bold tracking-[3px] uppercase bg-black text-white px-4 py-2 hover:bg-gray-bg hover:text-black transition-colors border-2 border-black"
+        >
+          Contact
+        </a>
+      </div>
+    </motion.nav>
   );
 }

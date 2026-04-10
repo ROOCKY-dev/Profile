@@ -1,221 +1,167 @@
-import { PROJECTS } from '@/lib/project-data';
-import SimpleFooter from '@/components/layout/SimpleFooter';
-import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import Image from 'next/image';
+import Link from 'next/link';
+import { PROJECTS } from '@/lib/project-data';
+import Footer from '@/components/layout/Footer';
 
-export async function generateStaticParams() {
-  return PROJECTS.map((project) => ({
-    slug: project.id,
-  }));
+export function generateStaticParams() {
+  return PROJECTS.map((p) => ({ slug: p.id }));
 }
 
-export default async function ProjectDetail({ params }: { params: Promise<{ slug: string }> }) {
+export function generateMetadata({ params }: { params: { slug: string } }) {
+  const project = PROJECTS.find((p) => p.id === params.slug);
+  if (!project) return {};
+  return {
+    title: project.title,
+    description: project.description,
+  };
+}
+
+export default async function ProjectPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const project = PROJECTS.find((p) => p.id === slug);
+  if (!project) notFound();
 
-  if (!project) {
-    notFound();
-  }
-
-  // Find next project
   const currentIndex = PROJECTS.findIndex((p) => p.id === slug);
   const nextProject = PROJECTS[(currentIndex + 1) % PROJECTS.length];
 
-  const displayDescription = project.longDescription || project.description;
-
   return (
-    <main>
-      {/* Hero Section */}
-      <section className="relative h-screen w-full flex flex-col justify-end overflow-hidden border-b border-border-dark">
-        <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-[#0A0A0A]/50 to-transparent z-10" />
-          <div
-            className="w-full h-full bg-cover bg-center transition-transform duration-[2s] hover:scale-105"
-            style={{ backgroundImage: `url('${project.image}')` }}
-          />
+    <main className="pt-[60px]">
+      {/* Breadcrumb */}
+      <div className="px-6 md:px-12 py-4 border-b-[3px] border-black">
+        <div className="label-text">
+          <Link href="/work" className="hover:text-black transition-colors">Work</Link>
+          <span className="mx-2">/</span>
+          <span className="text-black">{project.title}</span>
         </div>
+      </div>
 
-        <div className="relative z-20 px-6 pb-12 md:px-12 md:pb-16 w-full max-w-[1920px] mx-auto">
-          {/* Breadcrumb */}
-          <div className="flex items-center gap-2 mb-6 font-mono text-sm">
-            <Link href="/" className="text-text-muted hover:text-primary transition-colors cursor-hover">HOME</Link>
-            <span className="text-border-dark">/</span>
-            <Link href="/work" className="text-text-muted hover:text-primary transition-colors cursor-hover">WORK</Link>
-            <span className="text-border-dark">/</span>
-            <span className="text-primary">{project.id.toUpperCase()}</span>
-          </div>
+      {/* Hero Image */}
+      <div className="relative aspect-[21/9] border-b-[3px] border-black overflow-hidden">
+        <Image
+          src={project.image}
+          alt={project.title}
+          fill
+          className="object-cover"
+          priority
+        />
+      </div>
 
-          <div className="flex flex-col gap-2 mb-4">
-            <div className="flex items-center gap-3">
-              <span className="h-[1px] w-12 bg-primary" />
-              <span className="text-primary font-mono text-sm tracking-widest uppercase">Case Study {String(currentIndex + 1).padStart(2, '0')}</span>
-            </div>
-          </div>
-          <h1 className="text-6xl md:text-8xl lg:text-[10rem] font-bold leading-[0.9] tracking-tighter text-white mix-blend-screen uppercase">
-            {project.title.split(' ')[0]} <br/>
-            <span className="text-stroke-primary text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-500">
-              {project.title.split(' ').slice(1).join(' ')}
-            </span>
-          </h1>
-        </div>
-
-        <div className="absolute bottom-8 right-8 z-20 animate-bounce hidden md:block">
-          <span className="material-symbols-outlined text-primary text-4xl">arrow_downward</span>
-        </div>
-      </section>
+      {/* Title */}
+      <div className="px-6 md:px-12 py-8 border-b-[3px] border-black">
+        <h1 className="text-[clamp(36px,8vw,72px)] font-black uppercase leading-[0.9] tracking-[-3px]">
+          {project.title}
+        </h1>
+      </div>
 
       {/* Metadata Grid */}
-      <section className="w-full border-b border-border-dark bg-background-dark">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-border-dark">
-          <div className="p-8 hover:bg-surface transition-colors duration-300 group">
-            <span className="block text-text-muted font-mono text-xs mb-2 tracking-widest">ROLE</span>
-            <div className="text-xl font-bold group-hover:text-primary transition-colors">{project.role || 'Developer'}</div>
+      <div className="grid grid-cols-2 md:grid-cols-4 border-b-[3px] border-black">
+        {[
+          { label: 'Role', value: project.role ?? 'Developer' },
+          { label: 'Year', value: project.year },
+          { label: 'Category', value: project.category },
+          { label: 'Stack', value: project.stack?.join(', ') ?? '—' },
+        ].map((item, i) => (
+          <div
+            key={item.label}
+            className={`p-6 ${i < 3 ? 'border-r-[3px] border-black' : ''} ${i < 2 ? 'border-b-[3px] md:border-b-0 border-black' : ''}`}
+          >
+            <div className="label-text mb-2">{item.label}</div>
+            <div className="text-[13px] font-bold">{item.value}</div>
           </div>
-          <div className="p-8 hover:bg-surface transition-colors duration-300 group">
-            <span className="block text-text-muted font-mono text-xs mb-2 tracking-widest">TIMELINE</span>
-            <div className="text-xl font-bold group-hover:text-primary transition-colors">{project.year}</div>
-          </div>
-          <div className="p-8 hover:bg-surface transition-colors duration-300 group">
-            <span className="block text-text-muted font-mono text-xs mb-2 tracking-widest">CATEGORY</span>
-            <div className="text-xl font-bold group-hover:text-primary transition-colors">{project.category}</div>
-          </div>
-          <div className="p-8 hover:bg-surface transition-colors duration-300 group">
-            <span className="block text-text-muted font-mono text-xs mb-2 tracking-widest">STACK</span>
-            <div className="text-xl font-bold group-hover:text-primary transition-colors">
-              {project.stack ? project.stack.slice(0, 3).join(', ') : 'Full Stack'}
-            </div>
-          </div>
-        </div>
-      </section>
+        ))}
+      </div>
 
-      {/* Tags Bar */}
-      {project.tags && project.tags.length > 0 && (
-        <section className="w-full border-b border-border-dark bg-surface/30">
-          <div className="px-8 py-4 flex flex-wrap gap-3">
-            {project.tags.map((tag) => (
-              <span key={tag} className="font-mono text-xs text-primary/80 border border-primary/30 px-3 py-1.5 bg-black/50">
-                {tag}
-              </span>
-            ))}
-          </div>
-        </section>
+      {/* Tags */}
+      {project.tags && (
+        <div className="px-6 md:px-12 py-6 border-b-[3px] border-black flex flex-wrap gap-2">
+          {project.tags.map((tag) => (
+            <span
+              key={tag}
+              className="text-[9px] font-bold tracking-[2px] uppercase border-2 border-black px-3 py-1"
+            >
+              {tag}
+            </span>
+          ))}
+        </div>
       )}
 
-      {/* Narrative Content */}
-      <section className="py-24 px-6 md:px-12 bg-background-dark relative overflow-hidden">
-        <div className="absolute top-20 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px] pointer-events-none" />
-        <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-12">
-          <div className="md:col-span-4">
-            <div className="sticky top-24">
-              <h2 className="text-3xl font-bold mb-6 tracking-tight">THE <br/> CHALLENGE</h2>
-              <div className="h-1 w-20 bg-primary mb-6" />
-              <p className="font-mono text-sm text-text-muted leading-relaxed">
-                {"// SYSTEM_OVERVIEW"}<br/>
-                {"// STATUS: DEPLOYED"}<br/>
-                {"// PRIORITY: HIGH"}
-              </p>
-            </div>
-          </div>
-          <div className="md:col-span-8">
-            <div className="prose prose-invert prose-lg max-w-none font-light">
-              <p className="text-2xl leading-relaxed text-white mb-8">
-                {displayDescription}
-              </p>
-              {project.stack && project.stack.length > 0 && (
-                <div className="mt-8 border-t border-border-dark pt-8">
-                  <h4 className="font-mono text-xs text-text-muted tracking-widest mb-4">TECHNOLOGIES USED</h4>
-                  <div className="flex flex-wrap gap-3">
-                    {project.stack.map((tech) => (
-                      <span key={tech} className="px-4 py-2 border border-border-dark text-text-main font-mono text-sm hover:border-primary hover:text-primary transition-colors">
-                        {tech}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
+      {/* Content */}
+      <div className="grid grid-cols-1 md:grid-cols-[240px_1fr] border-b-[3px] border-black">
+        <div className="p-6 md:p-8 md:border-r-[3px] md:border-black md:sticky md:top-[60px] md:self-start">
+          <div className="label-text">About</div>
         </div>
-      </section>
-
-      {/* Gallery Section */}
-      <section className="py-12 px-6 md:px-12 border-y border-border-dark bg-surface/30">
-        <div className="max-w-[1920px] mx-auto">
-          {project.gallery && project.gallery.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {project.gallery.map((img, i) => (
-                <div key={i} className="relative h-[400px] overflow-hidden border border-border-dark group">
-                  <div
-                    className="absolute inset-0 bg-cover bg-center group-hover:scale-105 transition-transform duration-700"
-                    style={{ backgroundImage: `url('${img}')` }}
-                  />
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              <div className="bg-surface border border-border-dark h-[400px] flex items-center justify-center text-text-muted font-mono">GALLERY_ITEM_01</div>
-              <div className="bg-surface border border-border-dark h-[400px] flex items-center justify-center text-text-muted font-mono">GALLERY_ITEM_02</div>
-              <div className="bg-surface border border-border-dark h-[400px] flex items-center justify-center text-text-muted font-mono">GALLERY_ITEM_03</div>
-            </div>
-          )}
+        <div className="p-6 md:p-8">
+          <p className="text-[14px] leading-[1.8] text-gray max-w-2xl">
+            {project.longDescription ?? project.description}
+          </p>
         </div>
-      </section>
+      </div>
 
-      {/* External Link CTA */}
+      {/* Gallery */}
+      {project.gallery && project.gallery.length > 0 && (
+        <div className="grid grid-cols-1 md:grid-cols-3 border-b-[3px] border-black">
+          {project.gallery.map((img, i) => (
+            <div
+              key={i}
+              className={`relative aspect-[4/3] overflow-hidden ${
+                i < project.gallery!.length - 1 ? 'border-b-[3px] md:border-b-0 md:border-r-[3px] border-black' : ''
+              }`}
+            >
+              <Image
+                src={img}
+                alt={`${project.title} gallery ${i + 1}`}
+                fill
+                className="object-cover"
+              />
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* External Link */}
       {project.link && (
-        <section className="border-b border-border-dark bg-background-dark">
+        <div className="px-6 md:px-12 py-8 border-b-[3px] border-black">
           <a
             href={project.link}
             target="_blank"
             rel="noopener noreferrer"
-            className="group flex items-center justify-center gap-4 px-8 py-8 hover:bg-surface transition-colors duration-300 cursor-hover"
+            className="inline-block text-[10px] font-bold tracking-[3px] uppercase bg-black text-white px-8 py-4 border-2 border-black hover:bg-white hover:text-black transition-colors"
           >
-            <span className="font-mono text-sm text-text-muted group-hover:text-primary transition-colors tracking-widest uppercase">
-              VIEW LIVE PROJECT
-            </span>
-            <span className="material-symbols-outlined text-primary group-hover:rotate-[-45deg] transition-transform duration-300">
-              arrow_forward
-            </span>
+            Visit Project →
           </a>
-        </section>
+        </div>
       )}
 
-      {/* Back to all projects */}
-      <Link
-        href="/work"
-        className="group block w-full border-b border-border-dark bg-surface/20 hover:bg-surface transition-colors duration-300 cursor-hover"
-      >
-        <div className="px-8 py-6 flex items-center justify-center gap-3">
-          <span className="material-symbols-outlined text-text-muted group-hover:text-primary transition-colors group-hover:-translate-x-2 transition-transform duration-300">
-            arrow_back
-          </span>
-          <span className="font-mono text-sm text-text-muted group-hover:text-primary transition-colors tracking-widest uppercase">
-            ALL PROJECTS
-          </span>
-        </div>
-      </Link>
+      {/* Back */}
+      <div className="px-6 md:px-12 py-6 border-b-[3px] border-black">
+        <Link
+          href="/work"
+          className="text-[10px] font-bold tracking-[3px] uppercase border-b-2 border-black pb-1 hover:text-gray transition-colors"
+        >
+          ← All Projects
+        </Link>
+      </div>
 
-      {/* Next Project Footer */}
-      <Link href={`/work/${nextProject.id}`} className="group relative block h-[60vh] w-full overflow-hidden border-t border-border-dark cursor-hover">
-        <div
-          className="absolute inset-0 bg-cover bg-center transition-all duration-700 ease-in-out group-hover:scale-110 group-hover:blur-sm opacity-40 group-hover:opacity-60"
-          style={{ backgroundImage: `url('${nextProject.image}')` }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-background-dark via-transparent to-transparent" />
-
-        <div className="relative z-10 h-full flex flex-col items-center justify-center px-6">
-          <span className="font-mono text-text-muted text-sm tracking-[0.2em] mb-4 group-hover:text-white transition-colors">NEXT CASE STUDY</span>
-          <h2 className="text-5xl md:text-8xl font-bold text-white text-center tracking-tighter group-hover:text-primary transition-colors duration-300 uppercase">
-             {nextProject.title}
-          </h2>
-          <div className="mt-8 flex items-center justify-center h-16 w-16 rounded-full border border-white/20 group-hover:border-primary group-hover:bg-primary transition-all duration-300">
-            <span className="material-symbols-outlined text-white text-2xl group-hover:text-black group-hover:rotate-[-45deg] transition-transform duration-300">arrow_forward</span>
+      {/* Next Project */}
+      {nextProject && nextProject.id !== project.id && (
+        <Link
+          href={`/work/${nextProject.id}`}
+          className="group block border-b-[3px] border-black hover:bg-gray-bg transition-colors"
+        >
+          <div className="px-6 md:px-12 py-8 flex items-center justify-between">
+            <div>
+              <div className="label-text mb-2">Next Project</div>
+              <h3 className="text-[24px] font-black uppercase tracking-[-1px]">
+                {nextProject.title}
+              </h3>
+            </div>
+            <span className="text-[24px] font-black group-hover:translate-x-2 transition-transform">→</span>
           </div>
-        </div>
-      </Link>
+        </Link>
+      )}
 
-      <SimpleFooter />
+      <Footer />
     </main>
   );
 }

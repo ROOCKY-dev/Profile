@@ -1,14 +1,12 @@
 import type { Metadata } from "next";
-import { Space_Grotesk, JetBrains_Mono } from "next/font/google";
+import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
-import NoiseOverlay from "@/components/ui/NoiseOverlay";
-import CustomCursor from "@/components/ui/CustomCursor";
 import Navbar from "@/components/layout/Navbar";
-import { PerformanceProvider } from "@/lib/PerformanceContext";
-import { Analytics } from "@vercel/analytics/next"
+import FloatingShapes from "@/components/ui/FloatingShapes";
+import { Analytics } from "@vercel/analytics/next";
 
-const spaceGrotesk = Space_Grotesk({
-  variable: "--font-display",
+const inter = Inter({
+  variable: "--font-sans",
   subsets: ["latin"],
 });
 
@@ -18,35 +16,32 @@ const jetBrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-    title: {
-        default: 'Roocky | Developer Portfolio',
-        template: '%s | Roocky',
-    },
-
-    description: 'A brutalist, high-performance portfolio showcasing web development and creative coding projects of ROOCKYdev | Ahmed Ghaithan.',
-    metadataBase: new URL('https://roocky.dev'),
-    openGraph: {
-        title: 'Roocky | Developer Portfolio',
-        description: 'Web development and creative coding projects of ROOCKYdev | Ahmed Ghaithan. ',
-        url: 'https://roocky.dev',
-        siteName: 'Roockydev Portfolio',
-        locale: 'en_US',
-        type: 'website',
-    },
-    twitter: {
-        card: 'summary_large_image',
-        title: 'Roocky | Developer Portfolio',
-        description: 'Web development and creative coding projects of ROOCKYdev | Ahmed Ghaithan.',
-    },
-    robots: {
-        index: true,
-        follow: true,
-    },
-    /*
-    verification: {
-        google: 'YOUR_GOOGLE_VERIFICATION_CODE',
-    },
-    */
+  title: {
+    default: "Roocky | Developer Portfolio",
+    template: "%s | Roocky",
+  },
+  description:
+    "Portfolio of Ahmed Ghaithan — creative developer building web, games, and AI tools from Malaysia.",
+  metadataBase: new URL("https://roocky.dev"),
+  openGraph: {
+    title: "Roocky | Developer Portfolio",
+    description:
+      "Portfolio of Ahmed Ghaithan — creative developer building web, games, and AI tools from Malaysia.",
+    url: "https://roocky.dev",
+    siteName: "Roockydev Portfolio",
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Roocky | Developer Portfolio",
+    description:
+      "Portfolio of Ahmed Ghaithan — creative developer building web, games, and AI tools from Malaysia.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({
@@ -55,20 +50,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark scroll-smooth">
+    <html lang="en" className="scroll-smooth">
       <head>
-        <Analytics/>
-        <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+        <Analytics />
       </head>
       <body
-        className={`${spaceGrotesk.variable} ${jetBrainsMono.variable} antialiased bg-background-dark text-text-main font-display selection:bg-primary selection:text-background-dark overflow-x-hidden`}
+        className={`${inter.variable} ${jetBrainsMono.variable} font-sans antialiased bg-white text-black overflow-x-hidden`}
       >
-        <PerformanceProvider>
-          <NoiseOverlay />
-          <CustomCursor />
-          <Navbar />
-          {children}
-        </PerformanceProvider>
+        <Navbar />
+        <FloatingShapes />
+        {children}
       </body>
     </html>
   );

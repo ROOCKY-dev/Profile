@@ -1,197 +1,108 @@
 'use client';
 
-import { useState, useMemo } from 'react';
-import Link from 'next/link';
-import { PROJECTS, ProjectData } from '@/lib/project-data';
-import SimpleFooter from '@/components/layout/SimpleFooter';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import Link from 'next/link';
+import Image from 'next/image';
+import { PROJECTS } from '@/lib/project-data';
+import Footer from '@/components/layout/Footer';
+import { fadeSlideUp, staggerContainer } from '@/lib/animations';
 
 export default function WorkPage() {
-  const [activeFilter, setActiveFilter] = useState<string>('ALL');
+  const categories = ['All', ...Array.from(new Set(PROJECTS.map((p) => p.category)))];
+  const [active, setActive] = useState('All');
 
-  // Derive unique categories from the data
-  const categories = useMemo(() => {
-    const cats = Array.from(new Set(PROJECTS.map((p) => p.category)));
-    return ['ALL', ...cats];
-  }, []);
-
-  const filtered = useMemo(() => {
-    if (activeFilter === 'ALL') return PROJECTS;
-    return PROJECTS.filter((p) => p.category === activeFilter);
-  }, [activeFilter]);
+  const filtered = active === 'All' ? PROJECTS : PROJECTS.filter((p) => p.category === active);
 
   return (
-    <main className="min-h-screen bg-background-dark">
+    <main className="pt-[60px]">
       {/* Header */}
-      <section className="pt-32 pb-16 px-6 md:px-12 border-b border-border-dark relative overflow-hidden">
-        {/* Background Grid */}
-        <div
-          className="absolute inset-0 z-0 opacity-10 pointer-events-none"
-          style={{
-            backgroundImage:
-              'linear-gradient(#333 1px, transparent 1px), linear-gradient(90deg, #333 1px, transparent 1px)',
-            backgroundSize: '40px 40px',
-          }}
-        />
+      <div className="px-6 md:px-12 py-12 border-b-[3px] border-black">
+        <h1 className="text-[clamp(48px,10vw,96px)] font-black uppercase leading-[0.88] tracking-[-4px]">
+          Work
+        </h1>
+      </div>
 
-        <div className="max-w-[1400px] mx-auto relative z-10">
-          <div className="flex items-center gap-3 mb-6">
-            <Link
-              href="/"
-              className="font-mono text-text-muted text-sm hover:text-primary transition-colors cursor-hover flex items-center gap-1"
-            >
-              <span className="material-symbols-outlined text-sm">arrow_back</span>
-              HOME
-            </Link>
-            <span className="text-border-dark">/</span>
-            <span className="font-mono text-primary text-sm">WORK</span>
-          </div>
-
-          <h1 className="text-6xl md:text-8xl lg:text-9xl font-bold tracking-tighter uppercase mb-4">
-            ALL<br />
-            <span className="text-primary">PROJECTS</span>
-          </h1>
-          <p className="font-mono text-text-muted text-sm max-w-lg">
-            A complete archive of My work — from small mods to full-stack web apps.
-            Click any project to dive into the case study.
-          </p>
-
-          <div className="mt-8 font-mono text-xs text-text-muted">
-            {PROJECTS.length} PROJECTS IN ARCHIVE
-          </div>
-        </div>
-      </section>
-
-      {/* Filter Bar */}
-      <section className="sticky top-[65px] z-30 bg-background-dark/95 backdrop-blur-sm border-b border-border-dark">
-        <div className="max-w-[1400px] mx-auto px-6 md:px-12 py-4 flex flex-wrap gap-3">
-          {categories.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setActiveFilter(cat)}
-              className={`font-mono text-xs tracking-widest uppercase px-4 py-2 border transition-all duration-300 cursor-hover ${
-                activeFilter === cat
-                  ? 'bg-primary text-background-dark border-primary'
-                  : 'border-border-dark text-text-muted hover:border-primary hover:text-primary'
-              }`}
-            >
-              {cat}
-              {cat === 'ALL' && (
-                <span className="ml-2 opacity-60">({PROJECTS.length})</span>
-              )}
-              {cat !== 'ALL' && (
-                <span className="ml-2 opacity-60">
-                  ({PROJECTS.filter((p) => p.category === cat).length})
-                </span>
-              )}
-            </button>
-          ))}
-        </div>
-      </section>
-
-      {/* Projects Grid */}
-      <section className="px-6 md:px-12 py-16">
-        <div className="max-w-[1400px] mx-auto">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={activeFilter}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.3 }}
-              className="grid grid-cols-1 md:grid-cols-2 gap-8"
-            >
-              {filtered.map((project, index) => (
-                <ProjectGridCard key={project.id} project={project} index={index} />
-              ))}
-            </motion.div>
-          </AnimatePresence>
-
-          {filtered.length === 0 && (
-            <div className="text-center py-24">
-              <span className="material-symbols-outlined text-6xl text-border-dark mb-4 block">
-                folder_off
-              </span>
-              <p className="font-mono text-text-muted">No projects in this category yet.</p>
-            </div>
-          )}
-        </div>
-      </section>
-
-      <SimpleFooter />
-    </main>
-  );
-}
-
-function ProjectGridCard({ project, index }: { project: ProjectData; index: number }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 40 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: index * 0.1 }}
-    >
-      <Link
-        href={`/work/${project.id}`}
-        className="group relative block border border-border-dark overflow-hidden cursor-hover hover:border-primary/50 transition-colors duration-500"
-      >
-        {/* Image */}
-        <div className="relative h-[300px] md:h-[400px] overflow-hidden">
-          <div
-            className="absolute inset-0 bg-cover bg-center grayscale group-hover:grayscale-0 transition-all duration-700 ease-out group-hover:scale-110"
-            style={{ backgroundImage: `url('${project.image}')` }}
-          />
-          <div className="absolute inset-0 bg-background-dark/50 group-hover:bg-background-dark/20 transition-colors duration-500" />
-
-          {/* Year Badge */}
-          <div className="absolute top-4 left-4 font-mono text-xs text-white/60 bg-black/40 px-3 py-1 backdrop-blur-sm border border-white/10">
-            {project.year}
-          </div>
-
-          {/* Category Badge */}
-          <div className="absolute top-4 right-4 font-mono text-xs text-primary bg-black/80 px-3 py-1 border border-primary/50">
-            {project.category}
-          </div>
-
-          {/* Hover Arrow */}
-          <div className="absolute bottom-4 right-4 h-12 w-12 flex items-center justify-center border border-white/20 group-hover:border-primary group-hover:bg-primary transition-all duration-300 opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0">
-            <span className="material-symbols-outlined text-white group-hover:text-background-dark text-xl group-hover:rotate-[-45deg] transition-all duration-300">
-              arrow_forward
+      {/* Filters */}
+      <div className="sticky top-[60px] z-40 bg-white border-b-[3px] border-black px-6 md:px-12 py-4 flex gap-2 flex-wrap">
+        {categories.map((cat) => (
+          <button
+            key={cat}
+            onClick={() => setActive(cat)}
+            className={`text-[9px] font-bold tracking-[3px] uppercase px-4 py-2 border-2 border-black transition-colors ${
+              active === cat ? 'bg-black text-white' : 'bg-white text-black hover:bg-gray-bg'
+            }`}
+          >
+            {cat}
+            <span className="ml-2 text-gray">
+              {cat === 'All' ? PROJECTS.length : PROJECTS.filter((p) => p.category === cat).length}
             </span>
-          </div>
-        </div>
+          </button>
+        ))}
+      </div>
 
-        {/* Info */}
-        <div className="p-6 bg-surface/50 group-hover:bg-surface transition-colors duration-300">
-          <h3 className="text-2xl md:text-3xl font-bold tracking-tighter uppercase text-white group-hover:text-primary transition-colors duration-300 mb-2">
-            {project.title}
-          </h3>
-          <p className="font-mono text-text-muted text-sm line-clamp-2 mb-4">
-            {project.description}
-          </p>
-
-          {/* Tags */}
-          {project.tags && project.tags.length > 0 && (
-            <div className="flex flex-wrap gap-2">
-              {project.tags.slice(0, 4).map((tag) => (
-                <span
-                  key={tag}
-                  className="font-mono text-[10px] text-text-muted border border-border-dark px-2 py-0.5 group-hover:border-primary/30 group-hover:text-primary/70 transition-colors duration-300"
+      {/* Grid */}
+      <div className="px-6 md:px-12 py-12">
+        <motion.div
+          className="grid grid-cols-1 md:grid-cols-2 gap-0"
+          variants={staggerContainer}
+          initial="hidden"
+          animate="visible"
+          key={active}
+        >
+          <AnimatePresence mode="popLayout">
+            {filtered.map((project, i) => (
+              <motion.div
+                key={project.id}
+                variants={fadeSlideUp}
+                initial="hidden"
+                animate="visible"
+                exit={{ opacity: 0, y: -20 }}
+              >
+                <Link
+                  href={`/work/${project.id}`}
+                  className="group block border-[3px] border-black hover:bg-gray-bg transition-colors"
                 >
-                  {tag}
-                </span>
-              ))}
-              {project.tags.length > 4 && (
-                <span className="font-mono text-[10px] text-text-muted">
-                  +{project.tags.length - 4}
-                </span>
-              )}
-            </div>
-          )}
-        </div>
+                  <div className="relative aspect-[16/10] overflow-hidden border-b-[3px] border-black">
+                    <Image
+                      src={project.image}
+                      alt={project.title}
+                      fill
+                      className="object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-500"
+                    />
+                  </div>
+                  <div className="p-6">
+                    <div className="flex items-baseline justify-between mb-2">
+                      <span className="text-[40px] font-black leading-none tracking-[-2px] text-gray-lt">
+                        {String(i + 1).padStart(2, '0')}
+                      </span>
+                      <span className="label-text">{project.year}</span>
+                    </div>
+                    <h3 className="text-[20px] font-black uppercase tracking-[-0.5px] mt-2">
+                      {project.title}
+                    </h3>
+                    <p className="text-[12px] text-gray leading-[1.7] mt-2">
+                      {project.description}
+                    </p>
+                    <div className="flex flex-wrap gap-2 mt-4">
+                      {project.tags?.map((tag) => (
+                        <span
+                          key={tag}
+                          className="text-[8px] font-bold tracking-[2px] uppercase border border-black px-2 py-1"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </Link>
+              </motion.div>
+            ))}
+          </AnimatePresence>
+        </motion.div>
+      </div>
 
-        {/* Bottom Accent Line */}
-        <div className="h-[2px] w-0 group-hover:w-full bg-primary transition-all duration-700 ease-in-out" />
-      </Link>
-    </motion.div>
+      <Footer />
+    </main>
   );
 }
