@@ -1,113 +1,86 @@
-# 🚀 Creative Spark Portfolio
+# ROOCKY-dev Profile
 
-A modern, immersive developer portfolio built with **Next.js 16**, **React 19**, **Three.js**, and **Framer Motion**. Featuring a sleek dark UI with noise overlays, custom cursors, smooth scrolling, and 3D visual effects.
+Personal portfolio website built with Next.js (App Router), React, TypeScript, Tailwind CSS, and Framer Motion.
 
-![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js)
-![React](https://img.shields.io/badge/React-19-61DAFB?logo=react)
-![Three.js](https://img.shields.io/badge/Three.js-0.182-black?logo=three.js)
-![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-38B2AC?logo=tailwindcss)
-![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript)
+## Tech Stack
 
----
+- Next.js 16
+- React 19
+- TypeScript 5
+- Tailwind CSS 4
+- Framer Motion
+- Vercel Analytics
 
-## ✨ Features
+## Features
 
-- **Hero Section** — Bold landing with animated roles and a terminal-style aesthetic
-- **Marquee Banner** — Scrolling highlights (experience, projects, availability)
-- **Capabilities Showcase** — Game Mechanics, Infrastructure, UI/UX with Material Symbols icons
-- **Selected Projects Grid** — Filterable project cards with dynamic detail pages (`/work/[slug]`)
-- **Tech Stack Display** — Categorized skills (Languages, Game Engines, Infrastructure, Specializations)
-- **Custom 404 Page** — Glitch-style "Coordinate Lost" error page
-- **3D Effects** — Powered by `@react-three/fiber` and `@react-three/drei` with post-processing
-- **Smooth Scrolling** — Lenis-based buttery smooth scroll experience
-- **Custom Cursor** — Interactive cursor that responds to hoverable elements
-- **Noise Overlay** — Subtle film-grain texture for visual depth
-- **Framer Motion Animations** — Page transitions and scroll-triggered animations
-- **Sound Effects** — Howler.js integration for UI interactions
+- Home page with Hero, Marquee, Services, and Selected Projects sections
+- Project listing page with category filters (`/work`)
+- Dynamic project detail pages (`/work/[slug]`)
+- SEO metadata and Open Graph configuration
+- Custom 404 page
+- Centralized portfolio and project data in `src/lib`
 
-## 🛠 Tech Stack
+## Project Structure
 
-| Category       | Technologies                                              |
-|----------------|-----------------------------------------------------------|
-| **Framework**  | Next.js 16 (App Router)                                   |
-| **UI**         | React 19, Tailwind CSS 4, Framer Motion 12                |
-| **3D / WebGL** | Three.js, React Three Fiber, React Three Drei, R3F Postprocessing |
-| **Fonts**      | Space Grotesk (display), JetBrains Mono (monospace)       |
-| **Audio**      | Howler.js                                                 |
-| **Scrolling**  | Lenis                                                     |
-| **Utilities**  | clsx, tailwind-merge, uuid, lucide-react, maath           |
-| **Language**   | TypeScript 5                                              |
-
-## 📁 Project Structure
-```
-
+```text
 src/
-├── app/
-│   ├── layout.tsx          # Root layout (fonts, metadata, global UI)
-│   ├── page.tsx            # Home page (Hero → Marquee → Capabilities → Projects → Tech → Footer)
-│   ├── not-found.tsx       # Custom 404 page
-│   ├── globals.css         # Global styles
-│   └── work/
-│       └── [slug]/         # Dynamic project detail pages
-│           └── page.tsx
-├── components/
-│   ├── layout/             # Navbar, Footer, SimpleFooter
-│   ├── sections/           # Hero, Marquee, Capabilities, SelectedProjects, TechStack
-│   └── ui/                 # CustomCursor, NoiseOverlay, ServiceMenu
-└── lib/ # Color maps, game constants
-├── portfolio-data.ts   # Portfolio data models & structured content
-├── sound.ts            # Sound utilities
-└── types.ts            # TypeScript type definitions
+  app/
+    layout.tsx
+    page.tsx
+    not-found.tsx
+    work/
+      page.tsx
+      [slug]/page.tsx
+  components/
+    layout/
+    sections/
+    ui/
+  lib/
+    animations.ts
+    portfolio-data.ts
+    project-data.ts
+    types.ts
 ```
-## 🚀 Getting Started
+
+## Getting Started
 
 ### Prerequisites
 
-- **Node.js** ≥ 18
-- **npm** (ships with Node.js)
+- Node.js 18+
+- npm
 
-### Installation
-```
-bash
-# Clone the repository
-git clone <repository-url>
-cd Profile
+### Install
 
-# Install dependencies
+```bash
 npm install
 ```
-### Development
-```
-bash
+
+### Run in development
+
+```bash
 npm run dev
 ```
-Open [http://localhost:3000](http://localhost:3000) to view the portfolio.
 
-### Production Build
-```
-bash
+Visit: `http://localhost:3000`
+
+### Build for production
+
+```bash
 npm run build
-npm start
+npm run start
 ```
-### Linting
-```
-bash
+
+### Lint
+
+```bash
 npm run lint
 ```
-## 🌐 Routes
 
-| Route              | Description                     |
-|--------------------|---------------------------------|
-| `/`                | Home — full portfolio experience |
-| `/work/[slug]`     | Individual project case study    |
-| `/*` (catch-all)   | Custom 404 page                 |
+## Data Updates
 
-## 📝 Configuration
+- Edit `src/lib/portfolio-data.ts` for personal info, hero text, services, and contact info.
+- Edit `src/lib/project-data.ts` to add or update projects.
 
-- **Remote Images** — Unsplash is allowed via `next.config.ts` remote patterns
-- **Fonts** — Loaded via `next/font/google` (Space Grotesk + JetBrains Mono)
-- **Tailwind** — Configured with PostCSS via `@tailwindcss/postcss`
+## License
 
-## 📄 License
-
-This project is private and not licensed for redistribution.
+Private repository. All rights reserved.
