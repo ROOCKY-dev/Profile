@@ -1,39 +1,20 @@
 'use client';
 
-import { motion } from 'framer-motion';
-import { fadeSlideUp } from '@/lib/animations';
-
-const ITEMS = [
-  'WEB DEVELOPMENT',
-  'GAME DEVELOPMENT',
-  'AI TOOLS',
-  'MINECRAFT MODS',
-  'AVAILABLE FOR PROJECTS',
-  'MALAYSIA BASED',
-  'FULL STACK',
-];
+import { PORTFOLIO_DATA } from '@/lib/portfolio-data';
 
 export default function Marquee() {
-  const content = ITEMS.map((item) => `${item} —`).join(' ');
+  const D = PORTFOLIO_DATA;
+  const items = D.marquee;
+  const line = items.join('   /   ');
 
   return (
-    <motion.div
-      className="bg-black text-white py-4 overflow-hidden border-b-[3px] border-black"
-      variants={fadeSlideUp}
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true }}
-    >
-      <div className="flex whitespace-nowrap">
-        {[0, 1].map((i) => (
-          <div
-            key={i}
-            className="animate-marquee flex-shrink-0 text-[10px] font-bold tracking-[4px] uppercase px-4"
-          >
-            {content}
-          </div>
-        ))}
+    <div className="section-dark border-t-2 border-b-2 border-ink overflow-hidden">
+      <div className="mq-wrap py-5.5">
+        <div className="mq flex gap-[48px] whitespace-nowrap will-change-transform animate-marquee font-serif text-[clamp(28px,4.2vw,56px)] tracking-[-0.02em] uppercase leading-none">
+          <span className="pr-[48px]">{line}   /   </span>
+          <span className="pr-[48px]">{line}   /   </span>
+        </div>
       </div>
-    </motion.div>
+    </div>
   );
 }
