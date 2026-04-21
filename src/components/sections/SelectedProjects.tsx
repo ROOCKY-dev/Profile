@@ -1,76 +1,109 @@
 'use client';
 
+import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { PORTFOLIO_DATA } from '@/lib/portfolio-data';
+import Image from 'next/image';
+import { PROJECTS } from '@/lib/project-data';
+import { fadeSlideUp, staggerContainer, slideFromLeft, slideFromRight, borderDraw } from '@/lib/animations';
 
 export default function SelectedProjects() {
-  const featured = PORTFOLIO_DATA.projects.filter(p => p.featured).slice(0, 3);
+  const featured = PROJECTS.filter((p) => p.featured);
+  const projects = featured.length > 0 ? featured : PROJECTS.slice(0, 3);
 
   return (
-    <section id="work" className="border-b-2 border-ink relative overflow-hidden">
-      <div className="p-14 flex justify-between items-end">
+    <section className="py-16 px-6 md:px-12 grid-bg">
+      {/* Header */}
+      <motion.div
+        className="flex items-end justify-between mb-6"
+        variants={slideFromLeft}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true }}
+      >
         <div>
-          <span className="label">04 / Selected Work</span>
-          <h2 className="reveal in font-serif text-[clamp(36px,5vw,72px)] tracking-[-0.03em] uppercase leading-[0.92] mt-2.5">
-            Experiments — <br/>and some products.
-          </h2>
+          <div className="section-number">03</div>
+          <div className="label-text mt-2">Selected Work</div>
         </div>
-        <Link href="/work" className="label hover:text-ink transition-colors pb-3.5">
-          View all {PORTFOLIO_DATA.projects.length} projects →
-        </Link>
-      </div>
+      </motion.div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 border-t-2 border-ink">
-        {featured.map((p, i) => (
-          <Link 
-            key={p.id} 
-            href={`/work/${p.id}`}
-            className="proj-card group relative block border-r-2 border-ink last:border-r-0 transition-all duration-300 hover:translate-x-[-3px] hover:translate-y-[-3px] hover:shadow-[10px_10px_0_var(--ink)] overflow-hidden"
+      {/* Decorative ruled line */}
+      <motion.div
+        className="h-[3px] bg-black w-full mb-12 origin-left"
+        variants={borderDraw}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true }}
+      />
+
+      {/* Grid */}
+      <motion.div
+        className="grid grid-cols-1 md:grid-cols-2 gap-0"
+        variants={staggerContainer}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.1 }}
+      >
+        {projects.map((project, i) => (
+          <motion.div
+            key={project.id}
+            variants={i % 2 === 0 ? slideFromLeft : slideFromRight}
           >
-            <div className="cover aspect-[4/3] relative overflow-hidden bg-paper-2 border-b-2 border-ink">
-              <div className="num absolute left-4.5 top-3.5 font-serif text-[clamp(80px,12vw,160px)] leading-[0.8] tracking-[-0.04em] text-ink/10 transition-colors group-hover:text-ink/20">
-                {p.n}
+            <Link
+              href={`/work/${project.id}`}
+              className="group block border-[3px] border-black hover:bg-gray-bg transition-colors"
+            >
+              {/* Image */}
+              <div className="relative aspect-[16/10] overflow-hidden border-b-[3px] border-black">
+                <Image
+                  src={project.image}
+                  alt={project.title}
+                  fill
+                  className="object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-500"
+                />
               </div>
-              <div className="chip absolute right-3.5 top-3.5">
-                <span className="badge px-2 py-1 border-[1.5px] border-ink font-mono text-[9px] tracking-[0.18em] uppercase bg-paper">
-                  {p.category}
-                </span>
-              </div>
-              
-              {/* Image with duotone hover effect */}
-              <div className="absolute inset-0 transition-all duration-500 mix-blend-multiply opacity-0 group-hover:opacity-100 bg-ink" />
-              <img 
-                src={p.image} 
-                alt={p.title}
-                className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
-              />
-              
-              <div className="arrow absolute right-4.5 bottom-3.5 font-mono text-xs tracking-[0.2em] opacity-0 translate-x-[-8px] group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
-                VIEW CASE →
-              </div>
-            </div>
 
-            <div className="p-7">
-              <div className="flex justify-between items-start mb-4">
-                <h3 className="font-serif text-3xl tracking-[-0.02em] uppercase leading-none">
-                  {p.title}
-                </h3>
-                <span className="font-serif text-xl tracking-[-0.01em]">{p.year}</span>
-              </div>
-              <p className="text-sm leading-[1.6] text-muted line-clamp-2 mb-6">
-                {p.description}
-              </p>
-              <div className="flex gap-1.5 flex-wrap">
-                {(p.stack || []).slice(0, 3).map(s => (
-                  <span key={s} className="font-mono text-[10px] tracking-wider text-ink/60 uppercase">
-                    {s}
+              {/* Info */}
+              <div className="p-6">
+                <div className="flex items-baseline justify-between mb-2">
+                  <span className="text-[40px] font-black leading-none tracking-[-2px] text-gray-lt">
+                    {String(i + 1).padStart(2, '0')}
                   </span>
-                ))}
+                  <span className="label-text">{project.year}</span>
+                </div>
+                <h3 className="text-[20px] font-black uppercase tracking-[-0.5px] mt-2">
+                  {project.title}
+                </h3>
+                <div className="mt-2">
+                  <span className="text-[9px] font-bold tracking-[3px] uppercase text-gray border border-black px-2 py-1">
+                    {project.category}
+                  </span>
+                </div>
+                <div className="mt-4 overflow-hidden h-0 group-hover:h-6 transition-all duration-300">
+                  <span className="text-[10px] font-bold tracking-[3px] uppercase border-b-2 border-black">
+                    View Project →
+                  </span>
+                </div>
               </div>
-            </div>
-          </Link>
+            </Link>
+          </motion.div>
         ))}
-      </div>
+      </motion.div>
+
+      {/* View All Link */}
+      <motion.div
+        className="flex justify-end mt-8"
+        variants={fadeSlideUp}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true }}
+      >
+        <Link
+          href="/work"
+          className="text-[10px] font-bold tracking-[3px] uppercase border-b-[3px] border-black pb-1 hover:text-gray transition-colors"
+        >
+          View All Projects →
+        </Link>
+      </motion.div>
     </section>
   );
 }

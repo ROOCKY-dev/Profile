@@ -6,37 +6,25 @@ export { PROJECTS };
 
 export interface TechItem {
   name: string;
-  category: 'CORE' | 'TOOLS' | 'LANGUAGES' | 'GAME_ENGINES' | 'INFRASTRUCTURE' | 'STACKS';
+  category: 'CORE' | 'TOOLS' | 'LANGUAGES' | 'GAME_ENGINES' | 'INFRASTRUCTURE';
 }
 
 export interface Capability {
-  n: string;
-  key: string;
-  verb: string;
-  sentence: string[];
-  tools: string[];
-}
-
-export interface Service {
-  n: string;
   title: string;
-  desc: string;
-  price: string;
-  tt: string;
+  description: string;
+  icon: string;
 }
 
 /**
  * Centralized data source for the portfolio website.
- * Updated to Swiss/Bauhaus v4.0 design improvements.
+ * Contains personal information, hero section content, capabilities, tech stack, and contact details.
  */
 export const PORTFOLIO_DATA = {
   personal: {
-    name: 'AHMED HUSAM GHAITHAN',
-    alias: 'ROOCKY.DEV',
+    name: 'Ahmed Husam Ghaithan',
+    alias: 'ROOCKY dev',
     role: 'Creative Thinker & Tech Enthusiast',
-    location: 'KUALA LUMPUR, MY',
-    tz: 'Asia/Kuala_Lumpur',
-    tzLabel: 'UTC+8',
+    location: 'Malaysia',
     email: 'letsbuild@roocky.dev',
     socials: {
       github: 'https://github.com/ROOCKY-dev/',
@@ -44,78 +32,74 @@ export const PORTFOLIO_DATA = {
       wa: 'https://wa.link/jpl25x'
     }
   },
-  portfolio: {
-    issue: 'No. 04',
-    version: 'v4.0',
-    year: '2026'
+  hero: {
+    title: ['VIBECODER' , 'STUDENT' , 'GAMER' ], // Split for the layout
+    subtitle: '<System.Init> Portfolio_v3.0',
+    description: 'Crafting immersive digital experiences. Bridging the gap between Imagination and reality'
   },
-  roles: ['VIBECODER', 'STUDENT', 'GAMER', 'MODDER'],
   marquee: [
     '1+ YEARS EXP',
-    '2 SHIPPED PROJECTS',
-    'AI / VIBECODING',
-    'CYBER SEC @ UNITEN',
-    'AVAILABLE FOR COLLAB',
-    'REMOTE FRIENDLY',
-    'BASED IN MALAYSIA'
-  ],
-  ticker: [
-    'PORTFOLIO No. 04 — ISSUE 01 / VOL. IV',
-    '24/7 WORKSHOP — LIGHTS ON',
-    'PRESS [T] FOR TWEAKS · [→] NEXT PAGE',
-    'NOW BUILDING — PORTFOLIO REDESIGN'
-  ],
-  stats: [
-    { num: '02', label: 'Projects Shipped', sub: 'MC mods · web · AI' },
-    { num: '01+', label: 'Years Shipping', sub: 'Full-stack + gamedev' },
-    { num: 'MY', label: 'Kuala Lumpur', sub: 'Remote-friendly' }
+    '1+ MAJOR PROJECTS',
+    'AI / VibeCoding',
+    'Cyber Security Student @ UNITEN',
+    'AVAILABLE FOR WORK'
   ],
   capabilities: [
     {
-      n: '01', key: 'AI',
-      verb: 'Ship AI-driven apps',
-      sentence: ['Utilizing', 'AI tools', 'to build AI-driven apps, pipelines & automations.'],
-      tools: ['Claude Code', 'Cursor', 'Antigravity', 'Ollama', 'OpenAI'],
+      title: 'Game Mechanics',
+      description: 'Designing complex gameplay loops and systems for immersive player experiences.',
+      icon: 'videogame_asset'
     },
     {
-      n: '02', key: 'GAME',
-      verb: 'Make worlds & mods',
-      sentence: ['Writing', 'mod & engine code', 'for Minecraft mods, systems and gameplay loops.'],
-      tools: ['Java', 'NeoForge', 'Fabric', 'C#', 'Unity', 'Blender'],
+      title: 'Administrative',
+      description: 'Expertise in server administration, Linux, Ubuntu and Game servers.',
+      icon: 'dns'
     },
     {
-      n: '03', key: 'WEB',
-      verb: 'Ship fast websites',
-      sentence: ['Building with', 'a modern web stack', 'to ship fast, type-heavy, honest websites.'],
-      tools: ['TypeScript', 'Next.js', 'React 19', 'Tailwind', 'Framer Motion'],
+      title: 'AI Development',
+      description: 'Strong Grab over ai tools and vibeCoding agents.',
+      icon: 'layers'
     },
     {
-      n: '04', key: 'OPS',
-      verb: 'Keep servers on',
-      sentence: ['Running', 'Linux & server tooling', 'so things stay up 24/7 without babysitting.'],
-      tools: ['Linux', 'Ubuntu', 'Docker', 'Git', 'C++'],
-    },
+      title: 'Minecraft Mods Development',
+      description: 'making minecraft mods for NeoForge and Fabric',
+      icon: 'brush'
+    }
   ],
+  // Projects are now sourced from project-data.ts
   projects: PROJECTS,
-  services: [
-    { n: '01', title: 'Minecraft Mod', desc: 'Custom NeoForge / Fabric mods, from mechanic to release on Modrinth.', price: 'FROM $300', tt: '2–4 WEEKS' },
-    { n: '02', title: 'Web Build', desc: 'Marketing sites, portfolios, dashboards. Next.js, opinionated type, honest motion.', price: 'FROM $800', tt: '2–3 WEEKS' },
-    { n: '03', title: 'AI Pipeline', desc: 'Practical vibecoding setups: Cursor / Claude / Ollama, codegen & content.', price: 'FROM $400', tt: '1–2 WEEKS' },
-  ],
-  status: {
-    WORKING:   { label: 'WORKING',   now: 'Redesigning the portfolio — Swiss/Bauhaus style.' },
-    AVAILABLE: { label: 'AVAILABLE', now: 'Open to new collaborations — mods, webs, AI pipelines.' },
-    STUDYING:  { label: 'STUDYING',  now: 'Cyber Security coursework @ UNITEN — networks week.' },
-    RESTING:   { label: 'RESTING',   now: 'Offline. Back on the tools in a bit.' },
+  techStack: {
+    core: [
+      { name: 'C++', category: 'LANGUAGES' },
+      { name: 'Java', category: 'LANGUAGES' },
+      { name: 'C#', category: 'LANGUAGES' },
+      { name: 'WebDev', category: 'STACKS' },
+      { name: 'Git', category: 'TOOLS' },
+    ],
+    tools: [
+      { name: 'Unity', category: 'GAME_ENGINES' },
+      { name: 'Linux', category: 'INFRASTRUCTURE' },
+      { name: 'Blender', category: 'TOOLS' },
+    ],
+    AI: [
+      { name: 'Lovable', category: 'TOOLS' },
+      { name: 'AntiGravity', category: 'TOOLS' },
+      { name: 'CursorCode', category: 'TOOLS' },
+      { name: 'ClaudCode', category: 'TOOLS' },
+      { name: 'Ollama', category: 'TOOLS' },
+    ]
   },
-  log: [
-    { t: '04:12', e: 'git push  portfolio-v4  origin/production' },
-    { t: '03:58', e: 'refactor  Hero  →  kinetic cycling roles' },
-    { t: '03:31', e: 'drop  Three.js  from bundle  (-214 KB)' },
-    { t: '02:47', e: 'add  WorkshopStatus  component' },
-    { t: '02:12', e: 'coffee  ++' },
-    { t: '01:40', e: 'plan   →   spec/2026-04-06-portfolio.md' },
-  ],
+  /*
+ Options :
+  AVAILABLE
+  STUDYING
+  WORKING
+  RESTING
+  */
+  stat: {
+    status: 'WORKING',
+    currentlyWorkingOn: 'Redesigning the portfolio — Swiss/Bauhaus style',
+  },
   contact: {
     methods: [
       { id: 'email', label: 'Email', value: 'letsbuild@roocky.dev', url: 'mailto:letsbuild@roocky.dev', icon: 'mail' },
@@ -123,6 +107,6 @@ export const PORTFOLIO_DATA = {
       { id: 'github', label: 'GitHub', value: '@ROOCKY-dev', url: 'https://github.com/ROOCKY-dev/', icon: 'code' },
       { id: 'instagram', label: 'Instagram', value: '@roocky_dev', url: 'https://www.instagram.com/roocky_dev/', icon: 'photo_camera' }
     ],
-    resumeUrl: '#'
+    resumeUrl: '#' // Placeholder URL for now
   }
 };

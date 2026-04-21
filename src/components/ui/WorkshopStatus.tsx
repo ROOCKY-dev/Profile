@@ -2,10 +2,16 @@
 
 import { PORTFOLIO_DATA } from '@/lib/portfolio-data';
 
+const STATUS_MAP: Record<string, string> = {
+  AVAILABLE: 'AVAILABLE',
+  STUDYING: 'STUDYING',
+  WORKING: 'BUILDING',
+  RESTING: 'OFFLINE',
+};
+
 export default function WorkshopStatus({ className = '' }: { className?: string }) {
-  // Use 'WORKING' as the default key to match the new design's intent
-  const statusKey = 'WORKING';
-  const data = PORTFOLIO_DATA.status[statusKey];
+  const raw = PORTFOLIO_DATA.stat.status;
+  const label = STATUS_MAP[raw] ?? raw;
 
   return (
     <div className={`inline-flex items-center gap-2 ${className}`}>
@@ -14,7 +20,7 @@ export default function WorkshopStatus({ className = '' }: { className?: string 
         <span className="relative inline-flex h-2 w-2 rounded-full bg-black" />
       </span>
       <span className="text-[10px] font-bold tracking-[4px] uppercase">
-        {data.label}
+        {label}
       </span>
     </div>
   );

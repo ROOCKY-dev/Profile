@@ -1,53 +1,64 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { PORTFOLIO_DATA } from '@/lib/portfolio-data';
-import StatusPill from '@/components/ui/StatusPill';
+import { motion } from 'framer-motion';
+import WorkshopStatus from '@/components/ui/WorkshopStatus';
 
 export default function Navbar() {
-  const pathname = usePathname();
-  const D = PORTFOLIO_DATA;
-  
-  const items = [
-    { id: 'home', label: 'Index', path: '/' },
-    { id: 'work', label: 'Work', path: '/work' },
-  ];
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   return (
-    <nav className="sticky top-0 z-40 bg-paper/90 backdrop-blur-md border-b-2 border-ink">
-      <div className="max-w-[1440px] mx-auto px-7 py-3.5 grid grid-cols-[1fr_auto_1fr] items-center gap-4">
-        {/* Left: Logo and Status */}
-        <div className="flex items-center gap-3.5">
-          <Link href="/" className="font-serif text-lg tracking-[-0.02em] uppercase">
-            AG / ROOCKY.DEV
-          </Link>
-          <StatusPill status="WORKING" />
-        </div>
-
-        {/* Center: Nav Items */}
-        <div className="flex gap-1">
-          {items.map(it => (
-            <Link
-              key={it.id}
-              href={it.path}
-              className={`px-3.5 py-2 font-mono text-[11px] tracking-[0.2em] uppercase border-[1.5px] border-transparent transition-colors ${
-                pathname === it.path ? 'bg-ink text-paper' : 'bg-transparent text-ink hover:bg-ink/5'
-              }`}
-            >
-              {it.label}
-            </Link>
-          ))}
-        </div>
-
-        {/* Right: Portfolio Info and Contact */}
-        <div className="flex justify-end gap-2.5 items-center">
-          <span className="label hidden sm:inline">{D.portfolio.issue} / {D.portfolio.version}</span>
-          <Link href="/#contact" className="btn solid px-4 py-2.5">
-            Contact
-          </Link>
-        </div>
+    <motion.nav
+      initial={{ y: -60, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+      className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-12 h-[60px] border-b-[3px] border-black transition-colors duration-300 ${
+        scrolled ? 'bg-white/95 backdrop-blur-sm' : 'bg-white'
+      }`}
+    >
+      <div className="flex items-center gap-4">
+        <Link
+          href="/"
+          className="text-[13px] font-black tracking-[4px] uppercase"
+        >
+          AG — ROOCKY.DEV
+        </Link>
+        <WorkshopStatus className="hidden md:inline-flex" />
       </div>
-    </nav>
+
+      <div className="hidden md:flex items-center gap-8">
+        <Link
+          href="/work"
+          className="text-[10px] font-bold tracking-[3px] uppercase text-gray hover:text-black transition-colors hover-border-expand pb-1"
+        >
+          Work
+        </Link>
+        <a
+          href="#about"
+          className="text-[10px] font-bold tracking-[3px] uppercase text-gray hover:text-black transition-colors hover-border-expand pb-1"
+        >
+          About
+        </a>
+        <a
+          href="#services"
+          className="text-[10px] font-bold tracking-[3px] uppercase text-gray hover:text-black transition-colors hover-border-expand pb-1"
+        >
+          Services
+        </a>
+        <a
+          href="#contact"
+          className="text-[10px] font-bold tracking-[3px] uppercase bg-black text-white px-4 py-2 hover:bg-gray-bg hover:text-black transition-colors border-2 border-black"
+        >
+          Contact
+        </a>
+      </div>
+    </motion.nav>
   );
 }
