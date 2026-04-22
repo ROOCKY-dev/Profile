@@ -1,18 +1,23 @@
 import type { Metadata } from "next";
-import { Inter, JetBrains_Mono } from "next/font/google";
+import { Inter, JetBrains_Mono, Archivo_Black } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/layout/Navbar";
-import FloatingShapes from "@/components/ui/FloatingShapes";
 import { Analytics } from "@vercel/analytics/next";
 
 const inter = Inter({
-  variable: "--font-sans",
+  variable: "--font-inter",
   subsets: ["latin"],
 });
 
 const jetBrainsMono = JetBrains_Mono({
   variable: "--font-mono",
   subsets: ["latin"],
+});
+
+const archivoBlack = Archivo_Black({
+  variable: "--font-archivo-black",
+  subsets: ["latin"],
+  weight: "400",
 });
 
 export const metadata: Metadata = {
@@ -50,16 +55,33 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="scroll-smooth">
+    <html lang="en" className="scroll-smooth snap-y snap-mandatory">
       <head>
         <Analytics />
       </head>
       <body
-        className={`${inter.variable} ${jetBrainsMono.variable} font-sans antialiased bg-white text-black overflow-x-hidden`}
+        className={`${inter.variable} ${jetBrainsMono.variable} ${archivoBlack.variable} font-sans antialiased bg-white text-black`}
       >
         <Navbar />
-        <FloatingShapes />
         {children}
+
+        {/* Mouse Parallax Variables */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function(){
+                if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+                const root = document.documentElement;
+                window.addEventListener('mousemove', (e) => {
+                  const mvx = (e.clientX / window.innerWidth) - 0.5;
+                  const mvy = (e.clientY / window.innerHeight) - 0.5;
+                  root.style.setProperty('--mx', mvx.toFixed(3));
+                  root.style.setProperty('--my', mvy.toFixed(3));
+                });
+              })();
+            `,
+          }}
+        />
       </body>
     </html>
   );

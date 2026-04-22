@@ -1,64 +1,55 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import Link from 'next/link';
-import { motion } from 'framer-motion';
-import WorkshopStatus from '@/components/ui/WorkshopStatus';
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { PORTFOLIO_DATA } from "@/lib/portfolio-data";
+import { StatusPill } from "../ui/WorkshopStatus";
 
 export default function Navbar() {
-  const [scrolled, setScrolled] = useState(false);
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
+  const pathname = usePathname();
+  const D = PORTFOLIO_DATA;
+  
+  const navItems = [
+    { label: "Index", href: "/" },
+    { label: "Work", href: "/work" },
+  ];
 
   return (
-    <motion.nav
-      initial={{ y: -60, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-      className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-12 h-[60px] border-b-[3px] border-black transition-colors duration-300 ${
-        scrolled ? 'bg-white/95 backdrop-blur-sm' : 'bg-white'
-      }`}
-    >
-      <div className="flex items-center gap-4">
-        <Link
-          href="/"
-          className="text-[13px] font-black tracking-[4px] uppercase"
-        >
-          AG — ROOCKY.DEV
-        </Link>
-        <WorkshopStatus className="hidden md:inline-flex" />
-      </div>
+    <nav className="fixed top-0 left-0 w-full z-50 bg-white/90 backdrop-blur-md border-b-2 border-black">
+      <div className="w-full px-6 md:px-12 lg:px-20 h-[64px] flex items-center justify-between">
+        <div className="flex items-center gap-6">
+          <Link href="/" className="text-xl font-serif leading-none tracking-tighter uppercase">
+            ROOCKY<span className="text-gray-300">.DEV</span>
+          </Link>
+          
+          <div className="hidden sm:block">
+            <StatusPill status={D.stat.status} />
+          </div>
+        </div>
 
-      <div className="hidden md:flex items-center gap-8">
-        <Link
-          href="/work"
-          className="text-[10px] font-bold tracking-[3px] uppercase text-gray hover:text-black transition-colors hover-border-expand pb-1"
-        >
-          Work
-        </Link>
-        <a
-          href="#about"
-          className="text-[10px] font-bold tracking-[3px] uppercase text-gray hover:text-black transition-colors hover-border-expand pb-1"
-        >
-          About
-        </a>
-        <a
-          href="#services"
-          className="text-[10px] font-bold tracking-[3px] uppercase text-gray hover:text-black transition-colors hover-border-expand pb-1"
-        >
-          Services
-        </a>
-        <a
-          href="#contact"
-          className="text-[10px] font-bold tracking-[3px] uppercase bg-black text-white px-4 py-2 hover:bg-gray-bg hover:text-black transition-colors border-2 border-black"
-        >
-          Contact
-        </a>
+        <div className="flex items-center gap-10">
+          <div className="hidden md:flex items-center gap-8">
+            {navItems.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`font-mono text-[10px] font-black tracking-[0.2em] uppercase transition-colors hover:text-black ${
+                  pathname === item.href ? "text-black underline underline-offset-4" : "text-gray-400"
+                }`}
+              >
+                {item.label}
+              </Link>
+            ))}
+          </div>
+
+          <Link
+            href="/#contact"
+            className="btn btn-black h-[40px] px-6 text-[10px] font-black"
+          >
+            Contact
+          </Link>
+        </div>
       </div>
-    </motion.nav>
+    </nav>
   );
 }

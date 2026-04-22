@@ -1,98 +1,90 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import Link from 'next/link';
-import Image from 'next/image';
-import { PROJECTS } from '@/lib/project-data';
-import Footer from '@/components/layout/Footer';
-import { fadeSlideUp, staggerContainer } from '@/lib/animations';
+import { useState } from "react";
+import Link from "next/link";
+import { motion, AnimatePresence } from "framer-motion";
+import { PORTFOLIO_DATA } from "@/lib/portfolio-data";
+import Footer from "@/components/layout/Footer";
+import { maskReveal, staggerContainer } from "@/lib/animations";
 
 export default function WorkPage() {
-  const categories = ['All', ...Array.from(new Set(PROJECTS.map((p) => p.category)))];
-  const [active, setActive] = useState('All');
+  const D = PORTFOLIO_DATA;
+  const [filter, setFilter] = useState('ALL');
 
-  const filtered = active === 'All' ? PROJECTS : PROJECTS.filter((p) => p.category === active);
+  const cats = ['ALL', ...new Set(D.projects.map(p => p.category))];
+  const shown = filter === 'ALL' ? D.projects : D.projects.filter(p => p.category === filter);
 
   return (
-    <main className="pt-[60px]">
+    <main className="min-h-screen bg-white pt-[60px]">
       {/* Header */}
-      <div className="px-6 md:px-12 py-12 border-b-[3px] border-black">
-        <h1 className="text-[clamp(48px,10vw,96px)] font-black uppercase leading-[0.88] tracking-[-4px]">
-          Work
-        </h1>
-      </div>
+      <section className="border-b-2 border-black grid-bg px-6 md:px-12 lg:px-20 py-16 md:py-24">
+        <motion.div 
+          className="w-full"
+          initial="hidden"
+          animate="visible"
+          variants={maskReveal}
+        >
+          <span className="label-text text-gray-400">Index // All Work</span>
+          <h1 className="font-serif text-[clamp(64px,14vw,200px)] uppercase leading-[0.82] tracking-[-0.05em] mt-8 breathe-header">
+            Work / <span className="text-gray-100">{shown.length.toString().padStart(2, '0')}</span>
+          </h1>
+        </motion.div>
+      </section>
 
       {/* Filters */}
-      <div className="sticky top-[60px] z-40 bg-white border-b-[3px] border-black px-6 md:px-12 py-4 flex gap-2 flex-wrap">
-        {categories.map((cat) => (
-          <button
-            key={cat}
-            onClick={() => setActive(cat)}
-            className={`text-[9px] font-bold tracking-[3px] uppercase px-4 py-2 border-2 border-black transition-colors ${
-              active === cat ? 'bg-black text-white' : 'bg-white text-black hover:bg-gray-bg'
-            }`}
-          >
-            {cat}
-            <span className="ml-2 text-gray">
-              {cat === 'All' ? PROJECTS.length : PROJECTS.filter((p) => p.category === cat).length}
-            </span>
-          </button>
-        ))}
+      <div className="sticky top-[60px] z-40 bg-white/80 backdrop-blur-md border-b-2 border-black">
+        <div className="w-full px-6 md:px-12 lg:px-20 py-5 flex flex-wrap gap-3">
+          {cats.map(c => (
+            <button 
+              key={c} 
+              onClick={() => setFilter(c)} 
+              className={`font-mono text-[10px] font-bold tracking-[0.2em] uppercase px-5 py-2 border-2 border-black transition-all ${
+                filter === c ? 'bg-black text-white' : 'bg-white text-black hover:bg-gray-100'
+              }`}
+            >
+              {c}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Grid */}
-      <div className="px-6 md:px-12 py-12">
-        <motion.div
-          className="grid grid-cols-1 md:grid-cols-2 gap-0"
+      <section className="w-full px-6 md:px-12 lg:px-20 py-16 md:py-24 bg-gray-50">
+        <motion.div 
+          className="grid grid-cols-1 md:grid-cols-2 gap-10"
           variants={staggerContainer}
           initial="hidden"
           animate="visible"
-          key={active}
+          key={filter}
         >
           <AnimatePresence mode="popLayout">
-            {filtered.map((project, i) => (
+            {shown.map((project, i) => (
               <motion.div
                 key={project.id}
-                variants={fadeSlideUp}
-                initial="hidden"
-                animate="visible"
-                exit={{ opacity: 0, y: -20 }}
+                variants={maskReveal}
+                layout
+                className="group border-2 border-black bg-white"
               >
-                <Link
-                  href={`/work/${project.id}`}
-                  className="group block border-[3px] border-black hover:bg-gray-bg transition-colors"
-                >
-                  <div className="relative aspect-[16/10] overflow-hidden border-b-[3px] border-black">
-                    <Image
-                      src={project.image}
-                      alt={project.title}
-                      fill
-                      className="object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-500"
-                    />
-                  </div>
-                  <div className="p-6">
-                    <div className="flex items-baseline justify-between mb-2">
-                      <span className="text-[40px] font-black leading-none tracking-[-2px] text-gray-lt">
+                <Link href={`/work/${project.id}`}>
+                  <div className="p-10">
+                    <div className="flex justify-between items-start mb-16">
+                      <span className="font-serif text-7xl text-gray-100 group-hover:text-black/5 transition-colors">
                         {String(i + 1).padStart(2, '0')}
                       </span>
-                      <span className="label-text">{project.year}</span>
+                      <span className="label-text text-gray-400 group-hover:text-black transition-colors">{project.year}</span>
                     </div>
-                    <h3 className="text-[20px] font-black uppercase tracking-[-0.5px] mt-2">
+
+                    <h3 className="font-serif text-[44px] md:text-[52px] uppercase tracking-tighter mb-6 leading-none transition-transform duration-500 group-hover:translate-x-2">
                       {project.title}
                     </h3>
-                    <p className="text-[12px] text-gray leading-[1.7] mt-2">
+                    
+                    <p className="text-[16px] leading-relaxed text-gray-500 max-w-md mb-12">
                       {project.description}
                     </p>
-                    <div className="flex flex-wrap gap-2 mt-4">
-                      {project.tags?.map((tag) => (
-                        <span
-                          key={tag}
-                          className="text-[8px] font-bold tracking-[2px] uppercase border border-black px-2 py-1"
-                        >
-                          {tag}
-                        </span>
-                      ))}
+
+                    <div className="flex items-center justify-between pt-10 border-t-2 border-dashed border-gray-100">
+                      <span className="label-text text-gray-300 group-hover:text-black transition-colors">{project.category}</span>
+                      <span className="font-mono text-[11px] font-black tracking-widest group-hover:translate-x-1 transition-transform">EXPLORE CASE →</span>
                     </div>
                   </div>
                 </Link>
@@ -100,7 +92,7 @@ export default function WorkPage() {
             ))}
           </AnimatePresence>
         </motion.div>
-      </div>
+      </section>
 
       <Footer />
     </main>

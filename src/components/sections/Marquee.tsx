@@ -1,39 +1,24 @@
-'use client';
+"use client";
 
-import { motion } from 'framer-motion';
-import { fadeSlideUp } from '@/lib/animations';
-
-const ITEMS = [
-  'WEB DEVELOPMENT',
-  'GAME DEVELOPMENT',
-  'AI TOOLS',
-  'MINECRAFT MODS',
-  'AVAILABLE FOR PROJECTS',
-  'MALAYSIA BASED',
-  'FULL STACK',
-];
+import { PORTFOLIO_DATA } from "@/lib/portfolio-data";
 
 export default function Marquee() {
-  const content = ITEMS.map((item) => `${item} —`).join(' ');
+  const D = PORTFOLIO_DATA;
+  const items = D.marquee;
+  const line = items.join('   /   ');
 
   return (
-    <motion.div
-      className="bg-black text-white py-4 overflow-hidden border-b-[3px] border-black"
-      variants={fadeSlideUp}
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true }}
-    >
-      <div className="flex whitespace-nowrap">
-        {[0, 1].map((i) => (
-          <div
-            key={i}
-            className="animate-marquee flex-shrink-0 text-[10px] font-bold tracking-[4px] uppercase px-4"
-          >
-            {content}
-          </div>
-        ))}
+    <div className="bg-gray-50 border-b-2 border-black">
+      <div className="overflow-hidden py-6">
+        <div className="flex animate-marquee whitespace-nowrap">
+          <span className="text-[clamp(32px,5vw,64px)] font-black uppercase tracking-tighter pr-12">
+            {line}   /   
+          </span>
+          <span className="text-[clamp(32px,5vw,64px)] font-black uppercase tracking-tighter pr-12">
+            {line}   /   
+          </span>
+        </div>
       </div>
-    </motion.div>
+    </div>
   );
 }

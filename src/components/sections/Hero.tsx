@@ -1,122 +1,133 @@
-'use client';
+"use client";
 
-import { motion } from 'framer-motion';
-import Link from 'next/link';
-import AnimatedText from '@/components/ui/AnimatedText';
-import CountUp from '@/components/ui/CountUp';
-import { PORTFOLIO_DATA } from '@/lib/portfolio-data';
-import {
-  borderDraw,
-  borderDrawVertical,
-  fadeSlideUp,
-  statPop,
-  staggerContainerSlow,
-} from '@/lib/animations';
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { PORTFOLIO_DATA } from "@/lib/portfolio-data";
+import { useClock } from "@/hooks/use-animations";
+import { staggerContainer, maskReveal, roleAnimation } from "@/lib/animations";
 
 export default function Hero() {
-  const { personal } = PORTFOLIO_DATA;
+  const D = PORTFOLIO_DATA;
+  const roles = D.roles;
+  const [roleIdx, setRoleIdx] = useState(0);
+  const clock = useClock(D.personal.tz);
+
+  useEffect(() => {
+    const id = setInterval(() => setRoleIdx((i) => (i + 1) % roles.length), 2400);
+    return () => clearInterval(id);
+  }, [roles.length]);
 
   return (
-    <section className="grid-bg min-h-screen pt-[60px] grid grid-cols-1 lg:grid-cols-[1fr_380px] border-b-[3px] border-black">
-      {/* Left */}
-      <div className="relative flex flex-col justify-between p-8 md:p-12">
-        {/* Animated vertical border replacing the static lg:border-r */}
-        <motion.div
-          className="hidden lg:block absolute right-0 top-0 w-[3px] bg-black origin-top"
-          style={{ height: '100%' }}
-          variants={borderDrawVertical}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-        />
+    <section className="relative w-full h-screen border-b-2 border-black grid-bg overflow-hidden flex flex-col">
+      <div className="flex-1 w-full grid grid-cols-1 lg:grid-cols-[1fr_400px]">
+        {/* Left Side */}
+        <div className="p-6 md:p-12 lg:p-20 pt-[84px] lg:pt-[100px] border-r-0 lg:border-r-2 border-black flex flex-col justify-between h-full">
+          <div className="flex justify-between items-start">
+            <span className="label-text text-gray-400">Portfolio // {D.portfolio.issue}</span>
+            <span className="label-text text-right text-gray-400">
+              {D.personal.location} / {clock || "--:--:--"} {D.personal.tzLabel}
+            </span>
+          </div>
 
-        <div className="label-text">Portfolio — No. 04</div>
-
-        <div className="flex-1 flex flex-col justify-center py-12">
-          <AnimatedText
-            text="CREATIVE DEVELOPER."
-            as="h1"
-            mode="word"
-            className="text-[clamp(48px,10vw,96px)] font-black uppercase leading-[0.88] tracking-[-4px]"
-          />
-
-          <motion.div
-            className="h-[3px] bg-black my-8 origin-left"
-            variants={borderDraw}
+          <motion.div 
+            className="flex-1 flex flex-col justify-center"
+            variants={staggerContainer}
             initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-          />
-
-          <motion.div
-            className="grid grid-cols-1 md:grid-cols-2 gap-8"
-            variants={fadeSlideUp}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
+            animate="visible"
           >
-            <p className="text-[13px] text-gray leading-[1.8] md:border-r md:border-gray-lt md:pr-8">
-              {PORTFOLIO_DATA.hero.description}
-            </p>
-            <div className="flex flex-col gap-3">
-              <Link
-                href="/work"
-                className="text-center text-[10px] font-bold tracking-[3px] uppercase bg-black text-white py-[13px] px-6 border-2 border-black hover:bg-white hover:text-black transition-colors"
-              >
-                View Work
-              </Link>
-              <a
-                href="#contact"
-                className="text-center text-[10px] font-bold tracking-[3px] uppercase bg-white text-black py-[13px] px-6 border-2 border-black hover:bg-black hover:text-white transition-colors"
-              >
-                Contact Me
-              </a>
-            </div>
+            <h1 className="font-heading text-[clamp(56px,14vw,180px)] leading-[0.82] tracking-[-0.05em] uppercase breathe-header text-black font-black">
+              <motion.div variants={maskReveal}>Creative</motion.div>
+              <div className="flex items-baseline gap-4 md:gap-10 flex-wrap">
+                <motion.div variants={maskReveal}>Dev —</motion.div>
+                <div className="relative h-[0.9em] overflow-hidden min-w-[8ch]">
+                  <AnimatePresence mode="wait">
+                    <motion.span
+                      key={roles[roleIdx]}
+                      variants={roleAnimation}
+                      initial="initial"
+                      animate="animate"
+                      exit="exit"
+                      transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                      className="absolute left-0 top-0 text-gray-300"
+                    >
+                      {roles[roleIdx]}
+                    </motion.span>
+                  </AnimatePresence>
+                </div>
+              </div>
+              <motion.div variants={maskReveal}>At Work.</motion.div>
+            </h1>
           </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-[1.5fr_1fr] items-end gap-8 md:gap-16">
+            <motion.div 
+              className="max-w-xl"
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              variants={maskReveal}
+            >
+              <p className="text-[14px] md:text-[15px] leading-relaxed text-gray-600">
+                {D.personal.name} — Kuala Lumpur. Crafting immersive digital experiences;
+                bridging the gap between imagination and reality. Minecraft mods, web
+                platforms, AI pipelines. Quiet, obsessive, 24/7.
+              </p>
+              <div className="mt-6 font-mono text-[10px] font-bold tracking-[0.25em] uppercase text-black border-b-2 border-black inline-block pb-1">
+                {D.personal.email}
+              </div>
+            </motion.div>
+
+            <motion.div 
+              className="flex flex-col gap-3"
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              variants={maskReveal}
+            >
+              <a href="#work" className="btn btn-black w-full h-[52px]">
+                <span>View Work</span>
+                <span>→</span>
+              </a>
+              <a href="#contact" className="btn btn-outline w-full h-[52px]">
+                <span>Contact</span>
+                <span>→</span>
+              </a>
+            </motion.div>
+          </div>
         </div>
 
-        <div className="label-text">{personal.email}</div>
+        {/* Right Side Stats */}
+        <div className="hidden lg:flex flex-col border-t-2 lg:border-t-0 border-black h-full">
+          {D.stats.map((stat, i) => (
+            <motion.div 
+              key={i} 
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              variants={maskReveal}
+              transition={{ delay: i * 0.1 }}
+              className={`p-10 lg:p-12 flex-1 flex flex-col justify-between border-b-2 last:border-b-0 border-black ${
+                i === 2 ? "bg-black text-white" : "bg-white text-black"
+              }`}
+            >
+              <span className={`label-text ${i === 2 ? "text-gray-600" : "text-gray-400"}`}>
+                Stat // 0{i + 1}
+              </span>
+              <div>
+                <div className="text-7xl md:text-8xl font-heading tracking-tighter leading-none mb-3 font-black">
+                  {stat.num}
+                </div>
+                <div className="label-text mt-4 block text-xs tracking-[4px]">
+                  {stat.label}
+                </div>
+                <p className={`font-mono text-[10px] mt-2 tracking-widest ${i === 2 ? "text-gray-500" : "text-gray-400"}`}>
+                  {stat.sub}
+                </p>
+              </div>
+            </motion.div>
+          ))}
+        </div>
       </div>
-
-      {/* Right — Stats */}
-      <motion.div
-        className="hidden lg:flex flex-col"
-        variants={staggerContainerSlow}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true }}
-      >
-        <motion.div
-          className="flex-1 flex flex-col justify-end p-8 border-b-[3px] border-black"
-          variants={statPop}
-        >
-          <CountUp target={2} suffix="+" className="text-[56px] font-black leading-none tracking-[-2px]" />
-          <div className="label-text mt-2">Projects Shipped</div>
-          <p className="text-[11px] text-gray mt-2 leading-[1.5]">
-            Minecraft mods, web platforms, AI tools
-          </p>
-        </motion.div>
-        <motion.div
-          className="flex-1 flex flex-col justify-end p-8 border-b-[3px] border-black"
-          variants={statPop}
-        >
-          <CountUp target={1} suffix="+" className="text-[56px] font-black leading-none tracking-[-2px]" />
-          <div className="label-text mt-2">Year Experience</div>
-          <p className="text-[11px] text-gray mt-2 leading-[1.5]">
-            Full-stack + game development
-          </p>
-        </motion.div>
-        <motion.div
-          className="flex-1 flex flex-col justify-end p-8 bg-black text-white"
-          variants={statPop}
-        >
-          <span className="text-[56px] font-black leading-none tracking-[-2px]">MY</span>
-          <div className="label-text mt-2 !text-[#555]">Malaysia — Available</div>
-          <p className="text-[11px] text-[#555] mt-2 leading-[1.5]">
-            Remote-friendly, open to collab
-          </p>
-        </motion.div>
-      </motion.div>
     </section>
   );
 }
