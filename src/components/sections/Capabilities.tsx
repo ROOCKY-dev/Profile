@@ -46,7 +46,7 @@ export default function Capabilities() {
     <section 
       ref={sectionRef}
       onMouseMove={handleMove}
-      className="w-full min-h-screen flex flex-col border-b-2 border-black bg-white relative overflow-hidden"
+      className="w-full min-h-[calc(100vh-64px)] flex flex-col border-b-2 border-black bg-white relative overflow-hidden"
     >
       {/* Container wrapper for consistent alignment */}
       <div className="w-full px-6 md:px-12 lg:px-20 border-b-2 border-black bg-white relative z-20">

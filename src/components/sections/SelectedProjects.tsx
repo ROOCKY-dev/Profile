@@ -76,8 +76,8 @@ export default function SelectedProjects() {
   const featured = PORTFOLIO_DATA.projects.filter((p) => p.featured);
 
   return (
-    <section id="work" className="border-b-2 border-black bg-gray-50 relative overflow-hidden">
-      <div className="w-full">
+    <section id="work" className="border-b-2 border-black bg-gray-50 relative overflow-hidden min-h-[calc(100vh-64px)] flex flex-col">
+      <div className="w-full flex-1 flex flex-col">
         <div className="p-6 md:p-12 lg:p-20 border-b-2 border-black flex flex-col md:flex-row md:items-end justify-between gap-12 bg-white relative z-10">
           <motion.div 
             className="max-w-4xl"

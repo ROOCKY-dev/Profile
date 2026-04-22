@@ -11,7 +11,7 @@ export default function AboutStrip() {
   const s = D.status[status as keyof typeof D.status];
 
   return (
-    <section id="about" className="border-b-2 border-black min-h-screen flex flex-col justify-center">
+    <section id="about" className="border-b-2 border-black min-h-[calc(100vh-64px)] flex flex-col justify-center">
       <div className="w-full grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] flex-1">
         {/* Left Side */}
         <motion.div 
