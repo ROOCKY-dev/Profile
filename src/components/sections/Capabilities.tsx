@@ -82,10 +82,10 @@ export default function Capabilities() {
                 }}
                 className="relative aspect-square border-b-2 sm:border-b-0 sm:border-r-2 last:border-r-0 border-black bg-white cursor-default group"
               >
-                <div className={`absolute inset-0 p-8 lg:p-10 flex flex-col justify-between transition-colors duration-300 ${isTileActive ? "bg-gray-50" : "bg-white"}`}>
+                <div className={`absolute inset-0 p-8 lg:p-10 flex flex-col justify-between transition-colors duration-300 ${isTileActive ? "bg-gray-50" : "bg-white"}`} >
                   <div 
                     className="absolute left-0 top-0 bottom-0 bg-black transition-all duration-300 z-20"
-                    style={{ width: isTileActive ? 6 : 0 }}
+                    
                   />
 
                   <div className="flex justify-between items-start z-10">
@@ -98,8 +98,8 @@ export default function Capabilities() {
                   <div className="z-10 py-6">
                     <div className="font-heading text-2xl md:text-[clamp(20px,2vw,28px)] leading-[1.1] tracking-tight uppercase text-black font-black">
                       <span className="text-gray-200 transition-colors group-hover:text-gray-300">{c.sentence[0]} </span>
-                      
-                      <span className="relative inline whitespace-nowrap">
+                      <br />
+                      <span className="relative inline-block">
                         <span
                           onMouseEnter={(e) => {
                             e.stopPropagation();
@@ -107,7 +107,7 @@ export default function Capabilities() {
                             setToolsKey(c.key);
                           }}
                           onMouseLeave={scheduleHide}
-                          className={`relative z-10 transition-colors duration-200 cursor-help underline decoration-2 underline-offset-8 ${
+                          className={`relative z-10 transition-colors duration-200 cursor-help decoration-2 inline-block ${
                             toolsKey === c.key ? "text-white no-underline" : "text-black"
                           }`}
                         >
@@ -120,12 +120,12 @@ export default function Capabilities() {
                               animate={{ scaleX: 1 }}
                               exit={{ scaleX: 0 }}
                               transition={{ duration: 0.2, ease: "circOut" }}
-                              className="absolute inset-x-[-8px] inset-y-[-4px] bg-black z-0 origin-left"
+                              className="absolute inset-x-[-8px] inset-y-[-2px] bg-black z-0 origin-left"
                             />
                           )}
                         </AnimatePresence>
                       </span>
-
+                      <br />
                       <span className="text-gray-200 transition-colors group-hover:text-gray-300"> {c.sentence[2]}</span>
                     </div>
                   </div>
