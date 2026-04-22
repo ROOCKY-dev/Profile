@@ -18,7 +18,7 @@ export default function Hero() {
   }, [roles.length]);
 
   return (
-    <section className="relative w-full min-h-[calc(100vh-64px)] border-b-2 border-black grid-bg overflow-hidden flex flex-col bg-white">
+    <section className="relative w-full min-h-[calc(100vh-64px)] overflow-hidden flex flex-col bg-white">
       <div className="flex-1 w-full grid grid-cols-1 lg:grid-cols-[1fr_400px]">
         {/* Left Side */}
         <div className="p-6 md:p-12 lg:p-20 pt-10 lg:pt-16 border-r-0 lg:border-r-2 border-black flex flex-col justify-between h-full">
@@ -35,7 +35,7 @@ export default function Hero() {
             initial="hidden"
             animate="visible"
           >
-            <h1 className="font-heading text-[clamp(56px,14vw,180px)] leading-[0.82] tracking-[-0.05em] uppercase breathe-header text-black font-black">
+            <h1 className="font-heading text-[clamp(56px,14vw,180px)] leading-[0.95] tracking-[-0.04em] uppercase breathe-header text-black font-black">
               <motion.div variants={maskReveal}>Creative</motion.div>
               <div className="flex items-baseline gap-4 md:gap-10 flex-wrap">
                 <motion.div variants={maskReveal}>Dev —</motion.div>
@@ -48,7 +48,7 @@ export default function Hero() {
                       animate="animate"
                       exit="exit"
                       transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                      className="absolute left-0 top-0 text-gray-300"
+                      className="absolute left-0 top-0 text-gray-400"
                     >
                       {roles[roleIdx]}
                     </motion.span>
