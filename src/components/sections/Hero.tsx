@@ -18,10 +18,10 @@ export default function Hero() {
   }, [roles.length]);
 
   return (
-    <section className="relative w-full min-h-[calc(100vh-64px)] border-b-2 border-black grid-bg overflow-hidden flex flex-col">
+    <section className="relative w-full min-h-[calc(100vh-64px)] border-b-2 border-black grid-bg overflow-hidden flex flex-col bg-white">
       <div className="flex-1 w-full grid grid-cols-1 lg:grid-cols-[1fr_400px]">
         {/* Left Side */}
-        <div className="p-6 md:p-12 lg:p-20 pt-[84px] lg:pt-[100px] border-r-0 lg:border-r-2 border-black flex flex-col justify-between h-full">
+        <div className="p-6 md:p-12 lg:p-20 pt-10 lg:pt-16 border-r-0 lg:border-r-2 border-black flex flex-col justify-between h-full">
           <div className="flex justify-between items-start">
             <span className="label-text text-gray-400">Portfolio // {D.portfolio.issue}</span>
             <span className="label-text text-right text-gray-400">
