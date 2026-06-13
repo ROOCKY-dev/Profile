@@ -2,9 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
-import { fadeUp, stagger } from "@/lib/animations";
-import { motion } from "framer-motion";
+import { account, databases, APPWRITE_DB_ID, APPWRITE_LOGS_COLLECTION_ID } from "@/lib/appwrite.client";
+import { ID, Query } from "appwrite";
 
 export default function AdminLogsPage() {
   const [logs, setLogs] = useState<any[]>([]);
@@ -12,29 +11,31 @@ export default function AdminLogsPage() {
   const [timeText, setTimeText] = useState("");
   const [loading, setLoading] = useState(true);
   const router = useRouter();
-  const supabase = createClient();
 
   useEffect(() => {
     checkUser();
-    fetchLogs();
   }, []);
 
   const checkUser = async () => {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) {
-      router.push("/login");
+    try {
+      await account.get();
+      fetchLogs();
+    } catch {
+      router.push("/verify");
     }
   };
 
   const fetchLogs = async () => {
     setLoading(true);
-    const { data, error } = await supabase
-      .from("logs")
-      .select("*")
-      .order("created_at", { ascending: false });
-
-    if (!error && data) {
-      setLogs(data);
+    try {
+      const response = await databases.listDocuments(
+        APPWRITE_DB_ID,
+        APPWRITE_LOGS_COLLECTION_ID,
+        [Query.orderDesc("$createdAt")]
+      );
+      setLogs(response.documents);
+    } catch (error) {
+      console.error("Failed to fetch logs:", error);
     }
     setLoading(false);
   };
@@ -43,31 +44,41 @@ export default function AdminLogsPage() {
     e.preventDefault();
     if (!eventText || !timeText) return;
 
-    const { error } = await supabase.from("logs").insert([
-      { time: timeText, event: eventText }
-    ]);
-
-    if (!error) {
+    try {
+      await databases.createDocument(
+        APPWRITE_DB_ID,
+        APPWRITE_LOGS_COLLECTION_ID,
+        ID.unique(),
+        { time: timeText, event: eventText }
+      );
       setEventText("");
       setTimeText("");
       fetchLogs();
-    } else {
+    } catch (error: any) {
       alert("Error adding log: " + error.message);
     }
   };
 
   const handleDelete = async (id: string) => {
-    const { error } = await supabase.from("logs").delete().eq("id", id);
-    if (!error) {
+    try {
+      await databases.deleteDocument(
+        APPWRITE_DB_ID,
+        APPWRITE_LOGS_COLLECTION_ID,
+        id
+      );
       fetchLogs();
-    } else {
+    } catch (error: any) {
       alert("Error deleting log: " + error.message);
     }
   };
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
-    router.push("/login");
+    try {
+      await account.deleteSession("current");
+    } catch (error) {
+      console.error("Logout error", error);
+    }
+    router.push("/verify");
   };
 
   return (
@@ -116,10 +127,10 @@ export default function AdminLogsPage() {
           {loading ? (
             <div className="text-[var(--text-tertiary)] font-mono text-sm animate-pulse">Loading logs...</div>
           ) : logs.length === 0 ? (
-            <div className="text-[var(--text-tertiary)] font-mono text-sm">No logs found in Supabase.</div>
+            <div className="text-[var(--text-tertiary)] font-mono text-sm">No logs found in Appwrite.</div>
           ) : (
             logs.map((log) => (
-              <div key={log.id} className="glass-card p-4 rounded-xl flex items-center justify-between group">
+              <div key={log.$id} className="glass-card p-4 rounded-xl flex items-center justify-between group">
                 <div className="flex items-center gap-4">
                   <span className="font-mono text-xs text-[var(--accent-primary)] bg-[var(--accent-glow)] px-2 py-1 rounded">
                     {log.time}
@@ -129,7 +140,7 @@ export default function AdminLogsPage() {
                   </span>
                 </div>
                 <button 
-                  onClick={() => handleDelete(log.id)}
+                  onClick={() => handleDelete(log.$id)}
                   className="text-red-400 opacity-0 group-hover:opacity-100 transition-opacity font-mono text-xs hover:underline"
                 >
                   Delete

@@ -1,17 +1,25 @@
 import { SITE } from "@/lib/data";
 import Footer from "@/components/layout/Footer";
 
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient, APPWRITE_DB_ID, APPWRITE_LOGS_COLLECTION_ID } from "@/lib/appwrite.server";
+import { Query } from "node-appwrite";
 
 export default async function LogPage() {
-  const supabase = await createClient();
-  const { data: logs } = await supabase
-    .from("logs")
-    .select("*")
-    .order("created_at", { ascending: false });
+  let logs: any[] = [];
+  try {
+    const { databases } = createAdminClient();
+    const response = await databases.listDocuments(
+      APPWRITE_DB_ID,
+      APPWRITE_LOGS_COLLECTION_ID,
+      [Query.orderDesc("$createdAt")]
+    );
+    logs = response.documents;
+  } catch (error) {
+    console.error("Failed to fetch logs:", error);
+  }
 
   // Fallback to static data if table isn't created or empty
-  const displayLogs = logs && logs.length > 0 ? logs : SITE.log;
+  const displayLogs = logs.length > 0 ? logs : SITE.log;
 
   return (
     <main className="w-full bg-[var(--bg-primary)]">
@@ -49,7 +57,7 @@ export default async function LogPage() {
 
             {displayLogs.map((entry, i) => (
               <article 
-                key={entry.id || i}
+                key={entry.$id || i}
                 className="group relative glass-card p-8 rounded-2xl"
               >
                 <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-8 mb-6">
