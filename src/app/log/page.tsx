@@ -4,6 +4,10 @@ import Footer from "@/components/layout/Footer";
 import { createAdminClient, APPWRITE_DB_ID, APPWRITE_LOGS_COLLECTION_ID } from "@/lib/appwrite.server";
 import { Query } from "node-appwrite";
 
+// Force Next.js to always render this page dynamically and fetch the latest logs
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export default async function LogPage() {
   let logs: any[] = [];
   try {
@@ -67,7 +71,7 @@ export default async function LogPage() {
                   <div className="h-px bg-[var(--border-subtle)] flex-1 hidden md:block" />
                 </div>
                 
-                <p className="font-mono text-lg text-[var(--text-primary)]">
+                <p className="font-mono text-lg text-[var(--text-primary)] whitespace-pre-wrap">
                   {entry.event}
                 </p>
               </article>
@@ -81,9 +85,7 @@ export default async function LogPage() {
           </div>
 
           {/* Right: Sidebar / Community */}
-          <div
-            className="relative"
-          >
+          <div className="relative">
             <div className="glass-card-elevated p-8 rounded-3xl sticky top-[120px]">
               <span className="badge mb-8">Community</span>
               
