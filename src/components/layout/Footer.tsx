@@ -1,97 +1,99 @@
 "use client";
 
-import { PORTFOLIO_DATA } from "@/lib/portfolio-data";
+import { SITE } from "@/lib/data";
 
 export default function Footer() {
-  const D = PORTFOLIO_DATA;
-  const email = D.personal.email;
+  const emailChars = SITE.personal.email.split("");
 
   return (
-    <footer id="contact" className="bg-black text-white p-6 md:p-12 lg:p-20 overflow-hidden relative border-t-2 border-black min-h-screen flex flex-col justify-center snap-start">
-      {/* Decorative Background Grid */}
-      <div className="absolute inset-0 opacity-5 pointer-events-none grid-bg" />
-
-      <div className="w-full relative z-10 grid grid-cols-1 lg:grid-cols-[1.6fr_1fr] gap-20 lg:gap-40 items-center py-20">
-        {/* Left Side: Contact */}
-        <div className="flex flex-col justify-center">
+    <footer id="contact" className="relative border-t border-[var(--border-subtle)] bg-[var(--bg-primary)] overflow-hidden">
+      <div className="absolute inset-0 dot-grid opacity-20 pointer-events-none" />
+      
+      <div className="w-full max-w-[1440px] mx-auto px-6 md:px-12 lg:px-16 py-32 md:py-48 relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-20">
+          
+          {/* Left: Huge CTA */}
           <div>
-            <span className="label-text text-gray-700 block mb-12 uppercase tracking-[8px] font-black">07 / LET'S BUILD SOMETHING</span>
+            <span className="badge mb-12">04 // Let's Build Something</span>
             
             <a 
-              href={`mailto:${email}`}
-              className="giant-email block cursor-pointer group select-none"
+              href={`mailto:${SITE.personal.email}`}
+              className="flex flex-wrap font-display text-[clamp(40px,8vw,120px)] font-bold tracking-tight uppercase text-[var(--text-primary)] hover:text-[var(--accent-primary)] transition-colors duration-500 leading-none group"
             >
-              {email.split("").map((char, i) => (
-                <span key={i}>
+              {emailChars.map((char, i) => (
+                <span 
+                  key={i}
+                  className="transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:-translate-y-4"
+                  style={{ transitionDelay: `${i * 30}ms` }}
+                >
                   {char === " " ? "\u00A0" : char}
                 </span>
               ))}
             </a>
-
-            <p className="mt-20 text-2xl md:text-3xl text-gray-500 max-w-2xl leading-[1.1] font-black tracking-tighter uppercase">
-              Ship a mod, design a site, spin up an AI pipeline. Quick
-              projects and long-haul ones both welcome.
+            
+            <p className="mt-12 text-xl md:text-2xl text-[var(--text-secondary)] max-w-xl leading-relaxed">
+              Ship a mod, design a site, spin up an AI pipeline. Quick projects and long-haul ones both welcome.
             </p>
+
+            <div className="mt-16 flex gap-6">
+              <a href={`mailto:${SITE.personal.email}`} className="btn-primary">
+                Send Email
+              </a>
+              <a href={SITE.personal.socials.wa} target="_blank" rel="noreferrer" className="btn-ghost">
+                Direct Chat
+              </a>
+            </div>
           </div>
 
-          <div className="mt-20 flex flex-wrap gap-8">
-            <a href={`mailto:${email}`} className="btn bg-white text-black border-white hover:bg-black hover:text-white px-12 h-[64px] text-xs font-black shadow-[10px_10px_0_rgba(255,255,255,0.1)] hover:shadow-none transition-all">
-              <span>Send Email</span>
-              <span>→</span>
-            </a>
-            <a href={D.personal.socials.wa} className="btn bg-transparent text-white border-white hover:bg-white hover:text-black px-12 h-[64px] text-xs font-black">
-              <span>Direct Chat</span>
-              <span>→</span>
-            </a>
-          </div>
-        </div>
+          {/* Right: Directory */}
+          <div className="flex flex-col gap-16 lg:pl-12 lg:border-l border-[var(--border-subtle)]">
+            <div>
+              <span className="label mb-6 block text-[var(--text-secondary)]">Socials</span>
+              <ul className="space-y-4">
+                {Object.entries(SITE.personal.socials).map(([key, url]) => (
+                  <li key={key}>
+                    <a 
+                      href={url} 
+                      target="_blank" 
+                      rel="noreferrer"
+                      className="font-mono text-sm tracking-widest uppercase text-[var(--text-primary)] hover:text-[var(--accent-primary)] transition-colors"
+                    >
+                      {key} ↗
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
 
-        {/* Right Side: Directory */}
-        <div className="flex flex-col justify-center border-l-0 lg:border-l-2 border-gray-900 lg:pl-20">
-          <div>
-            <span className="label-text text-gray-800 mb-16 block uppercase tracking-[4px] font-black underline decoration-gray-800 underline-offset-8 decoration-4">Directory // Workshop</span>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-20 font-mono text-[13px] font-bold tracking-[3px] uppercase">
-              <div className="space-y-12">
-                <div className="flex flex-col gap-4">
-                  <span className="text-gray-700 text-[10px] tracking-[4px] font-black">Socials</span>
-                  <a href={D.personal.socials.github} className="text-white hover:text-gray-400 transition-all hover:translate-x-3 inline-block">Github</a>
-                  <a href={D.personal.socials.instagram} className="text-white hover:text-gray-400 transition-all hover:translate-x-3 inline-block">Instagram</a>
-                  <a href={D.personal.socials.wa} className="text-white hover:text-gray-400 transition-all hover:translate-x-3 inline-block">WhatsApp</a>
+            <div>
+              <span className="label mb-6 block text-[var(--text-secondary)]">Base</span>
+              <ul className="space-y-2 font-mono text-xs tracking-wider uppercase text-[var(--text-tertiary)]">
+                <li>{SITE.personal.location}</li>
+                <li>{SITE.personal.tzLabel} · MYT</li>
+              </ul>
+            </div>
+
+            <div className="pt-12 border-t border-[var(--border-subtle)]">
+              <span className="label mb-6 block text-[var(--text-secondary)]">Tech</span>
+              <div className="grid grid-cols-2 gap-4 font-mono text-[10px] tracking-wider uppercase text-[var(--text-tertiary)]">
+                <div className="flex flex-col gap-2">
+                  <span>Next.js 16</span>
+                  <span>React 19</span>
                 </div>
-              </div>
-
-              <div className="space-y-12">
-                <div className="flex flex-col gap-4">
-                  <span className="text-gray-700 text-[10px] tracking-[4px] font-black">Base</span>
-                  <span className="text-white">Kuala Lumpur, MY</span>
-                  <span className="text-white">{D.personal.tzLabel} · MYT</span>
-                  <span className="text-white">UNITEN — Cyber Sec</span>
+                <div className="flex flex-col gap-2">
+                  <span>Tailwind 4</span>
+                  <span>Framer 12</span>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="mt-40 border-t-2 border-gray-900 pt-16">
-            <div className="label-text text-gray-800 mb-8 uppercase tracking-[4px] font-black">Engineered with</div>
-            <div className="grid grid-cols-2 gap-10 font-mono text-[11px] text-gray-600 tracking-[3px] uppercase font-black">
-              <div className="flex flex-col gap-3">
-                <span className="text-gray-400">Next.js 16</span>
-                <span className="text-gray-400">React 19</span>
-              </div>
-              <div className="flex flex-col gap-3">
-                <span className="text-gray-400">Tailwind 4</span>
-                <span className="text-gray-400">Framer 12</span>
-              </div>
-            </div>
-          </div>
         </div>
-      </div>
 
-      <div className="w-full mt-24 pt-12 border-t border-gray-950 flex flex-col md:flex-row justify-between gap-10 font-mono text-[11px] text-gray-900 tracking-[6px] uppercase font-black bg-black z-20">
-        <span>© 2026 {D.personal.name}</span>
-        <div className="flex gap-16">
-          <span>PORTFOLIO {D.portfolio.issue}</span>
-          <span>V {D.portfolio.version}</span>
+        {/* Copyright */}
+        <div className="mt-32 pt-8 border-t border-[var(--border-subtle)] flex flex-col md:flex-row justify-between items-center gap-4 font-mono text-[10px] tracking-widest uppercase text-[var(--text-tertiary)]">
+          <span>© 2026 {SITE.personal.name}</span>
+          <span>PORTFOLIO V4 // REIMAGINED</span>
         </div>
       </div>
     </footer>

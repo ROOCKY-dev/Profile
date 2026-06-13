@@ -1,92 +1,98 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { PORTFOLIO_DATA } from "@/lib/portfolio-data";
-import { StatusPill, Typewriter } from "../ui/WorkshopStatus";
-import { maskReveal } from "@/lib/animations";
+import { fadeUp, stagger } from "@/lib/animations";
+import { SITE } from "@/lib/data";
 
 export default function AboutStrip() {
-  const D = PORTFOLIO_DATA;
-  const status = D.stat.status;
-  const s = D.status[status as keyof typeof D.status];
-
   return (
-    <section id="about" className="border-b-2 border-black min-h-[calc(100vh-64px)] flex flex-col justify-center">
-      <div className="w-full grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] flex-1">
-        {/* Left Side */}
-        <motion.div 
-          className="p-6 md:p-12 lg:p-20 lg:border-r-2 border-black flex flex-col justify-center"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          variants={maskReveal}
-        >
-          <div className="mb-12">
-            <span className="label-text text-gray-400 block mb-2">02 / About</span>
-            <span className="label-text cursor-pointer hover:text-black transition-colors underline underline-offset-4">Full Bio →</span>
-          </div>
+    <section id="about" className="relative border-b border-[var(--border-subtle)] bg-[var(--bg-primary)] overflow-hidden">
+      {/* Background Decor */}
+      <div className="absolute right-0 top-0 w-1/2 h-full bg-gradient-to-l from-[var(--bg-glass)] to-transparent pointer-events-none" />
+      
+      <div className="w-full max-w-[1440px] mx-auto px-6 md:px-12 lg:px-16 py-24 md:py-40">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_1fr] gap-20">
+          
+          {/* Left: Bio */}
+          <motion.div 
+            variants={stagger}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            className="flex flex-col justify-center"
+          >
+            <motion.div variants={fadeUp} className="mb-12">
+              <span className="badge">01 // Identity</span>
+            </motion.div>
 
-          <h2 className="font-heading text-[clamp(44px,8.5vw,100px)] leading-[0.88] tracking-[-0.05em] uppercase breathe-header mb-12 font-black text-black">
-            A workshop<br/>that never closes.
-          </h2>
+            <motion.h2 
+              variants={fadeUp}
+              className="font-display text-[clamp(40px,6vw,80px)] leading-[0.95] tracking-tight uppercase mb-10 text-[var(--text-primary)]"
+            >
+              A workshop<br />
+              <span className="text-[var(--text-secondary)]">that never</span><br />
+              <span className="text-[var(--accent-primary)] glow-text">closes.</span>
+            </motion.h2>
 
-          <p className="text-[16px] md:text-[18px] leading-relaxed text-gray-600 max-w-2xl mb-12">
-            Self-taught, curious, and stubborn about craft. I split my time between
-            cybersecurity coursework at UNITEN and a rotating bench of side
-            projects — Minecraft mods, web platforms, and AI-assisted tooling.
-            I prefer shipping small, sharp things over shipping big, fuzzy ones.
-          </p>
+            <motion.p 
+              variants={fadeUp}
+              className="text-lg leading-relaxed text-[var(--text-secondary)] max-w-xl mb-12"
+            >
+              {SITE.personal.bio}
+            </motion.p>
 
-          <div className="flex flex-wrap gap-3">
-            {['Malaysia, MY', 'Cyber Sec @ UNITEN', 'Open for collab', 'Speaks EN / AR'].map((tag) => (
-              <span 
-                key={tag} 
-                className="font-mono text-[10px] font-bold tracking-[0.2em] uppercase px-4 py-2 border-2 border-black bg-white"
-              >
-                {tag}
-              </span>
-            ))}
-          </div>
-        </motion.div>
+            <motion.div variants={fadeUp} className="flex flex-wrap gap-3">
+              {SITE.tags.map((tag) => (
+                <span key={tag} className="label px-4 py-2 rounded-full border border-[var(--border-subtle)] bg-white/[0.02]">
+                  {tag}
+                </span>
+              ))}
+            </motion.div>
+          </motion.div>
 
-        {/* Right Side */}
-        <motion.div 
-          className="p-6 md:p-12 lg:p-20 bg-gray-50 flex flex-col justify-between overflow-hidden"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          variants={maskReveal}
-        >
-          <div className="flex-1 flex flex-col justify-center">
-            <div className="flex justify-between items-center mb-16">
-              <span className="label-text text-gray-400">Current State</span>
-              <StatusPill status={status} />
-            </div>
+          {/* Right: Activity Log */}
+          <motion.div 
+            variants={fadeUp}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            className="relative"
+          >
+            <div className="glass-card-elevated p-8 md:p-12 h-full flex flex-col">
+              <div className="flex items-center justify-between mb-12">
+                <span className="label">Activity / Syslog</span>
+                <div className="flex items-center gap-2">
+                  <div className="status-dot bg-amber-400" />
+                  <span className="label text-amber-400">Recording</span>
+                </div>
+              </div>
 
-            <div className="font-mono">
-              <div className="text-[11px] text-gray-400 mb-6 tracking-widest uppercase">$ tail -f workshop.log</div>
-              <div className="text-2xl md:text-3xl font-bold leading-tight tracking-tight text-black max-w-lg uppercase">
-                <Typewriter text={s.now} />
+              <div className="flex-1 space-y-6">
+                {SITE.log.map((entry, i) => (
+                  <div 
+                    key={i} 
+                    className="flex gap-6 items-start font-mono text-sm group"
+                    style={{ opacity: 1 - i * 0.15 }}
+                  >
+                    <span className="text-[var(--text-tertiary)] group-hover:text-[var(--text-secondary)] transition-colors">
+                      {entry.time}
+                    </span>
+                    <span className="text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] transition-colors">
+                      {entry.event}
+                    </span>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-12 pt-8 border-t border-[var(--border-subtle)]">
+                <div className="font-mono text-xs text-[var(--accent-primary)] opacity-80">
+                  <span className="animate-pulse">_</span> system standing by
+                </div>
               </div>
             </div>
-          </div>
+          </motion.div>
 
-          <div className="mt-20 pt-12 border-t-2 border-dashed border-gray-200">
-            <div className="label-text mb-8 text-gray-300">Activity Log</div>
-            <div className="space-y-4">
-              {D.log.map((log, i) => (
-                <div 
-                  key={i} 
-                  className="grid grid-cols-[80px_1fr] gap-6 font-mono text-[11px] md:text-[12px]" 
-                  style={{ opacity: 1 - i * 0.12 }}
-                >
-                  <span className="text-gray-400 font-bold">{log.t}</span>
-                  <span className="text-gray-800 font-bold uppercase tracking-wider">{log.e}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </motion.div>
+        </div>
       </div>
     </section>
   );

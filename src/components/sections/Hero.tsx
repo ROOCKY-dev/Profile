@@ -2,132 +2,135 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { PORTFOLIO_DATA } from "@/lib/portfolio-data";
-import { useClock } from "@/hooks/use-animations";
-import { staggerContainer, maskReveal, roleAnimation } from "@/lib/animations";
+import { SITE } from "@/lib/data";
+import { useClock } from "@/hooks/use-clock";
+import { fadeUp, stagger, roleSwap } from "@/lib/animations";
 
 export default function Hero() {
-  const D = PORTFOLIO_DATA;
+  const D = SITE;
   const roles = D.roles;
   const [roleIdx, setRoleIdx] = useState(0);
   const clock = useClock(D.personal.tz);
 
   useEffect(() => {
-    const id = setInterval(() => setRoleIdx((i) => (i + 1) % roles.length), 2400);
+    const id = setInterval(
+      () => setRoleIdx((i) => (i + 1) % roles.length),
+      2800
+    );
     return () => clearInterval(id);
   }, [roles.length]);
 
   return (
-    <section className="relative w-full min-h-[calc(100vh-64px)] overflow-hidden flex flex-col bg-white">
-      <div className="flex-1 w-full grid grid-cols-1 lg:grid-cols-[1fr_400px]">
-        {/* Left Side */}
-        <div className="p-6 md:p-12 lg:p-20 pt-10 lg:pt-16 border-r-0 lg:border-r-2 border-black flex flex-col justify-between h-full">
-          <div className="flex justify-between items-start">
-            <span className="label-text text-gray-400">Portfolio // {D.portfolio.issue}</span>
-            <span className="label-text text-right text-gray-400">
-              {D.personal.location} / {clock || "--:--:--"} {D.personal.tzLabel}
-            </span>
-          </div>
+    <section className="relative w-full min-h-[100dvh] overflow-hidden flex flex-col">
+      {/* Background Glow Blobs */}
+      <div className="hero-glow top-[-200px] left-1/2 -translate-x-1/2" />
+      <div
+        className="absolute w-[500px] h-[400px] rounded-full filter blur-[100px] opacity-[0.08] pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(circle, #818cf8, transparent)",
+          bottom: "-100px",
+          right: "-100px",
+        }}
+      />
 
-          <motion.div 
-            className="flex-1 flex flex-col justify-center"
-            variants={staggerContainer}
-            initial="hidden"
-            animate="visible"
-          >
-            <h1 className="font-heading text-[clamp(56px,14vw,180px)] leading-[0.95] tracking-[-0.04em] uppercase breathe-header text-black font-black">
-              <motion.div variants={maskReveal}>Creative</motion.div>
-              <div className="flex items-baseline gap-4 md:gap-10 flex-wrap">
-                <motion.div variants={maskReveal}>Dev —</motion.div>
-                <div className="relative h-[0.9em] overflow-hidden min-w-[8ch]">
-                  <AnimatePresence mode="wait">
-                    <motion.span
-                      key={roles[roleIdx]}
-                      variants={roleAnimation}
-                      initial="initial"
-                      animate="animate"
-                      exit="exit"
-                      transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                      className="absolute left-0 top-0 text-gray-400"
-                    >
-                      {roles[roleIdx]}
-                    </motion.span>
-                  </AnimatePresence>
-                </div>
+      {/* Dot Grid Overlay */}
+      <div className="absolute inset-0 dot-grid opacity-30 pointer-events-none" />
+
+      {/* Content */}
+      <div className="relative z-10 flex-1 w-full max-w-[1440px] mx-auto px-6 md:px-12 lg:px-16 pt-[120px] md:pt-[160px] flex flex-col justify-between pb-12 md:pb-20">
+        {/* Top Row: Meta */}
+        <motion.div
+          className="flex justify-between items-start"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.3, duration: 0.8 }}
+        >
+          <span className="label">Portfolio // 2026</span>
+          <span className="label text-right">
+            {D.personal.location} / {clock || "--:--:--"} {D.personal.tzLabel}
+          </span>
+        </motion.div>
+
+        {/* Main Headline */}
+        <motion.div
+          className="flex-1 flex flex-col justify-center py-12 md:py-20"
+          variants={stagger}
+          initial="hidden"
+          animate="visible"
+        >
+          <h1 className="font-display text-[clamp(48px,12vw,160px)] leading-[0.92] tracking-[-0.04em] uppercase font-semibold">
+            <motion.div variants={fadeUp}>
+              <span className="text-[var(--text-primary)]">Creative</span>
+            </motion.div>
+            <motion.div
+              variants={fadeUp}
+              className="flex items-baseline gap-4 md:gap-8 flex-wrap"
+            >
+              <span className="text-[var(--text-primary)]">Dev —</span>
+              <div className="relative h-[0.9em] overflow-visible min-w-[12ch]">
+                <AnimatePresence mode="wait">
+                  <motion.span
+                    key={roles[roleIdx]}
+                    variants={roleSwap}
+                    initial="initial"
+                    animate="animate"
+                    exit="exit"
+                    transition={{
+                      duration: 0.5,
+                      ease: [0.32, 0.72, 0, 1],
+                    }}
+                    className="absolute left-0 top-0 text-[var(--accent-primary)] glow-text"
+                  >
+                    {roles[roleIdx]}
+                  </motion.span>
+                </AnimatePresence>
               </div>
-              <motion.div variants={maskReveal}>At Work.</motion.div>
-            </h1>
+            </motion.div>
+            <motion.div variants={fadeUp}>
+              <span className="text-[var(--text-primary)]">At Work</span>
+              <span className="text-[var(--accent-primary)]">.</span>
+            </motion.div>
+          </h1>
+        </motion.div>
+
+        {/* Bottom Row */}
+        <motion.div
+          className="grid grid-cols-1 md:grid-cols-[1.5fr_1fr] items-end gap-12 md:gap-20"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          variants={stagger}
+        >
+          {/* Description */}
+          <motion.div variants={fadeUp} className="max-w-xl">
+            <p className="text-[15px] md:text-base leading-relaxed text-[var(--text-secondary)]">
+              {D.personal.name} — Kuala Lumpur. {D.personal.heroParagraph}
+            </p>
+            <a
+              href={`mailto:${D.personal.email}`}
+              className="inline-block mt-6 label text-[var(--accent-primary)] hover:text-[var(--text-primary)] transition-colors duration-300 border-b border-[var(--border-accent)] pb-1"
+            >
+              {D.personal.email}
+            </a>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-[1.5fr_1fr] items-end gap-8 md:gap-16">
-            <motion.div 
-              className="max-w-xl"
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              variants={maskReveal}
-            >
-              <p className="text-[14px] md:text-[15px] leading-relaxed text-gray-600">
-                {D.personal.name} — Kuala Lumpur. Crafting immersive digital experiences;
-                bridging the gap between imagination and reality. Minecraft mods, web
-                platforms, AI pipelines. Quiet, obsessive, 24/7.
-              </p>
-              <div className="mt-6 font-mono text-[10px] font-bold tracking-[0.25em] uppercase text-black border-b-2 border-black inline-block pb-1">
-                {D.personal.email}
-              </div>
-            </motion.div>
-
-            <motion.div 
-              className="flex flex-col gap-3"
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              variants={maskReveal}
-            >
-              <a href="#work" className="btn btn-black w-full h-[52px]">
-                <span>View Work</span>
-                <span>→</span>
-              </a>
-              <a href="#contact" className="btn btn-outline w-full h-[52px]">
-                <span>Contact</span>
-                <span>→</span>
-              </a>
-            </motion.div>
-          </div>
-        </div>
-
-        {/* Right Side Stats */}
-        <div className="hidden lg:flex flex-col border-t-2 lg:border-t-0 border-black h-full">
-          {D.stats.map((stat, i) => (
-            <motion.div 
-              key={i} 
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              variants={maskReveal}
-              transition={{ delay: i * 0.1 }}
-              className={`p-10 lg:p-12 flex-1 flex flex-col justify-between border-b-2 last:border-b-0 border-black ${
-                i === 2 ? "bg-black text-white" : "bg-white text-black"
-              }`}
-            >
-              <span className={`label-text ${i === 2 ? "text-gray-600" : "text-gray-400"}`}>
-                Stat // 0{i + 1}
-              </span>
-              <div>
-                <div className="text-7xl md:text-8xl font-heading tracking-tighter leading-none mb-3 font-black">
-                  {stat.num}
-                </div>
-                <div className="label-text mt-4 block text-xs tracking-[4px]">
-                  {stat.label}
-                </div>
-                <p className={`font-mono text-[10px] mt-2 tracking-widest ${i === 2 ? "text-gray-500" : "text-gray-400"}`}>
-                  {stat.sub}
-                </p>
-              </div>
-            </motion.div>
-          ))}
-        </div>
+          {/* CTA Buttons */}
+          <motion.div variants={fadeUp} className="flex flex-col gap-3">
+            <a href="#work" className="btn-primary w-full justify-between">
+              <span>View Work</span>
+              <span>→</span>
+            </a>
+            <a href="#contact" className="btn-ghost w-full justify-between">
+              <span>Contact</span>
+              <span>→</span>
+            </a>
+          </motion.div>
+        </motion.div>
       </div>
+
+      {/* Bottom Gradient Fade */}
+      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#050508] to-transparent pointer-events-none z-10" />
     </section>
   );
 }

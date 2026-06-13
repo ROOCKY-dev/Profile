@@ -1,45 +1,39 @@
 import type { Metadata } from "next";
-import { Inter, JetBrains_Mono, Archivo_Black } from "next/font/google";
+import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/layout/Navbar";
 import { Analytics } from "@vercel/analytics/next";
 
-const inter = Inter({
-  variable: "--font-inter",
+const geistSans = Geist({
+  variable: "--font-geist-sans",
   subsets: ["latin"],
 });
 
-const jetBrainsMono = JetBrains_Mono({
-  variable: "--font-mono",
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
   subsets: ["latin"],
-});
-
-const archivoBlack = Archivo_Black({
-  variable: "--font-archivo-black",
-  subsets: ["latin"],
-  weight: "400",
 });
 
 export const metadata: Metadata = {
   title: {
-    default: "Roocky | Developer Portfolio",
-    template: "%s | Roocky",
+    default: "ROOCKY.DEV — Creative Developer",
+    template: "%s | ROOCKY.DEV",
   },
   description:
     "Portfolio of Ahmed Ghaithan — creative developer building web, games, and AI tools from Malaysia.",
   metadataBase: new URL("https://roocky.dev"),
   openGraph: {
-    title: "Roocky | Developer Portfolio",
+    title: "ROOCKY.DEV — Creative Developer",
     description:
       "Portfolio of Ahmed Ghaithan — creative developer building web, games, and AI tools from Malaysia.",
     url: "https://roocky.dev",
-    siteName: "Roockydev Portfolio",
+    siteName: "ROOCKY.DEV",
     locale: "en_US",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Roocky | Developer Portfolio",
+    title: "ROOCKY.DEV — Creative Developer",
     description:
       "Portfolio of Ahmed Ghaithan — creative developer building web, games, and AI tools from Malaysia.",
   },
@@ -55,28 +49,40 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="scroll-smooth snap-y snap-mandatory">
+    <html lang="en" className="scroll-smooth">
       <head>
         <Analytics />
       </head>
       <body
-        className={`${inter.variable} ${jetBrainsMono.variable} ${archivoBlack.variable} font-sans antialiased bg-white text-black`}
+        className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased`}
+        style={{ background: '#050508', color: '#f0f0f5' }}
+        suppressHydrationWarning
       >
+        {/* Film Grain Overlay */}
+        <div className="grain-overlay" aria-hidden="true" />
+
+        {/* Mouse-following Glow */}
+        <div id="mouse-glow" className="mouse-glow" aria-hidden="true" suppressHydrationWarning />
+
         <Navbar />
         {children}
 
-        {/* Mouse Parallax Variables */}
+        {/* Mouse Glow Tracker Script */}
         <script
           dangerouslySetInnerHTML={{
             __html: `
               (function(){
                 if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-                const root = document.documentElement;
+                const glow = document.getElementById('mouse-glow');
+                if (!glow) return;
+                let rAF;
                 window.addEventListener('mousemove', (e) => {
-                  const mvx = (e.clientX / window.innerWidth) - 0.5;
-                  const mvy = (e.clientY / window.innerHeight) - 0.5;
-                  root.style.setProperty('--mx', mvx.toFixed(3));
-                  root.style.setProperty('--my', mvy.toFixed(3));
+                  if (rAF) return;
+                  rAF = requestAnimationFrame(() => {
+                    glow.style.left = e.clientX + 'px';
+                    glow.style.top = e.clientY + 'px';
+                    rAF = null;
+                  });
                 });
               })();
             `,

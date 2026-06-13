@@ -1,14 +1,14 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { PROJECTS } from "@/lib/project-data";
+import { SITE } from "@/lib/data";
 import Footer from "@/components/layout/Footer";
 
 export function generateStaticParams() {
-  return PROJECTS.map((p) => ({ slug: p.id }));
+  return SITE.projects.map((p) => ({ slug: p.id }));
 }
 
 export function generateMetadata({ params }: { params: { slug: string } }) {
-  const project = PROJECTS.find((p) => p.id === params.slug);
+  const project = SITE.projects.find((p) => p.id === params.slug) as any;
   if (!project) return {};
   return {
     title: project.title,
@@ -18,78 +18,63 @@ export function generateMetadata({ params }: { params: { slug: string } }) {
 
 export default async function ProjectPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const project = PROJECTS.find((p) => p.id === slug);
+  const project = SITE.projects.find((p) => p.id === slug) as any;
   if (!project) notFound();
 
-  const others = PROJECTS.filter((x) => x.id !== project.id);
+  const others = SITE.projects.filter((x) => x.id !== project.id) as any[];
   const nextProj = others[0];
 
   return (
-    <main className="min-h-screen bg-white pt-[60px]">
-      {/* Breadcrumb */}
-      <div className="w-full px-6 md:px-12 lg:px-20 py-8 border-b-2 border-black flex justify-between items-center bg-white">
-        <div className="font-mono text-[10px] font-bold tracking-[2px] uppercase">
-          <Link href="/" className="text-gray-400 hover:text-black transition-colors">INDEX</Link>
-          <span className="mx-4 text-gray-200">/</span>
-          <Link href="/work" className="text-gray-400 hover:text-black transition-colors">WORK</Link>
-          <span className="mx-4 text-gray-200">/</span>
-          <span className="text-black">{project.title}</span>
-        </div>
-        <div className="label-text text-[9px] hidden sm:block text-gray-300 tracking-[4px]">
-          FILE {project.n} // WORKSHOP_VOL_04
-        </div>
-      </div>
+    <main className="w-full bg-[var(--bg-primary)]">
+      
+      {/* Hero */}
+      <section className="relative pt-[140px] md:pt-[200px] pb-24 md:pb-32 border-b border-[var(--border-subtle)] overflow-hidden">
+        <div 
+          className="absolute inset-0 opacity-[0.03] pointer-events-none"
+          style={{ background: `radial-gradient(circle at 50% 0%, ${project.gradient[1]}, transparent)` }}
+        />
+        
+        <div className="w-full max-w-[1440px] mx-auto px-6 md:px-12 lg:px-16 relative z-10">
+          <div className="flex flex-col md:flex-row justify-between items-start gap-8 mb-12">
+            <Link href="/work" className="btn-ghost !py-2 !px-4">
+              ← Back
+            </Link>
+            <div className="flex gap-2">
+              <span className="badge">{project.category}</span>
+              <span className="badge">{project.year}</span>
+            </div>
+          </div>
 
-      {/* Hero Header */}
-      <section className="border-b-2 border-black grid-bg px-6 md:px-12 lg:px-20 py-24 md:py-40">
-        <div className="w-full">
-          <span className="label-text text-gray-400 tracking-[4px]">{project.category}</span>
-          <h1 className="font-serif text-[clamp(56px,12.5vw,180px)] uppercase leading-[0.82] tracking-[-0.04em] mt-10 max-w-7xl breathe-header">
+          <h1 className="font-display text-[clamp(48px,10vw,140px)] font-bold uppercase tracking-tight leading-[0.85] text-[var(--text-primary)]">
             {project.title}
           </h1>
-          <p className="mt-16 text-2xl md:text-3xl font-medium leading-relaxed max-w-4xl text-gray-600">
+          
+          <p className="mt-12 text-xl md:text-3xl text-[var(--text-secondary)] max-w-3xl leading-relaxed font-medium">
             {project.description}
           </p>
         </div>
       </section>
 
-      {/* Metadata Strip */}
-      <section className="border-b-2 border-black bg-white">
-        <div className="w-full grid grid-cols-2 lg:grid-cols-4">
-          {[
-            { k: 'Role', v: project.role || 'Developer' },
-            { k: 'Year', v: project.year },
-            { k: 'Discipline', v: project.category },
-            { k: 'Status', v: project.status || 'LIVE' },
-          ].map((m, i, arr) => (
-            <div key={m.k} className={`p-10 border-b-2 lg:border-b-0 border-black ${i % 2 === 0 ? 'border-r-2' : ''} ${i < 3 ? 'lg:border-r-2' : 'lg:border-r-0'}`}>
-              <div className="label-text mb-6 text-gray-400">{m.k}</div>
-              <div className="font-serif text-3xl tracking-tight">{m.v}</div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Case Body */}
-      <section className="border-b-2 border-black bg-white">
-        <div className="w-full grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-20 p-6 md:p-12 lg:p-24">
-          <div className="lg:sticky lg:top-[120px] lg:self-start">
-            <span className="label-text text-gray-400">Context</span>
-            <h2 className="font-serif text-5xl md:text-6xl uppercase tracking-tighter mt-6 leading-[0.9] text-black">
-              The Story<br/>Behind it.
-            </h2>
-          </div>
+      {/* Content Grid */}
+      <section className="w-full max-w-[1440px] mx-auto px-6 md:px-12 lg:px-16 py-24 md:py-40">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-20">
           
-          <div className="space-y-16">
-            <div className="text-xl md:text-2xl leading-relaxed text-gray-600 max-w-3xl font-medium">
-              <p>{project.longDescription || project.description}</p>
+          {/* Left Meta */}
+          <div className="space-y-12 lg:sticky lg:top-[120px] lg:self-start">
+            <div>
+              <span className="label block mb-4 text-[var(--text-tertiary)]">Role</span>
+              <span className="font-display text-2xl text-[var(--text-primary)]">{project.role}</span>
             </div>
-
-            <div className="pt-16 border-t-2 border-dashed border-gray-100">
-              <div className="label-text mb-8 text-gray-400 tracking-[4px]">Stack & Tools</div>
-              <div className="flex flex-wrap gap-3">
-                {(project.stack || []).map(s => (
-                  <span key={s} className="font-mono text-[11px] font-black tracking-widest uppercase px-5 py-2 border-2 border-black bg-gray-50">
+            <div>
+              <span className="label block mb-4 text-[var(--text-tertiary)]">Status</span>
+              <span className="font-display text-2xl text-[var(--text-primary)]">{"status" in project ? project.status : "COMPLETED"}</span>
+            </div>
+            
+            <div className="pt-8 border-t border-[var(--border-subtle)]">
+              <span className="label block mb-6 text-[var(--text-tertiary)]">Stack</span>
+              <div className="flex flex-wrap gap-2">
+                {project.stack.map((s: string) => (
+                  <span key={s} className="px-3 py-1.5 rounded-md bg-white/[0.03] font-mono text-[10px] uppercase tracking-wider text-[var(--text-secondary)] border border-[var(--border-subtle)]">
                     {s}
                   </span>
                 ))}
@@ -97,31 +82,47 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
             </div>
 
             {project.link && (
-              <div className="pt-12">
-                <a href={project.link} target="_blank" rel="noreferrer" className="btn btn-black group h-[60px] px-12 text-xs">
-                  <span>Visit live project</span>
-                  <span className="ml-6 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1">↗</span>
+              <div className="pt-8">
+                <a href={project.link} target="_blank" rel="noreferrer" className="btn-primary w-full">
+                  Visit Live Project ↗
                 </a>
               </div>
             )}
           </div>
+
+          {/* Right Content */}
+          <div className="prose prose-invert prose-lg max-w-none">
+            <h2 className="font-display text-4xl uppercase tracking-tight mb-8 text-[var(--text-primary)]">
+              The Context.
+            </h2>
+            <p className="text-[var(--text-secondary)] leading-relaxed text-lg">
+              {project.longDescription || project.description}
+            </p>
+
+            <div className="mt-20 glass-card-elevated p-12 aspect-video flex items-center justify-center">
+              <span className="font-mono text-sm text-[var(--text-tertiary)] uppercase tracking-widest">
+                [ Visual Assets Pending ]
+              </span>
+            </div>
+          </div>
+
         </div>
       </section>
 
-      {/* Next Project Footer */}
+      {/* Next Project */}
       {nextProj && (
-        <section className="bg-black text-white p-6 md:p-12 lg:p-24 overflow-hidden group border-t-2 border-black relative">
-          <div className="absolute inset-0 opacity-5 pointer-events-none grid-bg" />
-          <Link href={`/work/${nextProj.id}`} className="w-full block relative z-10">
-            <span className="label-text text-gray-700 block mb-12 uppercase tracking-[4px]">Access Next File</span>
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-12">
-              <h3 className="font-serif text-[clamp(44px,11vw,160px)] uppercase leading-[0.82] tracking-[-0.04em] group-hover:translate-x-6 transition-transform duration-1000 ease-[0.16, 1, 0.3, 1]">
+        <section className="border-t border-[var(--border-subtle)] bg-[var(--bg-secondary)] overflow-hidden">
+          <Link href={`/work/${nextProj.id}`} className="group block w-full max-w-[1440px] mx-auto px-6 md:px-12 lg:px-16 py-32 relative">
+            <div className="absolute right-0 top-0 w-1/2 h-full bg-gradient-to-l from-[var(--accent-glow)] to-transparent opacity-0 group-hover:opacity-30 transition-opacity duration-1000 pointer-events-none" />
+            
+            <span className="label text-[var(--text-tertiary)] block mb-8">Next Project</span>
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8">
+              <h3 className="font-display text-[clamp(40px,8vw,100px)] uppercase font-bold tracking-tight text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] transition-colors duration-500">
                 {nextProj.title} →
               </h3>
-              <div className="text-right">
-                <span className="label-text text-gray-600 block mb-3 uppercase tracking-[4px]">{nextProj.category}</span>
-                <span className="font-serif text-3xl font-black text-gray-200">{nextProj.year}</span>
-              </div>
+              <span className="badge border-[var(--border-subtle)] text-[var(--text-secondary)]">
+                {nextProj.category}
+              </span>
             </div>
           </Link>
         </section>
