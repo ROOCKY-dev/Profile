@@ -10,28 +10,61 @@ import Footer from "@/components/layout/Footer";
 export const revalidate = 60;
 
 export default async function Home() {
-  let githubCommits = [];
+  let githubEvents = [];
   try {
-    const res = await fetch('https://api.github.com/repos/ROOCKY-dev/Profile/commits?per_page=5', {
+    const res = await fetch('https://api.github.com/users/ROOCKY-dev/events/public', {
       next: { revalidate: 60 } // Revalidate every 60 seconds
     });
+    
     if (res.ok) {
-      const data = await res.json();
-      githubCommits = data.map((c: any) => ({
-        sha: c.sha.substring(0, 7),
-        message: c.commit.message,
-        date: c.commit.committer.date,
-      }));
+      const events = await res.json();
+      
+      githubEvents = events.slice(0, 5).map((e: any) => {
+        let command = `git ${e.type} ${e.repo.name}`;
+        
+        switch (e.type) {
+          case 'PushEvent':
+            const branch = e.payload.ref?.split('/').pop() || 'main';
+            command = `git push ${e.repo.name} ${branch}`;
+            break;
+          case 'CreateEvent':
+            command = `git init ${e.repo.name}`;
+            break;
+          case 'WatchEvent':
+            command = `gh repo star ${e.repo.name}`;
+            break;
+          case 'IssuesEvent':
+            command = `gh issue ${e.payload.action} ${e.repo.name}`;
+            break;
+          case 'PullRequestEvent':
+            command = `gh pr ${e.payload.action} ${e.repo.name}`;
+            break;
+          case 'ForkEvent':
+            command = `gh repo fork ${e.repo.name}`;
+            break;
+          case 'DeleteEvent':
+            command = `git branch -D ${e.repo.name}/${e.payload.ref}`;
+            break;
+          default:
+            command = `gh api ${e.type} ${e.repo.name}`;
+        }
+        
+        return {
+          id: e.id,
+          date: e.created_at,
+          message: command,
+        };
+      });
     }
   } catch (err) {
-    console.error("Failed to fetch GitHub commits:", err);
+    console.error("Failed to fetch GitHub events:", err);
   }
 
   return (
     <main className="w-full">
       <Hero />
       <Marquee />
-      <AboutStrip githubCommits={githubCommits} />
+      <AboutStrip githubEvents={githubEvents} />
       <Capabilities />
       <SelectedProjects />
       <Footer />
