@@ -4,7 +4,13 @@ import { motion } from "framer-motion";
 import { fadeUp, stagger } from "@/lib/animations";
 import { SITE } from "@/lib/data";
 
-export default function AboutStrip() {
+interface GithubCommit {
+  sha: string;
+  message: string;
+  date: string;
+}
+
+export default function AboutStrip({ githubCommits = [] }: { githubCommits?: GithubCommit[] }) {
   return (
     <section id="about" className="relative border-b border-[var(--border-subtle)] bg-[var(--bg-primary)] overflow-hidden">
       {/* Background Decor */}
@@ -68,20 +74,29 @@ export default function AboutStrip() {
               </div>
 
               <div className="flex-1 space-y-6">
-                {SITE.log.map((entry, i) => (
-                  <div 
-                    key={i} 
-                    className="flex gap-6 items-start font-mono text-sm group"
-                    style={{ opacity: 1 - i * 0.15 }}
-                  >
-                    <span className="text-[var(--text-tertiary)] group-hover:text-[var(--text-secondary)] transition-colors">
-                      {entry.time}
-                    </span>
-                    <span className="text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] transition-colors">
-                      {entry.event}
-                    </span>
-                  </div>
-                ))}
+                {(githubCommits.length > 0 ? githubCommits : SITE.log).map((entry, i) => {
+                  const timeStr = 'date' in entry 
+                    ? new Date(entry.date).toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' })
+                    : entry.time;
+                  const eventStr = 'message' in entry 
+                    ? `git commit -m "${entry.message.split('\\n')[0]}"`
+                    : entry.event;
+
+                  return (
+                    <div 
+                      key={'sha' in entry ? entry.sha : i} 
+                      className="flex gap-6 items-start font-mono text-sm group"
+                      style={{ opacity: 1 - i * 0.15 }}
+                    >
+                      <span className="text-[var(--text-tertiary)] group-hover:text-[var(--text-secondary)] transition-colors w-12 shrink-0">
+                        {timeStr}
+                      </span>
+                      <span className="text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] transition-colors line-clamp-1">
+                        {eventStr}
+                      </span>
+                    </div>
+                  );
+                })}
               </div>
 
               <div className="mt-12 pt-8 border-t border-[var(--border-subtle)]">
