@@ -1,11 +1,18 @@
-"use client";
-
-import { motion } from "framer-motion";
-import { fadeUp, stagger } from "@/lib/animations";
 import { SITE } from "@/lib/data";
 import Footer from "@/components/layout/Footer";
 
-export default function LogPage() {
+import { createClient } from "@/lib/supabase/server";
+
+export default async function LogPage() {
+  const supabase = await createClient();
+  const { data: logs } = await supabase
+    .from("logs")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  // Fallback to static data if table isn't created or empty
+  const displayLogs = logs && logs.length > 0 ? logs : SITE.log;
+
   return (
     <main className="w-full bg-[var(--bg-primary)]">
       {/* Header */}
@@ -14,16 +21,16 @@ export default function LogPage() {
         <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-[var(--accent-glow)] to-transparent opacity-30 pointer-events-none" />
         
         <div className="w-full max-w-[1440px] mx-auto px-6 md:px-12 lg:px-16 relative z-10">
-          <motion.div variants={fadeUp} initial="hidden" animate="visible">
-            <span className="badge mb-8">Syslog // Dev Log</span>
-            <h1 className="font-display text-[clamp(48px,10vw,120px)] font-bold uppercase tracking-tight leading-none text-[var(--text-primary)]">
-              Workshop <br />
-              <span className="text-[var(--text-secondary)]">Logs.</span>
-            </h1>
-            <p className="mt-8 text-xl text-[var(--text-secondary)] max-w-2xl leading-relaxed">
-              Live updates, scattered thoughts, and dev logs from the workbench. A place to share what I'm currently building or breaking.
-            </p>
-          </motion.div>
+          <div className="mb-8">
+            <span className="badge">Syslog // Dev Log</span>
+          </div>
+          <h1 className="font-display text-[clamp(48px,10vw,120px)] font-bold uppercase tracking-tight leading-none text-[var(--text-primary)]">
+            Workshop <br />
+            <span className="text-[var(--text-secondary)]">Logs.</span>
+          </h1>
+          <p className="mt-8 text-xl text-[var(--text-secondary)] max-w-2xl leading-relaxed">
+            Live updates, scattered thoughts, and dev logs from the workbench. A place to share what I'm currently building or breaking.
+          </p>
         </div>
       </section>
 
@@ -32,12 +39,7 @@ export default function LogPage() {
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-20">
           
           {/* Left: Feed */}
-          <motion.div
-            variants={stagger}
-            initial="hidden"
-            animate="visible"
-            className="space-y-12"
-          >
+          <div className="space-y-12">
             <div className="flex items-center gap-4 border-b border-[var(--border-subtle)] pb-6 mb-12">
               <div className="status-dot bg-amber-400" />
               <span className="font-mono text-sm tracking-wider uppercase text-[var(--text-secondary)]">
@@ -45,10 +47,9 @@ export default function LogPage() {
               </span>
             </div>
 
-            {SITE.log.map((entry, i) => (
-              <motion.article 
-                key={i}
-                variants={fadeUp}
+            {displayLogs.map((entry, i) => (
+              <article 
+                key={entry.id || i}
                 className="group relative glass-card p-8 rounded-2xl"
               >
                 <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-8 mb-6">
@@ -61,21 +62,18 @@ export default function LogPage() {
                 <p className="font-mono text-lg text-[var(--text-primary)]">
                   {entry.event}
                 </p>
-              </motion.article>
+              </article>
             ))}
 
-            <motion.div variants={fadeUp} className="pt-12 text-center">
+            <div className="pt-12 text-center">
               <span className="font-mono text-sm text-[var(--text-tertiary)] opacity-60">
                 End of recent logs. System standing by <span className="animate-pulse">_</span>
               </span>
-            </motion.div>
-          </motion.div>
+            </div>
+          </div>
 
           {/* Right: Sidebar / Community */}
-          <motion.div
-            variants={fadeUp}
-            initial="hidden"
-            animate="visible"
+          <div
             className="relative"
           >
             <div className="glass-card-elevated p-8 rounded-3xl sticky top-[120px]">
@@ -98,7 +96,7 @@ export default function LogPage() {
                 </a>
               </div>
             </div>
-          </motion.div>
+          </div>
 
         </div>
       </section>
