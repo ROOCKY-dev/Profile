@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { account, databases, APPWRITE_DB_ID, APPWRITE_LOGS_COLLECTION_ID } from "@/lib/appwrite.client";
-import { ID, Query } from "appwrite";
+import { getAdminLogs, createAdminLog, updateAdminLog, deleteAdminLog } from "./actions/log.actions";
+import { logout } from "@/app/verify/actions";
 
 export default function AdminLogsPage() {
   const [logs, setLogs] = useState<any[]>([]);
@@ -14,29 +14,20 @@ export default function AdminLogsPage() {
   const router = useRouter();
 
   useEffect(() => {
-    checkUser();
+    fetchLogs();
   }, []);
-
-  const checkUser = async () => {
-    try {
-      await account.get();
-      fetchLogs();
-    } catch {
-      router.push("/verify");
-    }
-  };
 
   const fetchLogs = async () => {
     setLoading(true);
     try {
-      const response = await databases.listDocuments(
-        APPWRITE_DB_ID,
-        APPWRITE_LOGS_COLLECTION_ID,
-        [Query.orderDesc("$createdAt"), Query.limit(100)]
-      );
-      setLogs(response.documents);
-    } catch (error) {
-      console.error("Failed to fetch logs:", error);
+      const docs = await getAdminLogs();
+      setLogs(docs);
+    } catch (error: any) {
+      if (error.message === "Unauthorized") {
+        router.push("/verify");
+      } else {
+        console.error("Failed to fetch logs:", error);
+      }
     }
     setLoading(false);
   };
@@ -53,26 +44,20 @@ export default function AdminLogsPage() {
 
     try {
       if (editingId) {
-        await databases.updateDocument(
-          APPWRITE_DB_ID,
-          APPWRITE_LOGS_COLLECTION_ID,
-          editingId,
-          { time: timeText, event: eventText }
-        );
+        await updateAdminLog(editingId, timeText, eventText);
       } else {
-        await databases.createDocument(
-          APPWRITE_DB_ID,
-          APPWRITE_LOGS_COLLECTION_ID,
-          ID.unique(),
-          { time: timeText, event: eventText }
-        );
+        await createAdminLog(timeText, eventText);
       }
       setEventText("");
       setTimeText("");
       setEditingId(null);
       fetchLogs();
     } catch (error: any) {
-      alert("Error saving log: " + error.message);
+      if (error.message === "Unauthorized") {
+        router.push("/verify");
+      } else {
+        alert("Error saving log: " + error.message);
+      }
     }
   };
 
@@ -92,23 +77,19 @@ export default function AdminLogsPage() {
   const handleDelete = async (id: string) => {
     if (!confirm("Are you sure you want to delete this log?")) return;
     try {
-      await databases.deleteDocument(
-        APPWRITE_DB_ID,
-        APPWRITE_LOGS_COLLECTION_ID,
-        id
-      );
+      await deleteAdminLog(id);
       fetchLogs();
     } catch (error: any) {
-      alert("Error deleting log: " + error.message);
+      if (error.message === "Unauthorized") {
+        router.push("/verify");
+      } else {
+        alert("Error deleting log: " + error.message);
+      }
     }
   };
 
   const handleLogout = async () => {
-    try {
-      await account.deleteSession("current");
-    } catch (error) {
-      console.error("Logout error", error);
-    }
+    await logout();
     router.push("/verify");
   };
 

@@ -2,13 +2,10 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { account } from "@/lib/appwrite.client";
-import { AppwriteException } from "appwrite";
+import { login } from "./actions";
 
 export default function VerifyPage() {
-  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [stayLoggedIn, setStayLoggedIn] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -19,21 +16,14 @@ export default function VerifyPage() {
     setError(null);
 
     try {
-      // Create a session using Appwrite. Appwrite sessions are persistent by default.
-      await account.createEmailPasswordSession(email, password);
-      
-      // Store transient preference if needed in the future
-      if (!stayLoggedIn) {
-        sessionStorage.setItem("transient_session", "true");
-      }
-      
-      router.push("/admin/logs");
-    } catch (err) {
-      if (err instanceof AppwriteException) {
-        setError(err.message);
+      const res = await login(password);
+      if (res.success) {
+        router.push("/admin/logs");
       } else {
-        setError("An unknown error occurred during verification.");
+        setError(res.error || "Invalid passkey");
       }
+    } catch (err) {
+      setError("An unknown error occurred during verification.");
     } finally {
       setLoading(false);
     }
@@ -52,18 +42,7 @@ export default function VerifyPage() {
 
           <form onSubmit={handleLogin} className="space-y-6">
             <div>
-              <label className="label block text-[var(--text-secondary)] mb-2">Identifier</label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className="w-full bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-lg px-4 py-3 text-[var(--text-primary)] font-mono text-sm focus:outline-none focus:border-[var(--accent-primary)] transition-colors"
-                placeholder="admin@roocky.dev"
-              />
-            </div>
-            <div>
-              <label className="label block text-[var(--text-secondary)] mb-2">Passkey</label>
+              <label className="label block text-[var(--text-secondary)] mb-2">Admin Passphrase</label>
               <input
                 type="password"
                 value={password}
@@ -72,19 +51,6 @@ export default function VerifyPage() {
                 className="w-full bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-lg px-4 py-3 text-[var(--text-primary)] font-mono text-sm focus:outline-none focus:border-[var(--accent-primary)] transition-colors"
                 placeholder="••••••••"
               />
-            </div>
-
-            <div className="flex items-center gap-3 mt-4">
-              <input 
-                type="checkbox" 
-                id="stayLoggedIn" 
-                checked={stayLoggedIn}
-                onChange={(e) => setStayLoggedIn(e.target.checked)}
-                className="w-4 h-4 rounded border-[var(--border-subtle)] bg-[var(--bg-secondary)] accent-[var(--accent-primary)]"
-              />
-              <label htmlFor="stayLoggedIn" className="text-sm font-mono text-[var(--text-secondary)] select-none cursor-pointer">
-                Maintain active session
-              </label>
             </div>
 
             {error && (
